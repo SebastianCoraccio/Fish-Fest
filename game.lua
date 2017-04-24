@@ -14,6 +14,48 @@ local scene = composer.newScene()
 -- Bobber image
 local bobber
 
+-- Game timer
+local gameLoopTimer
+
+-- Table to hold all fish
+local fishTable = {}
+
+-- Function to remove the fish
+local function removeFish(time, fish)
+  local function remove()
+    table.remove(fishTable, table.indexOf(fishTable, fish))
+    display.remove(fish)
+  end
+  timer.performWithDelay(time + 200, remove)
+end
+
+-- Fish spawn loop
+local function spawnFish()
+  -- Get random location
+  local randX = 0
+  if (math.random(0,1) == 1) then randX = display.contentWidth + 100 else randX = -100 end
+  local randY = math.random(50, display.contentCenterY + 400)
+
+  -- Create the fish, send to the back
+  local fish = display.newCircle( randX, randY, 40 )
+  fish:setFillColor(0,0,255)
+  fish:toBack()
+
+  -- Insert into fish table to detect keep track of the fish
+  table.insert(fishTable, fish)
+
+  -- Start moving fish across screen
+  -- TODO: For time, instead of random, will be different for each fish
+  local randTime = math.random(5000,15000)
+  if (fish.x == -100) then
+    transition.to(fish, {x=display.contentWidth + 100, y=math.random(50, display.contentCenterY + 400),
+      time=randTime, transition=easing.outQuad, onComplete=removeFish(randTime, fish)})
+  else
+    transition.to(fish, {x=-100, y=math.random(50, display.contentCenterY + 400),
+      time=randTime, transition=easing.outQuad, onComplete=removeFish(randTime, fish)})
+  end
+end
+
 -- Function to to the catching
 local function catch( event )
   if (event.phase == "ended" or event.phase == "cancelled") then
@@ -80,10 +122,10 @@ function scene:create( event )
 
     -- Create the bobber
     bobber = display.newCircle( display.contentCenterX, display.contentCenterY + 400, 25 )
-    
+    bobber:addEventListener( "touch", doSwipe )
+
     -- Boolean to let bobber be cast
     bobber.canBeSwiped = true
-    
 end
 
 
@@ -99,7 +141,13 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
         -- Add listener on bobber
-        bobber:addEventListener( "touch", doSwipe )
+        -- Spawn initial fish
+        for i=1,3 do
+          spawnFish()
+        end
+        -- Timer to spawn fish throughout
+        -- TODO: Finalize time
+        gameLoopTimer = timer.performWithDelay( 2500, spawnFish, 0 )
     end
 end
 
