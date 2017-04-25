@@ -1,115 +1,23 @@
 ----------------------------------------------------------------------------------------------------
 -- game.lua -- TNAC --
 -- 
--- Casting code and catching code.
+-- All of the game code.
 --
 -- David San Antonio
 ----------------------------------------------------------------------------------------------------
--- Your code here
+-- Require imports
 local composer = require( "composer" )
+local cast = require( "cast" )
+local fish = require ( "fish" )
 
 -- This scene
 local scene = composer.newScene()
 
 -- Bobber image
-local bobber
+bobber = nil
 
 -- Game timer
 local gameLoopTimer
-
--- Table to hold all fish
-local fishTable = {}
-
--- Function to remove the fish
-local function removeFish(time, fish)
-  local function remove()
-    table.remove(fishTable, table.indexOf(fishTable, fish))
-    display.remove(fish)
-  end
-  timer.performWithDelay(time + 200, remove)
-end
-
--- Fish spawn loop
-local function spawnFish()
-  -- Get random location
-  local randX = 0
-  if (math.random(0,1) == 1) then randX = display.contentWidth + 100 else randX = -100 end
-  local randY = math.random(50, display.contentCenterY + 400)
-
-  -- Create the fish, send to the back
-  local fish = display.newCircle( randX, randY, 40 )
-  fish:setFillColor(0,0,255)
-  fish:toBack()
-
-  -- Insert into fish table to detect keep track of the fish
-  table.insert(fishTable, fish)
-
-  -- Start moving fish across screen
-  -- TODO: For time, instead of random, will be different for each fish
-  local randTime = math.random(5000,15000)
-  if (fish.x == -100) then
-    transition.to(fish, {x=display.contentWidth + 100, y=math.random(50, display.contentCenterY + 400),
-      time=randTime, transition=easing.outQuad, onComplete=removeFish(randTime, fish)})
-  else
-    transition.to(fish, {x=-100, y=math.random(50, display.contentCenterY + 400),
-      time=randTime, transition=easing.outQuad, onComplete=removeFish(randTime, fish)})
-  end
-end
-
--- Function to to the catching
-local function catch( event )
-  if (event.phase == "ended" or event.phase == "cancelled") then
-    transition.to( bobber, { x=display.contentCenterX, y=display.contentCenterY + 400, 
-      transition=easing.outQuad, onComplete=caught() } )
-  end
-end
-
--- Function to be called when the player cast to bobber
-local function casted()
-  bobber._functionListeners = nil -- remove event listener
-  bobber:addEventListener("touch", catch)
-end
-
--- Function to do the cast
-local function doSwipe( event )
-  -- Set focus on the bobber
-  if ( event.phase == "began" ) then
-    display.getCurrentStage():setFocus( event.target )
-  elseif ( event.phase == "moved" ) then
-    if ( bobber.canBeSwiped == false ) then
-      return
-    end
-  elseif ( event.phase == "ended" or event.phase == "cancelled" ) then
-    bobber.canBeSwiped = false
-
-    -- Make sure the bobber cant be put off screen
-    xLocation = event.x
-    yLocation = event.y
-    if (event.x <= 50) then
-      xLocation = 50
-    elseif (event.x >= display.contentWidth - 50) then
-      xLocation = display.contentWidth - 50
-    end
-
-    if (event.y >= display.contentCenterY + 400) then
-      -- Don't cast the bobber
-      yLocation = display.contentCenterY + 400
-      xLocation = display.contentCenterX
-    elseif (event.y <= 50) then
-      yLocation = 50
-    end
-    -- Move the bobber
-    transition.to( bobber, { x=xLocation, y=yLocation, transition=easing.outQuad, 
-      onComplete=casted() } )
-  end
-end
-
--- Function to be called when the player reeled in the bobber
-function caught()
-  bobber._functionListeners = nil -- remove event listener
-  bobber:addEventListener("touch", doSwipe)
-  bobber.canBeSwiped = true
-end
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -122,59 +30,50 @@ function scene:create( event )
 
     -- Create the bobber
     bobber = display.newCircle( display.contentCenterX, display.contentCenterY + 400, 25 )
-    bobber:addEventListener( "touch", doSwipe )
+    bobber:addEventListener( "touch", cast.doSwipe )
+
+    -- Runtime:addEventListener( "touch", cast.catch)
 
     -- Boolean to let bobber be cast
     bobber.canBeSwiped = true
 end
 
-
 -- show()
 function scene:show( event )
-
     local sceneGroup = self.view
     local phase = event.phase
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
         -- Add listener on bobber
         -- Spawn initial fish
         for i=1,3 do
-          spawnFish()
+          fish.spawnFish()
         end
         -- Timer to spawn fish throughout
         -- TODO: Finalize time
-        gameLoopTimer = timer.performWithDelay( 2500, spawnFish, 0 )
+        gameLoopTimer = timer.performWithDelay( 2500, fish.spawnFish, 0 )
     end
 end
 
-
 -- hide()
 function scene:hide( event )
-
     local sceneGroup = self.view
     local phase = event.phase
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
-        -- Stop the music!
-
     end
 end
 
-
 -- destroy()
 function scene:destroy( event )
-
     local sceneGroup = self.view
     -- Code here runs prior to the removal of scene's view
-
 end
 
 -- -----------------------------------------------------------------------------------
