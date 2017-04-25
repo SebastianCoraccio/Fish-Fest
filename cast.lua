@@ -20,7 +20,7 @@ R.caught = caught
 -- Function to to the catching
 local function catch( event )
   if (event.phase == "ended" or event.phase == "cancelled") then
-    transition.to( bobber, { x=display.contentCenterX, y=display.contentCenterY + 400, 
+    transition.to( bobber, { x=display.contentCenterX, y=display.contentCenterY + 500, 
       transition=easing.outQuad, onComplete=caught() } )
   end
 end

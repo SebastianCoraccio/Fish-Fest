@@ -12,7 +12,8 @@ local fish = require ( "fish" )
 
 -- This scene
 local scene = composer.newScene()
-
+local background = nil
+local water = nil
 -- Bobber image
 bobber = nil
 
@@ -27,9 +28,16 @@ local gameLoopTimer
 function scene:create( event )
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
+    background = display.newImage("images/backgrounds/bg_sand.png")
+    background.x = display.contentCenterX
+    background.y = display.contentCenterY
+
+    water = display.newImage("images/backgrounds/bg_water.png")
+    water.x = display.contentCenterX
+    water.y = display.contentCenterY - 550
 
     -- Create the bobber
-    bobber = display.newCircle( display.contentCenterX, display.contentCenterY + 400, 25 )
+    bobber = display.newCircle( display.contentCenterX, display.contentCenterY + 500, 25 )
     bobber:addEventListener( "touch", cast.doSwipe )
 
     -- Runtime:addEventListener( "touch", cast.catch)

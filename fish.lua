@@ -32,8 +32,8 @@ local function spawnFish()
 
   -- Create the fish, send to the back
   local fish = display.newCircle( randX, randY, 40 )
-  fish:setFillColor(0,0,255)
-  fish:toBack()
+  fish:setFillColor(.17,.41,1, 0.70)
+  -- fish:toBack()
 
   -- Insert into fish table to detect keep track of the fish
   table.insert(fishTable, fish)
