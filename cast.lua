@@ -17,50 +17,59 @@ local function caught()
 end
 R.caught = caught
 
+-- Function to stop the swiping
+local function noSwipe()
+  bobber.canBeSwiped = false
+end
+R.noSwipe = noSwipe
+
 -- Function to to the catching
 local function catch( event )
-  if (event.phase == "ended" or event.phase == "cancelled") then
+  if (event.phase == "ended" or event.phase == "cancelled") and (bobber.canBeSwiped == false) then
+    bobber:setLinearVelocity( 0, 0 )
     transition.to( bobber, { x=display.contentCenterX, y=display.contentCenterY + 400, 
       transition=easing.outQuad, onComplete=caught() } )
   end
 end
 R.catch = catch
 
+local counter = 0
+local function count()
+  counter = counter + 1
+end
+
 -- Function to do the cast
 local function doSwipe( event )
-  if (bobber.canBeSwiped == false) then
-    catch(event)
-  -- Set focus on the bobber
-  elseif ( event.phase == "began" ) then
+  if (bobber.canBeSwiped == false) then return end
+  if ( event.phase == "began" ) then
     display.getCurrentStage():setFocus( event.target )
+    handle = timer.performWithDelay(10, count, 0)
   elseif ( event.phase == "moved" ) then
-    if ( bobber.canBeSwiped == false ) then
-      catch(event)
+    if ( bobber.canBeSwiped == false ) then 
+      return
     end
-  elseif (event.phase == "ended" or event.phase == "cancelled") and (bobber.canBeSwiped == true) then
-    bobber.canBeSwiped = false
+    -- Caculate deltaX and deltaY
+    local deltaX = event.x - event.xStart
+    local deltaY = event.y - event.yStart
 
-    -- Make sure the bobber cant be put off screen
-    xLocation = event.x
-    yLocation = event.y
-    if (event.x <= 50) then
-      xLocation = 50
-    elseif (event.x >= display.contentWidth - 50) then
-      xLocation = display.contentWidth - 50
-    end
-
-    if (event.y >= display.contentCenterY + 400) then
-      -- Don't cast the bobber
-      yLocation = display.contentCenterY + 400
-      xLocation = display.contentCenterX
-    elseif (event.y <= 50) then
-      yLocation = 50
-    end
-    -- Move the bobber
-    transition.to( bobber, { x=xLocation, y=yLocation, transition=easing.outQuad} )
+    -- Calculate normal
+    normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
+    normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
   elseif ( event.phase == "ended" or event.phase == "cancelled" ) then
-    print("here")
+  -- Stop the user from swiping after a delay, delay to stop it from being called immediately
+    timer.performWithDelay(500, noSwipe)
+
+    timer.cancel(handle)
+    print(counter)
+    counter = 0
+    
+    speed = 500
+
+    -- Send bobber towards location with speed
+    bobber:setLinearVelocity(normDeltaX  * speed, normDeltaY  * speed)
+
     display.getCurrentStage():setFocus( nil )
+    print("FOCUS RELEASED")
   end
 end
 R.doSwipe = doSwipe

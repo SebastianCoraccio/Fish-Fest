@@ -6,9 +6,14 @@
 -- David San Antonio
 ----------------------------------------------------------------------------------------------------
 -- Require imports
-local composer = require( "composer" )
-local cast = require( "cast" )
-local fish = require ( "fish" )
+local composer = require("composer")
+local cast = require("cast")
+local fish = require("fish")
+local physics = require("physics")
+
+-- Start the physics with no gravity
+physics.start()
+physics.setGravity(0, 0)
 
 -- This scene
 local scene = composer.newScene()
@@ -31,8 +36,10 @@ function scene:create( event )
     -- Create the bobber
     bobber = display.newCircle( display.contentCenterX, display.contentCenterY + 400, 25 )
     bobber:addEventListener( "touch", cast.doSwipe )
+    physics.addBody(bobber, "dynamic")
+    bobber.linearDamping = 1
 
-    -- Runtime:addEventListener( "touch", cast.catch)
+    Runtime:addEventListener( "touch", cast.catch)
 
     -- Boolean to let bobber be cast
     bobber.canBeSwiped = true
