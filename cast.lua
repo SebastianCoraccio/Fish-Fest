@@ -30,8 +30,8 @@ R.noSwipe = noSwipe
 local function catch( event )
   if (event.phase == "ended" or event.phase == "cancelled") and (bobber.canBeSwiped == false) then
     bobber:setLinearVelocity( 0, 0 )
-    transition.to( bobber, { x=display.contentCenterX, y=display.contentCenterY + 400, 
-      transition=easing.outQuad, onComplete=caught() } )
+    transition.to( bobber, { time=800, x=display.contentCenterX, y=display.contentCenterY + 500, 
+      transition=easing.outQuad, xScale=1, yScale=1, onComplete=caught() } )
   end
 end
 R.catch = catch
@@ -66,14 +66,21 @@ local function doSwipe( event )
     -- Cancel the timer for the speed
     timer.cancel(handle)
     speed = counter > 0 and counter or SPEED_MINIMUM -- Set the speed
-    print(speed)
     counter = SPEED_MAXIMUM -- Reset the counter
 
     -- Send bobber towards location with speed
     bobber:setLinearVelocity(normDeltaX  * speed, normDeltaY  * speed)
 
+    -- Function to simulate arc of bobber
+    local function scaleUp()
+      local function scaleDown()
+        transition.to(bobber, {time=1100, xScale=.8, yScale=.8})
+      end
+      transition.to(bobber, {time=600, xScale=1.6, yScale=1.6, onComplete=scaleDown})
+    end
+    scaleUp()
+
     display.getCurrentStage():setFocus( nil )
-    print("FOCUS RELEASED")
   end
 end
 R.doSwipe = doSwipe
