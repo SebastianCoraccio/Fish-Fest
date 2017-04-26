@@ -10,7 +10,7 @@
 -- Object to return to call from other scripts
 local R = {}
 
--- Constant
+-- Constants for speed of throw
 local SPEED_MAXIMUM = 1200
 local SPEED_MINIMUM = 100
 
