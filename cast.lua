@@ -6,10 +6,13 @@
 -- David San Antonio
 ----------------------------------------------------------------------------------------------------
 -- Require imports
--- local catch = require( "catch" )
 
 -- Object to return to call from other scripts
 local R = {}
+
+-- Constant
+local SPEED_MAXIMUM = 1200
+local SPEED_MINIMUM = 100
 
 -- Function to be called when the player reeled in the bobber
 local function caught()
@@ -33,9 +36,10 @@ local function catch( event )
 end
 R.catch = catch
 
-local counter = 0
+-- Counter function to use for the casting speed
+local counter = SPEED_MAXIMUM
 local function count()
-  counter = counter + 1
+  counter = counter - 100
 end
 
 -- Function to do the cast
@@ -43,7 +47,7 @@ local function doSwipe( event )
   if (bobber.canBeSwiped == false) then return end
   if ( event.phase == "began" ) then
     display.getCurrentStage():setFocus( event.target )
-    handle = timer.performWithDelay(10, count, 0)
+    handle = timer.performWithDelay(50, count, 0)
   elseif ( event.phase == "moved" ) then
     if ( bobber.canBeSwiped == false ) then 
       return
@@ -59,11 +63,11 @@ local function doSwipe( event )
   -- Stop the user from swiping after a delay, delay to stop it from being called immediately
     timer.performWithDelay(500, noSwipe)
 
+    -- Cancel the timer for the speed
     timer.cancel(handle)
-    print(counter)
-    counter = 0
-    
-    speed = 500
+    speed = counter > 0 and counter or SPEED_MINIMUM -- Set the speed
+    print(speed)
+    counter = SPEED_MAXIMUM -- Reset the counter
 
     -- Send bobber towards location with speed
     bobber:setLinearVelocity(normDeltaX  * speed, normDeltaY  * speed)
