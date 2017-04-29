@@ -58,9 +58,6 @@ local function doSwipe( event )
     -- Stated cast
     startedCast = true
 
-    -- Reset the counter
-    counter = SPEED_MAXIMUM
-
     -- Calculate normal
     normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
     normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
@@ -71,7 +68,7 @@ local function doSwipe( event )
     -- Cancel the timer for the speed
     timer.cancel(handle)
     speed = counter > 0 and counter or SPEED_MINIMUM -- Set the speed
-    counter = SPEED_MAXIMUM -- Reset the counter
+    counter = SPEED_MAXIMUM -- Reset the counter    
 
     -- Function to simulate arc of bobber
     local function scaleUp()
@@ -91,6 +88,8 @@ local function doSwipe( event )
     end
 
     display.getCurrentStage():setFocus( nil )
+  elseif (startedCast == false) then
+    counter = SPEED_MAXIMUM
   end
 end
 R.doSwipe = doSwipe
