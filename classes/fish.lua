@@ -1,7 +1,7 @@
 -- Fish
--- Fish have two modes, seeking and pursing. 
+-- Fish have two modes, seeking and pursuing. 
 -- When seeking they will move randomly to new locations and look for a bobber
--- If a bobber is within their line of site they will switch to pursing.
+-- If a bobber is within their line of site they will switch to pursuing.
 -- When the fish is pursuing it will hit the bobber, and eventually bite
 
 Fish = { MAX_BOBS = 5 }

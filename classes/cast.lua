@@ -11,6 +11,9 @@ local SPEED_MINIMUM = 100
 -- Local boolean to keep track off if the user start to cast or not
 local startedCast = false
 
+-- Counter for the speed calculation
+local counter = SPEED_MAXIMUM
+
 -- Function to be called when the player reeled in the bobber
 local function caught()
   bobber.canBeSwiped = true
@@ -34,7 +37,6 @@ end
 R.catch = catch
 
 -- Counter function to use for the casting speed
-local counter = SPEED_MAXIMUM
 local function count()
   counter = counter - 100
 end

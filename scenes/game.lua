@@ -15,6 +15,7 @@ physics.setGravity(0, 0)
 local scene = composer.newScene()
 local background = nil
 local water = nil
+
 -- Bobber image
 bobber = nil
 
