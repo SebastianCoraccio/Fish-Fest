@@ -8,6 +8,9 @@ local R = {}
 local SPEED_MAXIMUM = 1200
 local SPEED_MINIMUM = 100
 
+-- Local boolean to keep track off if the user start to cast or not
+local startedCast = false
+
 -- Function to be called when the player reeled in the bobber
 local function caught()
   bobber.canBeSwiped = true
@@ -50,10 +53,16 @@ local function doSwipe( event )
     local deltaX = event.x - event.xStart
     local deltaY = event.y - event.yStart
 
+    -- Stated cast
+    startedCast = true
+
+    -- Reset the counter
+    counter = SPEED_MAXIMUM
+
     -- Calculate normal
     normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
     normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
-  elseif ( event.phase == "ended" or event.phase == "cancelled" ) then
+  elseif ( event.phase == "ended" or event.phase == "cancelled" ) and (startedCast == true) then
   -- Stop the user from swiping after a delay, delay to stop it from being called immediately
     timer.performWithDelay(500, noSwipe)
 
@@ -62,9 +71,6 @@ local function doSwipe( event )
     speed = counter > 0 and counter or SPEED_MINIMUM -- Set the speed
     counter = SPEED_MAXIMUM -- Reset the counter
 
-    -- Send bobber towards location with speed
-    bobber:setLinearVelocity(normDeltaX  * speed, normDeltaY  * speed)
-
     -- Function to simulate arc of bobber
     local function scaleUp()
       local function scaleDown()
@@ -72,7 +78,15 @@ local function doSwipe( event )
       end
       transition.to(bobber, {time=600, xScale=1.6, yScale=1.6, onComplete=scaleDown})
     end
-    scaleUp()
+
+    -- Send bobber towards location with speed
+    if (normDeltaX == nil or normDeltaY == nil) then
+      startedCast = false
+    else
+      bobber:setLinearVelocity(normDeltaX  * speed, normDeltaY  * speed)
+      scaleUp()
+      startedCast = false
+    end
 
     display.getCurrentStage():setFocus( nil )
   end
