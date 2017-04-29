@@ -1,14 +1,10 @@
-----------------------------------------------------------------------------------------------------
--- game.lua -- TNAC --
--- 
--- All of the game code.
---
--- David San Antonio
-----------------------------------------------------------------------------------------------------
+-- Game Scene
+-- Fish appear and the player can cast the rod and try to catch them
+
 -- Require imports
 local composer = require("composer")
-local cast = require("cast")
-local fish = require("fish")
+local cast = require("classes.cast")
+local fish = require("classes.fish")
 local physics = require("physics")
 
 -- Start the physics with no gravity
@@ -21,9 +17,6 @@ local background = nil
 local water = nil
 -- Bobber image
 bobber = nil
-
--- Game timer
-local gameLoopTimer
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -46,6 +39,14 @@ function scene:create( event )
     bobber:addEventListener( "touch", cast.doSwipe )
     physics.addBody(bobber, "dynamic")
     bobber.linearDamping = 1
+    
+    -- Create a fish
+    fish = Fish.create(display.contentCenterX, 
+                       display.contentCenterY, 
+                       display.contentWidth - 100,
+                       display.contentHeight - 300, 
+                       100,
+                       display.contentCenterY - 400)
 
     Runtime:addEventListener( "touch", cast.catch)
 
@@ -57,19 +58,20 @@ end
 function scene:show( event )
     local sceneGroup = self.view
     local phase = event.phase
-
+    local the_fish = nil
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
         -- Add listener on bobber
         -- Spawn initial fish
-        for i=1,3 do
-          fish.spawnFish()
-        end
+        -- for i=1,3 do
+        -- end
         -- Timer to spawn fish throughout
         -- TODO: Finalize time
-        gameLoopTimer = timer.performWithDelay( 2500, fish.spawnFish, 0 )
+        self.fishLoopTimer = timer.performWithDelay(2000, function()
+            self:updateFish()
+        end, 0 )
     end
 end
 
@@ -89,6 +91,10 @@ end
 function scene:destroy( event )
     local sceneGroup = self.view
     -- Code here runs prior to the removal of scene's view
+end
+
+function scene:updateFish() 
+    fish.update()
 end
 
 -- -----------------------------------------------------------------------------------

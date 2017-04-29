@@ -1,11 +1,5 @@
-----------------------------------------------------------------------------------------------------
--- cast.lua -- TNAC --
--- 
--- Casting
---
--- David San Antonio
-----------------------------------------------------------------------------------------------------
--- Require imports
+-- Cast
+-- Functions for physics and mechanics of casting and the bobber
 
 -- Object to return to call from other scripts
 local R = {}
