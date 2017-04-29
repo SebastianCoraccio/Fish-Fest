@@ -69,7 +69,7 @@ function scene:show( event )
         -- end
         -- Timer to spawn fish throughout
         -- TODO: Finalize time
-        self.fishLoopTimer = timer.performWithDelay(2000, function()
+        self.fishLoopTimer = timer.performWithDelay(4000, function()
             self:updateFish()
         end, 0 )
     end

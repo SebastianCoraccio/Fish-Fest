@@ -14,9 +14,13 @@ function Fish.create(x, y, maxX, maxY, minX, minY)
   fish.x, fish.y = x,y
   fish.maxX, fish.maxY = maxX, maxY
   fish.minX, fish.minY = minX, minY
+  fish.dir = 100
   fish.mode = "SEEKING"
-  fish.anim = display.newCircle( x, y, 40 )
-  fish.anim:setFillColor(.17,.41,1, 0.70)
+  fish.anim = display.newImage("images/fish/silhouette.png")
+  fish.anim:scale(.6, .6)
+  fish.anim.x = fish.x
+  fish.anim.y = fish.y
+  fish.anim.rotation = dir
 
   -- Updates what the fix will do now based on its state
   function Fish:update()
@@ -30,8 +34,8 @@ function Fish.create(x, y, maxX, maxY, minX, minY)
   function Fish:change_location()
     oldX = fish.x
     oldY = fish.y
-    fish.x = fish.x + math.random(-250, 250)
-    fish.y = fish.y + math.random(-250, 250)
+    fish.x = fish.x + math.random(-300, 300)
+    fish.y = fish.y + math.random(-300, 300)
 
     -- Check new x and y are in the bounding area
     if fish.x > fish.maxX then
@@ -54,7 +58,11 @@ function Fish.create(x, y, maxX, maxY, minX, minY)
     -- TODO: Actually make that work.
     dist = math.sqrt((fish.x - oldX)^2 + (fish.y - oldY)^2 )
 
-    transition.to(fish.anim, {x=fish.x, y=fish.y, time=30*dist, transition=easing.outQuad})
+    fish.dir = math.atan2(fish.y - oldY, fish.x - oldX) * (180/math.pi)
+    print(fish.dir)
+    
+    transition.to(fish.anim, {rotation = fish.dir, time=1000})
+    transition.to(fish.anim, {x=fish.x, y=fish.y, time=40*dist, transition=easing.outQuad})
   end
 
   -- To String method, returns string with x and y coordinate.
