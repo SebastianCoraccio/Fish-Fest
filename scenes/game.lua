@@ -15,9 +15,10 @@ physics.setGravity(0, 0)
 local scene = composer.newScene()
 local background = nil
 local water = nil
-
 -- Bobber image
 bobber = nil
+
+fishTable = {}
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -42,13 +43,14 @@ function scene:create( event )
     bobber.linearDamping = 1
     
     -- Create a fish
-    fish = Fish.create(display.contentCenterX, 
-                       display.contentCenterY, 
-                       display.contentWidth - 100,
-                       display.contentHeight - 300, 
-                       100,
-                       display.contentCenterY - 400)
+    for i=1,3 do
+        f = Fish.create(display.contentWidth - 100,
+                        display.contentHeight - 300, 
+                        100,
+                        display.contentCenterY - 400)
 
+        table.insert(fishTable, f)
+    end
     Runtime:addEventListener( "touch", cast.catch)
 
     -- Boolean to let bobber be cast
@@ -95,7 +97,10 @@ function scene:destroy( event )
 end
 
 function scene:updateFish() 
-    fish.update()
+    for i = #fishTable, 1, -1 do
+        print("Fish " ..  i .. ": " .. fishTable[i].tostring())
+        timer.performWithDelay(300, fishTable[i].update(), 0)
+    end
 end
 
 -- -----------------------------------------------------------------------------------

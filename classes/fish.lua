@@ -1,7 +1,7 @@
 -- Fish
--- Fish have two modes, seeking and pursuing. 
+-- Fish have two modes, seeking and pursing. 
 -- When seeking they will move randomly to new locations and look for a bobber
--- If a bobber is within their line of site they will switch to pursuing.
+-- If a bobber is within their line of site they will switch to pursing.
 -- When the fish is pursuing it will hit the bobber, and eventually bite
 
 Fish = { MAX_BOBS = 5 }
@@ -9,22 +9,21 @@ Fish.__index = Fish
 
 -- Creates a new fish at location (x,y), inside a bounded area 
 -- defined by two vertex (minX, minY), (maxX, maxY)
-function Fish.create(x, y, maxX, maxY, minX, minY)
+function Fish.create(maxX, maxY, minX, minY)
   local fish = setmetatable({}, Fish)
-  fish.x, fish.y = x,y
   fish.maxX, fish.maxY = maxX, maxY
   fish.minX, fish.minY = minX, minY
-  fish.dir = 100
+  fish.x = math.random(minX, maxX)
+  fish.y = math.random(minY, maxY)
+  fish.dir = math.random(0, 360)
   fish.mode = "SEEKING"
   fish.anim = display.newImage("images/fish/silhouette.png")
   fish.anim:scale(.6, .6)
   fish.anim.x = fish.x
   fish.anim.y = fish.y
-  fish.anim.rotation = dir
-
+  transition.to(fish.anim, {rotation = fish.dir, time=0})
   -- Updates what the fix will do now based on its state
   function Fish:update()
-    print("Update has been called.")
     if fish.mode == "SEEKING" then
       fish.change_location()
     end
@@ -59,7 +58,6 @@ function Fish.create(x, y, maxX, maxY, minX, minY)
     dist = math.sqrt((fish.x - oldX)^2 + (fish.y - oldY)^2 )
 
     fish.dir = math.atan2(fish.y - oldY, fish.x - oldX) * (180/math.pi)
-    print(fish.dir)
     
     transition.to(fish.anim, {rotation = fish.dir, time=1000})
     transition.to(fish.anim, {x=fish.x, y=fish.y, time=40*dist, transition=easing.outQuad})
