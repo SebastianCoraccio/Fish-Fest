@@ -4,7 +4,7 @@
 -- Require imports
 local composer = require("composer")
 local cast = require("classes.cast")
-local fish = require("classes.fish")
+local newFish = require("classes.fish").create
 local physics = require("physics")
 
 -- Start the physics with no gravity
@@ -44,11 +44,7 @@ function scene:create( event )
     
     -- Create a fish
     for i=1,3 do
-        f = Fish.create(display.contentWidth - 100,
-                        display.contentHeight - 300, 
-                        100,
-                        display.contentCenterY - 400)
-
+        local f = newFish(display.contentWidth - 100, display.contentHeight - 300, 100, display.contentCenterY - 400)
         table.insert(fishTable, f)
     end
     Runtime:addEventListener( "touch", cast.catch)

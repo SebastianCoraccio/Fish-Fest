@@ -4,13 +4,15 @@
 -- If a bobber is within their line of site they will switch to pursing.
 -- When the fish is pursuing it will hit the bobber, and eventually bite
 
-Fish = { MAX_BOBS = 5 }
-Fish.__index = Fish
+local _Fish = {}
+
+-- Fish = { MAX_BOBS = 5 }
+-- Fish.__index = Fish
 
 -- Creates a new fish at location (x,y), inside a bounded area 
 -- defined by two vertex (minX, minY), (maxX, maxY)
-function Fish.create(maxX, maxY, minX, minY)
-  local fish = setmetatable({}, Fish)
+function _Fish.create(maxX, maxY, minX, minY)
+  local fish = {}
   fish.maxX, fish.maxY = maxX, maxY
   fish.minX, fish.minY = minX, minY
   fish.x = math.random(minX, maxX)
@@ -22,15 +24,16 @@ function Fish.create(maxX, maxY, minX, minY)
   fish.anim.x = fish.x
   fish.anim.y = fish.y
   transition.to(fish.anim, {rotation = fish.dir, time=0})
+  
   -- Updates what the fix will do now based on its state
-  function Fish:update()
+  function fish:update()
     if fish.mode == "SEEKING" then
       fish.change_location()
     end
   end
 
   -- Picks a random location in its bounding area
-  function Fish:change_location()
+  function fish:change_location()
     oldX = fish.x
     oldY = fish.y
     fish.x = fish.x + math.random(-300, 300)
@@ -64,9 +67,11 @@ function Fish.create(maxX, maxY, minX, minY)
   end
 
   -- To String method, returns string with x and y coordinate.
-  function Fish:tostring()
+  function fish:tostring()
     return "Fish Location: (" .. fish.x .. ", " .. fish.y .. ")"
   end
 
   return fish
 end
+
+return _Fish
