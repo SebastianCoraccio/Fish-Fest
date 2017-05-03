@@ -3,8 +3,8 @@
 
 -- Require imports
 local composer = require("composer")
-local cast = require("classes.cast")
 local newFish = require("classes.fish").create
+local newBobber = require("classes.bobber").create
 local physics = require("physics")
 
 -- Start the physics with no gravity
@@ -14,11 +14,15 @@ physics.setGravity(0, 0)
 
 -- This scene
 local scene = composer.newScene()
+
+-- Images
 local background = nil
 local water = nil
--- Bobber image
-bobber = nil
 
+-- Bobber
+local bobber = nil
+
+-- Table to hold the fish
 fishTable = {}
 
 -- -----------------------------------------------------------------------------------
@@ -26,7 +30,7 @@ fishTable = {}
 -- -----------------------------------------------------------------------------------
 
 -- create()
-function scene:create( event )
+function scene:create(event)
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
     background = display.newImage("images/backgrounds/bg_sand.png")
@@ -38,20 +42,16 @@ function scene:create( event )
     water.y = display.contentCenterY - 550
 
     -- Create the bobber
-    bobber = display.newCircle( display.contentCenterX, display.contentCenterY + 500, 25 )
-    bobber:addEventListener( "touch", cast.doSwipe )
-    physics.addBody(bobber, "dynamic")
-    bobber.linearDamping = 1
+    bobber = newBobber(display.contentCenterX, display.contentCenterY + 500)
 
-    -- Create a fish
+    -- Create the fish
     for i=1,3 do
         local f = newFish(display.contentWidth, display.contentHeight - 150, 0, -100)
         table.insert(fishTable, f)
-    end 
-    Runtime:addEventListener( "touch", cast.catch)
+    end
 
-    -- Boolean to let bobber be cast
-    bobber.canBeSwiped = true
+    -- Add catch event
+    Runtime:addEventListener("touch", bobber.catch)
 end
 
 -- show()
