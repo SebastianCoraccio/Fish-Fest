@@ -8,6 +8,7 @@ local newFish = require("classes.fish").create
 local physics = require("physics")
 
 -- Start the physics with no gravity
+-- physics.setDrawMode( "hybrid" )
 physics.start()
 physics.setGravity(0, 0)
 
@@ -41,12 +42,12 @@ function scene:create( event )
     bobber:addEventListener( "touch", cast.doSwipe )
     physics.addBody(bobber, "dynamic")
     bobber.linearDamping = 1
-    
+
     -- Create a fish
     for i=1,3 do
-        local f = newFish(display.contentWidth - 100, display.contentHeight - 300, 100, display.contentCenterY - 400)
+        local f = newFish(display.contentWidth, display.contentHeight - 150, 0, -100)
         table.insert(fishTable, f)
-    end
+    end 
     Runtime:addEventListener( "touch", cast.catch)
 
     -- Boolean to let bobber be cast
@@ -62,10 +63,7 @@ function scene:show( event )
         -- Code here runs when the scene is still off screen (but is about to come on screen)
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
-        -- Add listener on bobber
-        -- Spawn initial fish
-        -- for i=1,3 do
-        -- end
+
         -- Timer to spawn fish throughout
         -- TODO: Finalize time
         self.fishLoopTimer = timer.performWithDelay(4000, function()
@@ -94,8 +92,8 @@ end
 
 function scene:updateFish() 
     for i = #fishTable, 1, -1 do
-        print("Fish " ..  i .. ": " .. fishTable[i].tostring())
-        timer.performWithDelay(300, fishTable[i].update(), 0)
+        -- print("Fish " ..  i .. ": " .. fishTable[i].tostring())
+        fishTable[i].update()
     end
 end
 
