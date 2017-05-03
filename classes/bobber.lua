@@ -8,7 +8,7 @@ local physics = require('physics')
 local _Bobber = {}
 
 -- Constants for speed of throw
-local SPEED_MAXIMUM = 1200
+local SPEED_MAXIMUM = 1300
 local SPEED_MINIMUM = 100
 
 -- Counter for the speed calculation
@@ -46,7 +46,6 @@ function _Bobber.create(x, y)
     -- Function to stop the swiping
     function bobber:noCast()
         bobber.canBeCast = false
-        counter = SPEED_MAXIMUM
     end
 
     -- Function to to the catching
@@ -69,8 +68,9 @@ function _Bobber.create(x, y)
     function bobber:cast(event)
         if (bobber.canBeCast == false) then return end
         if (event.phase == "began") then
+            counter = SPEED_MAXIMUM
             display.getCurrentStage():setFocus(event.target)
-            handle = timer.performWithDelay(50, bobber.count, 0)
+            handle = timer.performWithDelay(80, bobber.count, 0)
         elseif (event.phase == "moved") then
             if (bobber.canBeCast == false) then 
             return
