@@ -32,7 +32,7 @@ function _Bobber.create(x, y)
     bobber.startedCast = false
 
     -- If the bobber is active
-    bobber.isActive = false
+    bobber.anim.isActive = false
 
     -- Physics body
     physics.addBody(bobber.anim, "dynamic")
@@ -52,7 +52,7 @@ function _Bobber.create(x, y)
     function bobber:catch(event)
         -- if (event.phase == "ended" or event.phase == "cancelled") and (bobber.canBeCast == false) then
         if bobber.canBeCast == false then
-            bobber.isActive = false
+            bobber.anim.isActive = false
             bobber.anim:setLinearVelocity(0, 0)
             transition.to(bobber.anim, {time=800, x=display.contentCenterX, y=display.contentCenterY + 500, 
             transition=easing.outQuad, xScale=1, yScale=1, onComplete=bobber.caught()})
@@ -97,8 +97,10 @@ function _Bobber.create(x, y)
             -- Function to simulate arc of bobber
             local function scaleUp()
                 local function scaleDown()
-                    transition.to(bobber.anim, {time=1100, xScale=.8, yScale=.8})
-                    bobber.isActive = true
+                    transition.to(bobber.anim, {time=1100, xScale=.8, yScale=.8, 
+                    onComplete=function()
+                        bobber.anim.isActive = true
+                        end})
                 end
                 transition.to(bobber.anim, {time=600, xScale=1.6, yScale=1.6, onComplete=scaleDown})
             end

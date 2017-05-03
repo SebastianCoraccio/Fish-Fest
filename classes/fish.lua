@@ -111,7 +111,10 @@ function _Fish.create(maxX, maxY, minX, minY)
     elseif event.other.myName == "los" then
       fish.anim:setFillColor(1,1,1)
     else
-      fish.anim:setFillColor(0,1,0) 
+      print(event.other.isActive)
+      if (event.other.isActive) then 
+        fish.anim:setFillColor(0,1,0) 
+      end
     end
 
   end
