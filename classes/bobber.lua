@@ -11,9 +11,6 @@ local _Bobber = {}
 local SPEED_MAXIMUM = 1200
 local SPEED_MINIMUM = 100
 
--- Local boolean to keep track off if the user start to cast or not
-local startedCast = false
-
 -- Counter for the speed calculation
 local counter = SPEED_MAXIMUM
 
@@ -31,6 +28,12 @@ function _Bobber.create(x, y)
     bobber.anim = display.newCircle(x, y, 25)
     bobber.anim.myName = "bobber"
 
+    -- If the cast was started
+    bobber.startedCast = false
+
+    -- If the bobber is active
+    bobber.isActive = false
+
     -- Physics body
     physics.addBody(bobber.anim, "dynamic")
     bobber.anim.linearDamping = 1
@@ -43,12 +46,14 @@ function _Bobber.create(x, y)
     -- Function to stop the swiping
     function bobber:noCast()
         bobber.canBeCast = false
+        counter = SPEED_MAXIMUM
     end
 
     -- Function to to the catching
     function bobber:catch(event)
         -- if (event.phase == "ended" or event.phase == "cancelled") and (bobber.canBeCast == false) then
         if bobber.canBeCast == false then
+            bobber.isActive = false
             bobber.anim:setLinearVelocity(0, 0)
             transition.to(bobber.anim, {time=800, x=display.contentCenterX, y=display.contentCenterY + 500, 
             transition=easing.outQuad, xScale=1, yScale=1, onComplete=bobber.caught()})
@@ -62,7 +67,6 @@ function _Bobber.create(x, y)
 
     -- Function to do the cast
     function bobber:cast(event)
-        print(event)
         if (bobber.canBeCast == false) then return end
         if (event.phase == "began") then
             display.getCurrentStage():setFocus(event.target)
@@ -76,12 +80,12 @@ function _Bobber.create(x, y)
             local deltaY = event.y - event.yStart
 
             -- Stated cast
-            startedCast = true
+            bobber.startedCast = true
 
             -- Calculate normal
             normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
             normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
-        elseif (event.phase == "ended" or event.phase == "cancelled") and (startedCast == true) then
+        elseif (event.phase == "ended" or event.phase == "cancelled") and (bobber.startedCast == true) then
         -- Stop the user from swiping after a delay, delay to stop it from being called immediately
             timer.performWithDelay(500, bobber.noCast)
 
@@ -93,26 +97,28 @@ function _Bobber.create(x, y)
             -- Function to simulate arc of bobber
             local function scaleUp()
                 local function scaleDown()
-                    transition.to(bobber, {time=1100, xScale=.8, yScale=.8})
+                    transition.to(bobber.anim, {time=1100, xScale=.8, yScale=.8})
+                    bobber.isActive = true
                 end
-                transition.to(bobber, {time=600, xScale=1.6, yScale=1.6, onComplete=scaleDown})
+                transition.to(bobber.anim, {time=600, xScale=1.6, yScale=1.6, onComplete=scaleDown})
             end
 
             -- Send bobber towards location with speed
             if (normDeltaX == nil or normDeltaY == nil) then
-                startedCast = false
+                bobber.startedCast = false
             else
                 bobber.anim:setLinearVelocity(normDeltaX  * speed, normDeltaY  * speed)
                 scaleUp()
-                startedCast = false
+                bobber.startedCast = false
             end
 
             display.getCurrentStage():setFocus(nil)
-        elseif (startedCast == false) then
+        elseif (bobber.startedCast == false) then
             counter = SPEED_MAXIMUM
         end
     end
 
+    -- Bobber.anim touch passes event to the cast function
     function bobber.anim:touch(event)
         bobber:cast(event)
     end
