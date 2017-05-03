@@ -33,7 +33,7 @@ function _Bobber.create(x, y)
 
     -- Physics body
     physics.addBody(bobber.anim, "dynamic")
-    bobber.linearDamping = 1
+    bobber.anim.linearDamping = 1
 
     -- Function to be called when the player reeled in the bobber
     function bobber:caught()
@@ -47,9 +47,10 @@ function _Bobber.create(x, y)
 
     -- Function to to the catching
     function bobber:catch(event)
-        if (event.phase == "ended" or event.phase == "cancelled") and (bobber.canBeCast == false) then
-            bobber:setLinearVelocity(0, 0)
-            transition.to(bobber, {time=800, x=display.contentCenterX, y=display.contentCenterY + 500, 
+        -- if (event.phase == "ended" or event.phase == "cancelled") and (bobber.canBeCast == false) then
+        if bobber.canBeCast == false then
+            bobber.anim:setLinearVelocity(0, 0)
+            transition.to(bobber.anim, {time=800, x=display.contentCenterX, y=display.contentCenterY + 500, 
             transition=easing.outQuad, xScale=1, yScale=1, onComplete=bobber.caught()})
         end
     end
@@ -101,7 +102,7 @@ function _Bobber.create(x, y)
             if (normDeltaX == nil or normDeltaY == nil) then
                 startedCast = false
             else
-                bobber:setLinearVelocity(normDeltaX  * speed, normDeltaY  * speed)
+                bobber.anim:setLinearVelocity(normDeltaX  * speed, normDeltaY  * speed)
                 scaleUp()
                 startedCast = false
             end
@@ -111,8 +112,13 @@ function _Bobber.create(x, y)
             counter = SPEED_MAXIMUM
         end
     end
+
+    function bobber.anim:touch(event)
+        bobber:cast(event)
+    end
+
     -- Add event listener for cast
-    bobber.anim:addEventListener("touch", bobber.cast)
+    bobber.anim:addEventListener('touch')
 
     return bobber
 end
