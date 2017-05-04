@@ -103,6 +103,7 @@ function _Bobber.create(x, y)
                     onComplete=function()
                         bobber.anim.isActive = true
                         bobber.anim.isCatchable = true
+                        bobber.anim:setLinearVelocity(0, 0)
                         end})
                 end
                 transition.to(bobber.anim, {time=600, xScale=1.6, yScale=1.6, onComplete=scaleDown})
