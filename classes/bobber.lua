@@ -33,6 +33,7 @@ function _Bobber.create(x, y)
 
     -- If the bobber is active
     bobber.anim.isActive = false
+    bobber.anim.isCatchable = false
 
     -- Physics body
     physics.addBody(bobber.anim, "dynamic")
@@ -51,8 +52,9 @@ function _Bobber.create(x, y)
     -- Function to to the catching
     function bobber:catch(event)
         -- if (event.phase == "ended" or event.phase == "cancelled") and (bobber.canBeCast == false) then
-        if bobber.canBeCast == false then
+        if bobber.canBeCast == false and bobber.anim.isCatchable == true then
             bobber.anim.isActive = false
+            bobber.anim.isCatchable = false
             bobber.anim:setLinearVelocity(0, 0)
             transition.to(bobber.anim, {time=800, x=display.contentCenterX, y=display.contentCenterY + 500, 
             transition=easing.outQuad, xScale=1, yScale=1, onComplete=bobber.caught()})
@@ -100,6 +102,7 @@ function _Bobber.create(x, y)
                     transition.to(bobber.anim, {time=1100, xScale=.8, yScale=.8, 
                     onComplete=function()
                         bobber.anim.isActive = true
+                        bobber.anim.isCatchable = true
                         end})
                 end
                 transition.to(bobber.anim, {time=600, xScale=1.6, yScale=1.6, onComplete=scaleDown})
