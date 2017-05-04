@@ -16,7 +16,7 @@ local _Fish = {}
 function _Fish.create(maxX, maxY, minX, minY)
   local fish = {}
   fish.mode = "SEEKING"
-  
+  fish.isBiting = false
   -- Max and Min define bounding area fish can move within
   fish.maxX, fish.maxY = maxX, maxY
   fish.minX, fish.minY = minX, minY
@@ -36,6 +36,7 @@ function _Fish.create(maxX, maxY, minX, minY)
 
   fish.anim = display.newImage("images/fish/silhouette.png", 0, 0)
   fish.anim.myName = "fish"
+  fish.anim.alpha = 0.9
   -- Line of sight - los
   fish.los = display.newPolygon(0, 0, lineOfSight)
   fish.los.myName = 'los'
@@ -55,18 +56,19 @@ function _Fish.create(maxX, maxY, minX, minY)
 
   -- Updates what the fix will do now based on its state
   function fish:update()
+    print("Updating fish")
     if fish.mode == "SEEKING" then
       fish.anim:setFillColor(1,1,1)
       wait = math.random(0, 10) * 500 
-      print(wait)
       timer.performWithDelay(wait, fish.changeLocation(), -1)
     end
     
   end
 
   -- Rotates the fish towards the given x,y location
+  -- TODO: Add ability to pass in params to the transition (like onComplete) 
   function fish:rotateTo(x, y)
-    fish.dir = (math.atan2(fish.y - y, fish.x - x) * (180/math.pi)) - 90
+    fish.dir = math.atan2(fish.y - y, fish.x - x) * (180/math.pi) - 90
 
     -- Rotate towards new position
     transition.to(fish.anim, {rotation = fish.dir % 360, time=1000})
@@ -74,6 +76,7 @@ function _Fish.create(maxX, maxY, minX, minY)
   end
 
   -- Moves the fish to the given x,y location
+  -- TODO: Add ability to pass in params to the transition (like onComplete)
   function fish:moveTo(x, y)
     local dist = math.sqrt((x - fish.x)^2 + (y - fish.y)^2 )
 
@@ -111,22 +114,41 @@ function _Fish.create(maxX, maxY, minX, minY)
     return "Fish Location: (" .. fish.x .. ", " .. fish.y .. ")"
   end
 
+  function fish:destroy()
+		timer.performWithDelay(1, function()
+			display.remove(fish.anim)
+      display.remove(fish.los)
+		end)
+	end
+
   -- Collsion method
   function fish.los:collision(event)
     -- Check the other body that collided
     if event.other.myName == "bobber" then
       bobber = event.other
-      if bobber.isActive then
-        fish.anim:setFillColor(0,1,0)
+      if bobber.isActive and fish.mode == "SEEKING" then
+        -- fish.anim:setFillColor(0,1,0)
         fish.mode = "PURSUING"
         transition.cancel(fish.anim)
         timer.performWithDelay(1000, fish:rotateTo(bobber.x, bobber.y))
+        fish:moveTo(bobber.x, bobber.y)
+        fish.isBiting = true
       end
     end
 
   end
   fish.los:addEventListener('collision')
 
+  -- Checks if a fish is caught
+  function fish:checkCaught(event)
+    if fish.isBiting then
+      fish:destroy()
+      return true
+    else
+      fish.mode = "SEEKING"  
+    end
+  end
+  
   return fish
 end
 

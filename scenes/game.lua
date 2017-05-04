@@ -50,8 +50,9 @@ function scene:create(event)
         table.insert(fishTable, f)
     end
 
-    -- Add catch event
+    -- Add catch event and related listeners
     Runtime:addEventListener("touch", bobber.catch)
+    bobber.anim:addEventListener("catchEvent", scene.reelIn)
 end
 
 -- show()
@@ -97,6 +98,15 @@ function scene:updateFish()
     end
 end
 
+-- Checks if any fish were caught when the bobber was reeling in
+function scene:reelIn()
+         for i = #fishTable, 1, -1 do
+            -- print("Fish " ..  i .. ": " .. fishTable[i].tostring())
+            if fishTable[i].checkCaught() then
+                table.remove(fishTable, i)
+            end
+        end
+    end
 -- -----------------------------------------------------------------------------------
 -- Scene event function listeners
 -- -----------------------------------------------------------------------------------

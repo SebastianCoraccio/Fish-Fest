@@ -54,6 +54,11 @@ function _Bobber.create(x, y)
     function bobber:catch(event)
         -- if (event.phase == "ended" or event.phase == "cancelled") and (bobber.canBeCast == false) then
         if bobber.canBeCast == false and bobber.anim.isCatchable == true then
+
+            -- Catch event activates, which the game scene catches and checks if fish were caught
+            local catchEvent = {name="catchEvent", target="scene"}
+            bobber.anim:dispatchEvent(catchEvent)
+
             bobber.anim.isActive = false
             bobber.anim.isCatchable = false
             bobber.anim:setLinearVelocity(0, 0)
