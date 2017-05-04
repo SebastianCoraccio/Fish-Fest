@@ -25,7 +25,8 @@ function _Bobber.create(x, y)
     bobber.canBeCast = true
 
     -- Set the image
-    bobber.anim = display.newCircle(x, y, 25)
+    -- bobber.anim = display.newCircle(x, y, 25)
+    bobber.anim = display.newImage("images/bobber.png", x, y)
     bobber.anim.myName = "bobber"
 
     -- If the cast was started

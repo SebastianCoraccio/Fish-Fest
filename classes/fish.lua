@@ -56,46 +56,54 @@ function _Fish.create(maxX, maxY, minX, minY)
   -- Updates what the fix will do now based on its state
   function fish:update()
     if fish.mode == "SEEKING" then
-      wait = math.random(0, 3000)
-      timer.performWithDelay(wait, fish.change_location(), 0)
+      fish.anim:setFillColor(1,1,1)
+      wait = math.random(0, 10) * 500 
+      print(wait)
+      timer.performWithDelay(wait, fish.changeLocation(), -1)
     end
-    fish.anim:setFillColor(1,1,1)
-    fish.los:setFillColor(1,1,1)
+    
   end
 
-  -- Picks a random location in its bounding area
-  function fish:change_location()
-    local oldX = fish.x
-    local oldY = fish.y
-    fish.x = fish.x + math.random(-300, 300)
-    fish.y = fish.y + math.random(-300, 300)
+  -- Rotates the fish towards the given x,y location
+  function fish:rotateTo(x, y)
+    fish.dir = (math.atan2(fish.y - y, fish.x - x) * (180/math.pi)) - 90
 
-    -- Check new x and y are in the bounding area
-    if fish.x > fish.maxX then
-      fish.x = fish.maxX
-    elseif fish.x < minX then
-      fish.x = fish.minX
-    end
-
-    if fish.y > fish.maxY then
-      fish.y = fish.maxY
-    elseif fish.y < minY then
-      fish.y = fish.minY
-    end
-    -- Calculate the distance between the old loc and new loc
-    -- Used to make fish move at a constant rate 
-    -- regardless of distance it needs to move
-    -- TODO: Actually make that work.
-    local dist = math.sqrt((fish.x - oldX)^2 + (fish.y - oldY)^2 )
-    fish.dir = (math.atan2(fish.y - oldY, fish.x - oldX) * (180/math.pi)) + 90
-    
     -- Rotate towards new position
     transition.to(fish.anim, {rotation = fish.dir % 360, time=1000})
     transition.to(fish.los, {rotation = fish.dir % 360, time=1000})
+  end
 
-    -- Move to new position
-    transition.to(fish.anim, {x=fish.x, y=fish.y, time=20*dist, transition=easing.outQuad})
-    transition.to(fish.los, {x=fish.x, y=fish.y, time=20*dist, transition=easing.outQuad})    
+  -- Moves the fish to the given x,y location
+  function fish:moveTo(x, y)
+    local dist = math.sqrt((x - fish.x)^2 + (y - fish.y)^2 )
+
+    transition.to(fish.anim, {x=x, y=y, time=20*dist, transition=easing.outQuad})
+    fish.x, fish.y = x, y
+    transition.to(fish.los, {x=x, y=y, time=20*dist, transition=easing.outQuad}) 
+  end
+
+  -- Picks a random location in its bounding area
+  function fish:changeLocation()
+    local newX = fish.x + math.random(-100, 100)
+    local newY = fish.y + math.random(-400, 400)
+
+    -- Check new x and y are in the bounding area
+    if newX > fish.maxX then
+      newX = fish.maxX
+    elseif newX < minX then
+      newX = fish.minX
+    end
+
+    if newY > fish.maxY then
+      newY = fish.maxY
+    elseif newY < minY then
+      newY = fish.minY
+    end
+    
+    -- Rotate and move to new position
+    fish:rotateTo(newX, newY)
+    fish:moveTo(newX, newY)
+    
   end
 
   -- To String method, returns string with x and y coordinate.
@@ -106,14 +114,13 @@ function _Fish.create(maxX, maxY, minX, minY)
   -- Collsion method
   function fish.los:collision(event)
     -- Check the other body that collided
-    if event.other.myName == "fish" then
-      fish.anim:setFillColor(1,1,1)
-    elseif event.other.myName == "los" then
-      fish.anim:setFillColor(1,1,1)
-    else
-      print(event.other.isActive)
-      if (event.other.isActive) then 
-        fish.anim:setFillColor(0,1,0) 
+    if event.other.myName == "bobber" then
+      bobber = event.other
+      if bobber.isActive then
+        fish.anim:setFillColor(0,1,0)
+        fish.mode = "PURSUING"
+        transition.cancel(fish.anim)
+        timer.performWithDelay(1000, fish:rotateTo(bobber.x, bobber.y))
       end
     end
 
