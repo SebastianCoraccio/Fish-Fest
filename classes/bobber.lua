@@ -8,11 +8,11 @@ local physics = require('physics')
 local _Bobber = {}
 
 -- Constants for speed of throw
-local SPEED_MAXIMUM = 1300
-local SPEED_MINIMUM = 100
+-- local SPEED_MAXIMUM = 1300
+-- local SPEED_MINIMUM = 100
 
 -- Counter for the speed calculation
-local counter = SPEED_MAXIMUM
+-- local counter = SPEED_MAXIMUM
 
 -- Create a bobber at location (x,y)
 function _Bobber.create(x, y)
@@ -28,6 +28,13 @@ function _Bobber.create(x, y)
     -- bobber.anim = display.newCircle(x, y, 25)
     bobber.anim = display.newImage("images/bobber.png", x, y)
     bobber.anim.myName = "bobber"
+
+    -- Power meter
+    -- Inner power meter that will grow
+    bobber.power = display.newRect(x, y - bobber.anim.height / 2, 50, 0)
+    bobber.power:setFillColor(.5, .5, .5)
+    bobber.power.anchorX = .5
+    bobber.power.anchorY = 1
 
     -- If the cast was started
     bobber.startedCast = false
@@ -57,28 +64,27 @@ function _Bobber.create(x, y)
 
             -- Catch event activates, which the game scene catches and checks if fish were caught
             local catchEvent = {name="catchEvent", target="scene"}
-            bobber.anim:dispatchEvent(catchEvent)
-
-            bobber.anim.isActive = false
-            bobber.anim.isCatchable = false
-            bobber.anim:setLinearVelocity(0, 0)
+            bobber.anim:dispatchEvent(catchEvent) -- Catch event
+            bobber.anim.isActive = false -- bobber isn't active
+            bobber.anim.isCatchable = false -- bobber isn't catchable
+            bobber.anim:setLinearVelocity(0, 0) -- stop the bobber
             transition.to(bobber.anim, {time=800, x=display.contentCenterX, y=display.contentCenterY + 500, 
-            transition=easing.outQuad, xScale=1, yScale=1, onComplete=bobber.caught()})
+            transition=easing.outQuad, xScale=1, yScale=1, onComplete=bobber.caught()}) -- BRING HIM HOME
         end
     end
 
     -- Counter function to use for the casting speed
-    function bobber:count()
-        counter = counter - 100
-    end
+    -- function bobber:count()
+    --     counter = counter - 100
+    -- end
 
     -- Function to do the cast
     function bobber:cast(event)
         if (bobber.canBeCast == false) then return end
         if (event.phase == "began") then
-            counter = SPEED_MAXIMUM
+            -- counter = SPEED_MAXIMUM
             display.getCurrentStage():setFocus(event.target)
-            handle = timer.performWithDelay(80, bobber.count, 0)
+            -- handle = timer.performWithDelay(80, bobber.count, 0)
         elseif (event.phase == "moved") then
             if (bobber.canBeCast == false) then 
             return
@@ -86,6 +92,13 @@ function _Bobber.create(x, y)
             -- Caculate deltaX and deltaY
             local deltaX = event.x - event.xStart
             local deltaY = event.y - event.yStart
+
+            -- Set power meter
+            bobber.power.height = math.sqrt((deltaX)^2 + (deltaY)^2)
+            if (bobber.power.height > 500) then
+                bobber.power.height = 500
+            end
+            bobber.power.rotation = (math.atan2(deltaY, deltaX) * (180/math.pi) + 90) % 360
 
             -- Stated cast
             bobber.startedCast = true
@@ -98,9 +111,10 @@ function _Bobber.create(x, y)
             timer.performWithDelay(500, bobber.noCast)
 
             -- Cancel the timer for the speed
-            timer.cancel(handle)
-            speed = counter > 0 and counter or SPEED_MINIMUM -- Set the speed
-            counter = SPEED_MAXIMUM -- Reset the counter    
+            -- timer.cancel(handle)
+            -- speed = counter > 0 and counter or SPEED_MINIMUM -- Set the speed
+            speed = bobber.power.height * 2.8
+            -- counter = SPEED_MAXIMUM -- Reset the counter    
 
             -- Function to simulate arc of bobber
             local function scaleUp()
@@ -112,7 +126,7 @@ function _Bobber.create(x, y)
                         bobber.anim:setLinearVelocity(0, 0)
                         end})
                 end
-                transition.to(bobber.anim, {time=600, xScale=1.6, yScale=1.6, onComplete=scaleDown})
+                transition.to(bobber.anim, {time=speed, xScale=1.6, yScale=1.6, onComplete=scaleDown})
             end
 
             -- Send bobber towards location with speed
@@ -120,13 +134,14 @@ function _Bobber.create(x, y)
                 bobber.startedCast = false
             else
                 bobber.anim:setLinearVelocity(normDeltaX  * speed, normDeltaY  * speed)
+                bobber.power.height = 0 -- reset power meter
                 scaleUp()
                 bobber.startedCast = false
             end
 
             display.getCurrentStage():setFocus(nil)
         elseif (bobber.startedCast == false) then
-            counter = SPEED_MAXIMUM
+            -- counter = SPEED_MAXIMUM
         end
     end
 
