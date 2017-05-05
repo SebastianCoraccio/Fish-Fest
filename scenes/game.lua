@@ -100,13 +100,14 @@ end
 
 -- Checks if any fish were caught when the bobber was reeling in
 function scene:reelIn()
-         for i = #fishTable, 1, -1 do
-            -- print("Fish " ..  i .. ": " .. fishTable[i].tostring())
-            if fishTable[i].checkCaught() then
-                table.remove(fishTable, i)
-            end
+    for i = #fishTable, 1, -1 do
+        if fishTable[i].checkCaught() then
+            table.remove(fishTable, i)
+            local f = newFish(display.contentWidth, display.contentHeight - 150, 0, -100)
+            table.insert(fishTable, f)
         end
     end
+end
 -- -----------------------------------------------------------------------------------
 -- Scene event function listeners
 -- -----------------------------------------------------------------------------------

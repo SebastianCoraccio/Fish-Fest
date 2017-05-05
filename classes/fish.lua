@@ -36,7 +36,7 @@ function _Fish.create(maxX, maxY, minX, minY)
 
   fish.anim = display.newImage("images/fish/silhouette.png", 0, 0)
   fish.anim.myName = "fish"
-  fish.anim.alpha = 0.9
+  fish.anim.alpha = 0
   -- Line of sight - los
   fish.los = display.newPolygon(0, 0, lineOfSight)
   fish.los.myName = 'los'
@@ -54,6 +54,8 @@ function _Fish.create(maxX, maxY, minX, minY)
   fish.anim.isSensor = true
   fish.los.isSensor = true
 
+  transition.to(fish.anim, {alpha = .9, time = 1000})
+  
   -- Updates what the fix will do now based on its state
   function fish:update()
     print("Updating fish")
