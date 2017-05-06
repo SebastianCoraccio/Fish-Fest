@@ -28,7 +28,7 @@ function _Fish.create(maxX, maxY, minX, minY)
 
   -- Define a scale for the fish which will appropriately scale the fish components
   fish.scale = 0.6
-
+  
   -- Create fish components
   -- TODO: Decide if scaling is what we want, or 4-5 predefined polygons for each fish size
   local fishPolygon = { -37,15 , -51,-38 , -41,-77 , 13,-99 , 43,-77 , 50,-37 , 39,18 , -1, 100 }
@@ -61,8 +61,8 @@ function _Fish.create(maxX, maxY, minX, minY)
     print("Updating fish")
     if fish.mode == "SEEKING" then
       fish.anim:setFillColor(1,1,1)
-      wait = math.random(0, 10) * 500 
-      timer.performWithDelay(wait, fish.changeLocation(), -1)
+      wait = math.random(4, 10) * 1000 
+      timer.performWithDelay(wait, fish.changeLocation, 1)
     end
     
   end

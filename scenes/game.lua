@@ -67,7 +67,7 @@ function scene:show( event )
 
         -- Timer to spawn fish throughout
         -- TODO: Finalize time
-        self.fishLoopTimer = timer.performWithDelay(4000, function()
+        self.fishUpdateTimer = timer.performWithDelay(4000, function()
             self:updateFish()
         end, 0 )
     end
@@ -93,9 +93,21 @@ end
 
 function scene:updateFish() 
     for i = #fishTable, 1, -1 do
-        -- print("Fish " ..  i .. ": " .. fishTable[i].tostring())
         fishTable[i].update()
     end
+    
+    -- Check if adding a fish is needed, and try to do so it yes 
+    -- TODO: Create an attributes table for each of the locations
+    local MAX_FISH = 5
+    local SPAWN_CHANCE = .25
+
+    if #fishTable < MAX_FISH then
+        if math.random() < SPAWN_CHANCE then
+            local f = newFish(display.contentWidth, display.contentHeight - 150, 0, -100)
+            table.insert(fishTable, f)
+        end
+    end
+
 end
 
 -- Checks if any fish were caught when the bobber was reeling in
@@ -103,8 +115,6 @@ function scene:reelIn()
     for i = #fishTable, 1, -1 do
         if fishTable[i].checkCaught() then
             table.remove(fishTable, i)
-            local f = newFish(display.contentWidth, display.contentHeight - 150, 0, -100)
-            table.insert(fishTable, f)
         end
     end
 end
