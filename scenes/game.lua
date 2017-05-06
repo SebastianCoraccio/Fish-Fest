@@ -46,7 +46,10 @@ function scene:create(event)
 
     -- Create the fish
     for i=1,3 do
-        local f = newFish(display.contentWidth, display.contentHeight - 150, 0, -100)
+        local f = newFish({maxX=display.contentWidth, 
+                           maxY=display.contentHeight - 150, 
+                           minX=0, 
+                           minY=-100})
         table.insert(fishTable, f)
     end
 
@@ -67,7 +70,7 @@ function scene:show( event )
 
         -- Timer to spawn fish throughout
         -- TODO: Finalize time
-        self.fishUpdateTimer = timer.performWithDelay(4000, function()
+        self.fishUpdateTimer = timer.performWithDelay(3000, function()
             self:updateFish()
         end, 0 )
     end
@@ -103,7 +106,10 @@ function scene:updateFish()
 
     if #fishTable < MAX_FISH then
         if math.random() < SPAWN_CHANCE then
-            local f = newFish(display.contentWidth, display.contentHeight - 150, 0, -100)
+            local f = newFish({maxX=display.contentWidth, 
+                               maxY=display.contentHeight - 150, 
+                               minX=0, 
+                               minY=-100})
             table.insert(fishTable, f)
         end
     end

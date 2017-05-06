@@ -13,22 +13,23 @@ local _Fish = {}
 
 -- Creates a new fish at location (x,y), inside a bounded area 
 -- defined by two vertex (minX, minY), (maxX, maxY)
-function _Fish.create(maxX, maxY, minX, minY)
+function _Fish.create(params)
+
   local fish = {}
   fish.mode = "SEEKING"
   fish.isBiting = false
   -- Max and Min define bounding area fish can move within
-  fish.maxX, fish.maxY = maxX, maxY
-  fish.minX, fish.minY = minX, minY
+  fish.maxX, fish.maxY = params.maxX, params.maxY
+  fish.minX, fish.minY = params.minX, params.minY
 
   -- Pick a random location for the fish to start as well as a rotation
-  fish.x = math.random(minX, maxX)
-  fish.y = math.random(minY, maxY)
+  fish.x = math.random(fish.minX, fish.maxX)
+  fish.y = math.random(fish.minY, fish.maxY)
   fish.dir = math.random(0, 360)
 
   -- Define a scale for the fish which will appropriately scale the fish components
   fish.scale = 0.6
-  
+
   -- Create fish components
   -- TODO: Decide if scaling is what we want, or 4-5 predefined polygons for each fish size
   local fishPolygon = { -37,15 , -51,-38 , -41,-77 , 13,-99 , 43,-77 , 50,-37 , 39,18 , -1, 100 }
@@ -54,23 +55,20 @@ function _Fish.create(maxX, maxY, minX, minY)
   fish.anim.isSensor = true
   fish.los.isSensor = true
 
-  transition.to(fish.anim, {alpha = .9, time = 1000})
+  transition.to(fish.anim, {alpha = .7, time = 1000})
   
   -- Updates what the fix will do now based on its state
   function fish:update()
-    print("Updating fish")
     if fish.mode == "SEEKING" then
       fish.anim:setFillColor(1,1,1)
-      wait = math.random(4, 10) * 1000 
+      wait = math.random(2, 5) * 1000 
       timer.performWithDelay(wait, fish.changeLocation, 1)
-    end
-    
+    end  
   end
 
   -- Rotates the fish towards the given x,y location
-  -- TODO: Add ability to pass in params to the transition (like onComplete) 
-  function fish:rotateTo(x, y)
-    fish.dir = math.atan2(fish.y - y, fish.x - x) * (180/math.pi) - 90
+  function fish:rotateTo(params)
+    fish.dir = math.atan2(fish.y - params.y, fish.x - params.x) * (180/math.pi) - 90
 
     -- Rotate towards new position
     transition.to(fish.anim, {rotation = fish.dir % 360, time=1000})
@@ -78,13 +76,15 @@ function _Fish.create(maxX, maxY, minX, minY)
   end
 
   -- Moves the fish to the given x,y location
-  -- TODO: Add ability to pass in params to the transition (like onComplete)
-  function fish:moveTo(x, y)
-    local dist = math.sqrt((x - fish.x)^2 + (y - fish.y)^2 )
+  function fish:moveTo(params)
+    local dist = math.sqrt((params.x - fish.x)^2 + (params.y - fish.y)^2 )
 
-    transition.to(fish.anim, {x=x, y=y, time=20*dist, transition=easing.outQuad})
-    fish.x, fish.y = x, y
-    transition.to(fish.los, {x=x, y=y, time=20*dist, transition=easing.outQuad}) 
+    transition.to(fish.anim, {x=params.x, y=params.y, 
+                              time=20*dist, 
+                              transition=easing.outQuad,
+                              onComplete=params.onComplete})
+    fish.x, fish.y = params.x, params.y
+    transition.to(fish.los, {x=params.x, y=params.y, time=20*dist, transition=easing.outQuad}) 
   end
 
   -- Picks a random location in its bounding area
@@ -95,19 +95,19 @@ function _Fish.create(maxX, maxY, minX, minY)
     -- Check new x and y are in the bounding area
     if newX > fish.maxX then
       newX = fish.maxX
-    elseif newX < minX then
+    elseif newX < fish.minX then
       newX = fish.minX
     end
 
     if newY > fish.maxY then
       newY = fish.maxY
-    elseif newY < minY then
+    elseif newY < fish.minY then
       newY = fish.minY
     end
     
     -- Rotate and move to new position
-    fish:rotateTo(newX, newY)
-    fish:moveTo(newX, newY)
+    fish:rotateTo({x=newX, y=newY})
+    fish:moveTo({x=newX, y=newY})
     
   end
 
@@ -132,9 +132,11 @@ function _Fish.create(maxX, maxY, minX, minY)
         -- fish.anim:setFillColor(0,1,0)
         fish.mode = "PURSUING"
         transition.cancel(fish.anim)
-        timer.performWithDelay(1000, fish:rotateTo(bobber.x, bobber.y))
-        fish:moveTo(bobber.x, bobber.y)
-        fish.isBiting = true
+        timer.performWithDelay(1000, fish:rotateTo({x=bobber.x, y=bobber.y}))
+        fish:moveTo({x=bobber.x, y=bobber.y, onComplete=function() 
+                        fish.isBiting=true 
+                        fish.anim:setFillColor(0,0,0)
+                        end})  
       end
     end
 
