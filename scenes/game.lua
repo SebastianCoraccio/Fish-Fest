@@ -7,15 +7,12 @@ local newFish = require("classes.fish").create
 local newBobber = require("classes.bobber").create
 local physics = require("physics")
 
--- Load the DB
-local sqlite3 = require("sqlite3")
-local path = system.pathForFile("database.db", system.DocumentsDirectory)
-local db = sqlite3.open(path)
+local newLocation = require("classes.location").create
 
--- Test DB access
-for row in db:nrows("SELECT * FROM Fish") do
-  print(row.name)
-end
+-- Load the DB
+-- local sqlite3 = require("sqlite3")
+-- local path = system.pathForFile("database.db", system.DocumentsDirectory)
+-- local db = sqlite3.open(path)
 
 -- Start the physics with no gravity
 -- physics.setDrawMode( "hybrid" )
@@ -31,6 +28,9 @@ local water = nil
 
 -- Bobber
 local bobber = nil
+
+-- Location
+local location = nil
 
 -- Table to hold the fish
 fishTable = {}
@@ -53,6 +53,10 @@ function scene:create(event)
 
     -- Create the bobber
     bobber = newBobber(display.contentCenterX, display.contentCenterY + 500)
+
+    -- Pick the location
+    -- TODO: Need to get users pick for location. Passed from composer scene
+    location = newLocation('river')
 
     -- Create the fish
     for i=1,3 do
@@ -116,10 +120,12 @@ function scene:updateFish()
 
     if #fishTable < MAX_FISH then
         if math.random() < SPAWN_CHANCE then
+            local fishToAdd = location.giveFish()
             local f = newFish({maxX=display.contentWidth, 
                                maxY=display.contentHeight - 150, 
                                minX=0, 
-                               minY=-100})
+                               minY=-100,
+                               fid=fishToAdd.fid})
             table.insert(fishTable, f)
         end
     end
