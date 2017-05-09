@@ -24,13 +24,16 @@ function _Bobber.create(x, y)
     -- Bobber can be swiped initial
     bobber.canBeCast = true
 
+    -- Set the bigger back circle to recieve touch events
+    bobber.back = display.newCircle(x, y, 75)
+    bobber.back:setFillColor(1,0.01)
+    bobber.back:toFront()
+
     -- Set the image
-    -- bobber.anim = display.newCircle(x, y, 25)
     bobber.anim = display.newImage("images/bobber.png", x, y)
     bobber.anim.myName = "bobber"
 
     -- Power meter
-    -- Inner power meter that will grow
     bobber.power = display.newRect(x, y - bobber.anim.height / 2, 50, 0)
     bobber.power:setFillColor(.5, .5, .5)
     bobber.power.anchorX = .5
@@ -44,7 +47,7 @@ function _Bobber.create(x, y)
     bobber.anim.isCatchable = false
 
     -- Physics body
-    physics.addBody(bobber.anim, "dynamic")
+    physics.addBody(bobber.anim, "dynamic", {radius=60})
     bobber.anim.linearDamping = 1
 
     -- Function to be called when the player reeled in the bobber
@@ -125,7 +128,7 @@ function _Bobber.create(x, y)
                         bobber.anim.isActive = true
                         bobber.anim.isCatchable = true
                         bobber.anim:setLinearVelocity(0, 0)
-                        end})
+                    end})
                 end
                 transition.to(bobber.anim, {time=speed, xScale=1.6, yScale=1.6, onComplete=scaleDown})
             end
@@ -147,12 +150,12 @@ function _Bobber.create(x, y)
     end
 
     -- Bobber.anim touch passes event to the cast function
-    function bobber.anim:touch(event)
+    function bobber.back:touch(event)
         bobber:cast(event)
     end
 
     -- Add event listener for cast
-    bobber.anim:addEventListener('touch')
+    bobber.back:addEventListener('touch')
 
     return bobber
 end
