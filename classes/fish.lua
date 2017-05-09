@@ -135,7 +135,6 @@ function _Fish.create(params)
         timer.performWithDelay(1000, fish:rotateTo({x=bobber.x, y=bobber.y}))
         fish:moveTo({x=bobber.x, y=bobber.y, onComplete=function() 
                         fish.isBiting=true 
-                        fish.anim:setFillColor(0,0,0)
                         end})  
       end
     end
