@@ -7,6 +7,16 @@ local newFish = require("classes.fish").create
 local newBobber = require("classes.bobber").create
 local physics = require("physics")
 
+-- Load the DB
+local sqlite3 = require("sqlite3")
+local path = system.pathForFile("database.db", system.DocumentsDirectory)
+local db = sqlite3.open(path)
+
+-- Test DB access
+for row in db:nrows("SELECT * FROM Fish") do
+  print(row.name)
+end
+
 -- Start the physics with no gravity
 -- physics.setDrawMode( "hybrid" )
 physics.start()
