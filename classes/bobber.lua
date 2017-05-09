@@ -47,7 +47,7 @@ function _Bobber.create(x, y)
     bobber.anim.isCatchable = false
 
     -- Physics body
-    physics.addBody(bobber.anim, "dynamic", {radius=60})
+    physics.addBody(bobber.anim, "dynamic")
     bobber.anim.linearDamping = 1
 
     -- Function to be called when the player reeled in the bobber
