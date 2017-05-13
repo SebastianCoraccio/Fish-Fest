@@ -27,8 +27,9 @@ function _Splash.create(params)
     }
   }
 
-  splash.isActive = true
+  
   splash.anim = display.newSprite(sheet_splash, sequence_splash)
+  splash.anim.isActive = true
   splash.anim.x = params.x
   splash.anim.y = params.y - 5
   physics.addBody(splash.anim, "dynamic", {filter = {groupIndex=-1}})
