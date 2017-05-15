@@ -63,7 +63,8 @@ function scene:create(event)
         local f = newFish({maxX=display.contentWidth, 
                            maxY=display.contentHeight - 150, 
                            minX=0, 
-                           minY=-100})
+                           minY=-100,
+                           bobber=bobber})
         table.insert(fishTable, f)
     end
 

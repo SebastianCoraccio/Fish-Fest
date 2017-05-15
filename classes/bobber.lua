@@ -50,6 +50,12 @@ function _Bobber.create(x, y)
     physics.addBody(bobber.anim, "dynamic", {filter = {groupIndex=-1}})
     bobber.anim.linearDamping = 1
 
+
+    -- Get bobber x, y
+    function bobber:getLocation()
+        return bobber.x, bobber.y
+    end
+
     -- Function to be called when the player reeled in the bobber
     function bobber:caught()
         bobber.canBeCast = true
