@@ -73,9 +73,18 @@ function _Fish.create(params)
   function fish:rotateTo(params)
     fish.dir = math.atan2(fish.anim.y - params.y, fish.anim.x - params.x) * (180/math.pi) - 90
 
+    -- Set anchor to have rotation look natural
+    fish.anim.anchorY = .5
+
     -- Rotate towards new position
     transition.to(fish.anim, {rotation = fish.dir % 360, time=1000})
     transition.to(fish.los, {rotation = fish.dir % 360, time=1000})
+
+    -- Fix anchro
+    timer.performWithDelay(1000,
+      function()
+        fish.anim.achorY = 0
+      end)
   end
 
   -- Moves the fish to the given x,y location
