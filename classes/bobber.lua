@@ -102,6 +102,11 @@ function _Bobber.create(x, y)
             local deltaX = event.x - event.xStart
             local deltaY = event.y - event.yStart
 
+            -- Make it so can't cast backwards
+            if (deltaY > 0) then
+                deltaY = 0
+            end
+
             -- Set power meter
             bobber.power.height = math.sqrt((deltaX)^2 + (deltaY)^2)
             if (bobber.power.height > 500) then
