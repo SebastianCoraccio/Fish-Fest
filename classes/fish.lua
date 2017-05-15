@@ -73,18 +73,9 @@ function _Fish.create(params)
   function fish:rotateTo(params)
     fish.dir = math.atan2(fish.anim.y - params.y, fish.anim.x - params.x) * (180/math.pi) - 90
 
-    -- Set anchor to have rotation look natural
-    fish.anim.anchorY = .5
-
     -- Rotate towards new position
     transition.to(fish.anim, {rotation = fish.dir % 360, time=1000})
     transition.to(fish.los, {rotation = fish.dir % 360, time=1000})
-
-    -- Fix anchro
-    timer.performWithDelay(1000,
-      function()
-        fish.anim.achorY = 0
-      end)
   end
 
   -- Moves the fish to the given x,y location
@@ -147,7 +138,22 @@ function _Fish.create(params)
         end
         transition.cancel(fish.anim)
         fish:rotateTo({x=bobber.x, y=bobber.y})
-        fish:moveTo({x=bobber.x, y=bobber.y, 
+
+        local x = bobber.x
+        local y = bobber.y
+        if (fish.anim.x < bobber.x) then
+          x = x - 25
+        else
+          x = x + 25
+        end
+
+        if (fish.anim.y < bobber.y) then
+          y = y - 25
+        else
+          y = y + 25
+        end
+
+        fish:moveTo({x=x, y=y, 
                      onComplete=function() 
                        fish.isBiting=true 
                      end})  
