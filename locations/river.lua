@@ -3,7 +3,7 @@
 
 return {
     fish = {
-        {fid=0, spawnChance=40, name='test1'},
-        {fid=1, spawnChance=60, name='test2'}
+        {fid=0, spawnChance=40},
+        {fid=1, spawnChance=60}
     }
 }
