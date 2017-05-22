@@ -32,8 +32,12 @@ function _Splash.create(params)
   splash.anim.isActive = true
   splash.anim.x = params.x
   splash.anim.y = params.y - 5
-  physics.addBody(splash.anim, "dynamic", {filter = {groupIndex=-1}})
   splash.anim.myName = "splash"
+  
+  if(params.collide == true) then
+    physics.addBody(splash.anim, "dynamic", {filter = {groupIndex=-1}})
+  end
+  
   splash.anim:play()
   function splash:destroy()
     display.remove(splash.anim)

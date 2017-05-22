@@ -6,6 +6,8 @@
 
 local physics = require('physics')
 
+local newSplash = require('classes.splash').create
+
 local _Fish = {}
 
 -- Fish = { MAX_BOBS = 5 }
@@ -19,6 +21,8 @@ function _Fish.create(params)
   fish.mode = "SEEKING"
   fish.isBiting = false
   fish.moveTimer = nil
+  fish.biteTimer = nil
+  
   -- Max and Min define bounding area fish can move within
   fish.maxX, fish.maxY = params.maxX, params.maxY
   fish.minX, fish.minY = params.minX, params.minY
@@ -141,6 +145,8 @@ function _Fish.create(params)
 
         local x = bobber.x
         local y = bobber.y
+
+
         if (fish.anim.x < bobber.x) then
           x = x - 25
         else
@@ -154,8 +160,14 @@ function _Fish.create(params)
         end
 
         fish:moveTo({x=x, y=y, 
-                     onComplete=function() 
-                       fish.isBiting=true 
+                     onComplete=function()
+                       newSplash({x=x, y=y, collide = false}) 
+                       fish.isBiting=true
+
+                       -- TODO: Make timer dependent on fish id and its bite time
+                       fish.biteTimer = timer.performWithDelay(2000, function()
+                          fish:destroy()
+                         end, 0) 
                      end})  
       end
     end
@@ -165,13 +177,25 @@ function _Fish.create(params)
 
   -- Checks if a fish is caught
   function fish:checkCaught(event)
+    -- Fish is biting, timer has been started
+    -- Fish is caught
     if fish.isBiting then
+      timer.cancel(fish.biteTimer)
+      print("Caught the fish!")
       fish:destroy()
       return true
-    else
-      fish.mode = "SEEKING"
-      fish.isBiting = false  
+    -- Fish has not bit the lure yet but is pursuing
+    -- Fish runs away
+    elseif fish.mode == "PURSUING" then
+      transition.cancel(fish.anim)
+      transition.cancel(fish.los)
+      print("Reeled in too soon!")
+      fish:destroy()
+      return true
     end
+
+    -- Fish has nothing to do with the lure
+    return false
   end
   
   return fish

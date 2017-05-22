@@ -135,7 +135,7 @@ function _Bobber.create(x, y)
                 local function scaleDown()
                     transition.to(bobber.anim, {time=1100, xScale=.8, yScale=.8, 
                     onComplete=function()
-                        newSplash({x=bobber.anim.x, y=bobber.anim.y})
+                        newSplash({x=bobber.anim.x, y=bobber.anim.y, collide = true})
                         bobber.anim.isActive = true
                         bobber.anim.isCatchable = true
                         bobber.anim:setLinearVelocity(0, 0)
