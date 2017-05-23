@@ -133,12 +133,14 @@ end
 function scene:reelIn()
     for i = #fishTable, 1, -1 do
         local caught = fishTable[i].checkCaught()
-        if caught then
-            -- Show modal
-            showModal(caught.fid)
-
-            -- Remove fish from table
-            table.remove(fishTable, i)
+        if caught == 2 then
+            timer.performWithDelay(250, function()
+                -- Show modal
+                showModal(fishTable[i].fid) 
+                
+                -- Remove fish from table
+                table.remove(fishTable, i)
+            end)
         end
     end
 end

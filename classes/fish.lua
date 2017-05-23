@@ -185,8 +185,8 @@ function _Fish.create(params)
     if fish.isBiting then
       timer.cancel(fish.biteTimer)
       print("Caught the fish!")
-      -- fish:destroy()
-      return fish
+      fish:destroy()
+      return 2
     -- Fish has not bit the lure yet but is pursuing
     -- Fish runs away
     elseif fish.mode == "PURSUING" then
@@ -194,11 +194,11 @@ function _Fish.create(params)
       transition.cancel(fish.los)
       print("Reeled in too soon!")
       fish:destroy()
-      return false
-    end
-
+      return 1
     -- Fish has nothing to do with the lure
-    return false
+    else
+      return 0
+    end
   end
   
   return fish
