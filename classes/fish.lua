@@ -22,6 +22,9 @@ function _Fish.create(params)
   fish.isBiting = false
   fish.moveTimer = nil
   fish.biteTimer = nil
+
+  -- Fish ID
+  fish.fid = params.fid
   
   -- Max and Min define bounding area fish can move within
   fish.maxX, fish.maxY = params.maxX, params.maxY
@@ -182,8 +185,8 @@ function _Fish.create(params)
     if fish.isBiting then
       timer.cancel(fish.biteTimer)
       print("Caught the fish!")
-      fish:destroy()
-      return true
+      -- fish:destroy()
+      return fish
     -- Fish has not bit the lure yet but is pursuing
     -- Fish runs away
     elseif fish.mode == "PURSUING" then
@@ -191,7 +194,7 @@ function _Fish.create(params)
       transition.cancel(fish.los)
       print("Reeled in too soon!")
       fish:destroy()
-      return true
+      return false
     end
 
     -- Fish has nothing to do with the lure

@@ -6,7 +6,7 @@ local composer = require("composer")
 local newFish = require("classes.fish").create
 local newBobber = require("classes.bobber").create
 local physics = require("physics")
-
+local modal = require("classes.modal")
 local newLocation = require("classes.location").create
 
 -- Load the DB
@@ -30,10 +30,22 @@ local water = nil
 local bobber = nil
 
 -- Location
-local location = nil
+-- TODO: Need to get users pick for location. Passed from composer scene
+local location = newLocation('river')
 
 -- Table to hold the fish
 fishTable = {}
+
+-- Add a new fish
+function addFish()
+    local fishToAdd = location.giveFish()
+    local f = newFish({maxX=display.contentWidth, 
+                        maxY=display.contentHeight - 150, 
+                        minX=0, 
+                        minY=-100,
+                        fid=fishToAdd.fid})
+    table.insert(fishTable, f)
+end
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -54,18 +66,9 @@ function scene:create(event)
     -- Create the bobber
     bobber = newBobber(display.contentCenterX, display.contentCenterY + 500)
 
-    -- Pick the location
-    -- TODO: Need to get users pick for location. Passed from composer scene
-    location = newLocation('river')
-
     -- Create the fish
     for i=1,3 do
-        local f = newFish({maxX=display.contentWidth, 
-                           maxY=display.contentHeight - 150, 
-                           minX=0, 
-                           minY=-100,
-                           bobber=bobber})
-        table.insert(fishTable, f)
+        addFish()
     end
 
     -- Add catch event and related listeners
@@ -92,7 +95,7 @@ function scene:show( event )
 end
 
 -- hide()
-function scene:hide( event )
+function scene:hide(event)
     local sceneGroup = self.view
     local phase = event.phase
 
@@ -121,26 +124,25 @@ function scene:updateFish()
 
     if #fishTable < MAX_FISH then
         if math.random() < SPAWN_CHANCE then
-            local fishToAdd = location.giveFish()
-            local f = newFish({maxX=display.contentWidth, 
-                               maxY=display.contentHeight - 150, 
-                               minX=0, 
-                               minY=-100,
-                               fid=fishToAdd.fid})
-            table.insert(fishTable, f)
+            addFish()
         end
     end
-
 end
 
 -- Checks if any fish were caught when the bobber was reeling in
 function scene:reelIn()
     for i = #fishTable, 1, -1 do
-        if fishTable[i].checkCaught() then
+        local caught = fishTable[i].checkCaught()
+        if caught then
+            -- Show modal
+            showModal(caught.fid)
+
+            -- Remove fish from table
             table.remove(fishTable, i)
         end
     end
 end
+
 -- -----------------------------------------------------------------------------------
 -- Scene event function listeners
 -- -----------------------------------------------------------------------------------
