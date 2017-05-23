@@ -6,7 +6,7 @@ local composer = require("composer")
 local newFish = require("classes.fish").create
 local newBobber = require("classes.bobber").create
 local physics = require("physics")
-local modal = require("classes.modal")
+local newModal = require("classes.modal").create
 local newLocation = require("classes.location").create
 
 -- Load the DB
@@ -136,8 +136,8 @@ function scene:reelIn()
         if caught == 2 then
             timer.performWithDelay(250, function()
                 -- Show modal
-                showModal(fishTable[i].fid) 
-                
+                newModal(fishTable[i].fid) 
+
                 -- Remove fish from table
                 table.remove(fishTable, i)
             end)

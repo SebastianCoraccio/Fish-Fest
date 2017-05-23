@@ -2,46 +2,47 @@
 local widget = require("widget")
 local fishInfo = require("locations.fishInfo")
 
--- New display group to add modal too
-local modalGroup = nil
+local _Modal = {}
 
--- Local pieces of modal
-local modal
-local msgText
-local button1
-local button2
+function _Modal.create(fid)
+  local modal = {}
 
--- Function to handle details button
--- TODO: Open encylopedia with that fish
-local function handleButtonEventDetails(event)
-  if (event.phase == "ended") then
-    print("Open encylopedia of that fish")
+  -- New display group to add modal too
+  local modalGroup = display.newGroup()
+
+  -- Local pieces of modal
+  local modalBox
+  local msgText
+  local button1
+  local button2
+
+  -- Remove the modal
+  local function _destroyModal()
+    display.remove(modalGroup)
+    modalGroup = nil
   end
-end
 
--- Function to handle close button
-local function handleButtonEventClose(event)
-  if (event.phase == "ended") then
-    _destroyModal()
+  -- Function to handle details button
+  -- TODO: Open encylopedia with that fish
+  local function handleButtonEventDetails(event)
+    if (event.phase == "ended") then
+      print("Open encylopedia of that fish")
+    end
   end
-end
 
--- Remove the modal
-function _destroyModal()
-  display.remove(modalGroup)
-  modalGroup = nil
-end
-
--- Create a new modal
-function showModal(fid)
-  modalGroup = display.newGroup()
+  -- Function to handle close button
+  local function handleButtonEventClose(event)
+    if (event.phase == "ended") then
+      _destroyModal()
+    end
+  end
 
   -- Background
-	modal = display.newRoundedRect(0, 0, display.contentWidth / 1.5, display.contentHeight / 1.5, 12)
-	modal:setFillColor( 255 )
-	modal:setStrokeColor(78, 179, 211)
-	modal.strokeWidth = 4
-	modalGroup:insert(modal)
+	modalBox = display.newRoundedRect(0, 0, display.contentWidth / 1.5, display.contentHeight / 1.5, 12)
+	modalBox:setFillColor( 255 )
+	modalBox:setStrokeColor(78, 179, 211)
+	modalBox.strokeWidth = 4
+	modalGroup:insert(modalBox)
 
   -- Get fish name from fid
   local fishName = fid
@@ -120,4 +121,8 @@ function showModal(fid)
 
   -- Send it to the front
   modalGroup:toFront()
+
+  return modal
 end
+
+return _Modal
