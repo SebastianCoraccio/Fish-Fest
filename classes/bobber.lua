@@ -35,9 +35,12 @@ function _Bobber.create(x, y)
 
     -- Power meter
     bobber.power = display.newRect(x, y - bobber.anim.height / 2, 50, 0)
-    bobber.power:setFillColor(.5, .5, .5)
     bobber.power.anchorX = .5
     bobber.power.anchorY = 1
+
+    -- Colors for the bar
+    bobber.power.colors = {'#23B200', '#33FF00', '#66FF00', '#99FF00', '#CCFF00',
+                           '#FFFF00', '#FF9900', '#FF6600', '#FF3300', '#FF0000'}
 
     -- If the cast was started
     bobber.startedCast = false
@@ -50,6 +53,11 @@ function _Bobber.create(x, y)
     physics.addBody(bobber.anim, "dynamic", {filter = {groupIndex=-1}})
     bobber.anim.linearDamping = 1
 
+    -- Convert hex code to Corona RGB
+    local function hexToRGB(hexCode)
+        local hexCode = hexCode:gsub("#","")
+        return tonumber("0x"..hexCode:sub(1,2))/255,tonumber("0x"..hexCode:sub(3,4))/255,tonumber("0x"..hexCode:sub(5,6))/255;
+    end
 
     -- Get bobber x, y
     function bobber:getLocation()
@@ -113,6 +121,11 @@ function _Bobber.create(x, y)
                 bobber.power.height = 500
             end
             bobber.power.rotation = (math.atan2(deltaY, deltaX) * (180/math.pi) + 90) % 360
+           
+            -- Set power meter color
+            local height = math.floor(bobber.power.height / 50) + 1
+            if height > 10 then height = height - 1 end
+            bobber.power:setFillColor(hexToRGB(bobber.power.colors[height]))
 
             -- Stated cast
             bobber.startedCast = true
