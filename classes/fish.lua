@@ -170,8 +170,8 @@ function _Fish.create(params)
                        -- TODO: Make timer dependent on fish id and its bite time
                        fish.biteTimer = timer.performWithDelay(2000, function()
                           fish:destroy()
-                         end, 0) 
-                     end})  
+                     end, 0) 
+        end})  
       end
     end
 
@@ -184,7 +184,6 @@ function _Fish.create(params)
     -- Fish is caught
     if fish.isBiting then
       timer.cancel(fish.biteTimer)
-      print("Caught the fish!")
       fish:destroy()
       return 2
     -- Fish has not bit the lure yet but is pursuing
@@ -192,7 +191,6 @@ function _Fish.create(params)
     elseif fish.mode == "PURSUING" then
       transition.cancel(fish.anim)
       transition.cancel(fish.los)
-      print("Reeled in too soon!")
       fish:destroy()
       return 1
     -- Fish has nothing to do with the lure

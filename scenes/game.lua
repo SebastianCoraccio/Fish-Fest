@@ -137,7 +137,13 @@ function scene:reelIn()
             timer.performWithDelay(250, function()
                 -- Show modal
                 newModal(fishTable[i].fid) 
-
+                
+                -- Remove fish from table
+                table.remove(fishTable, i)
+            end)
+        elseif caught == 1 then
+            timer.performWithDelay(250, function()
+                print("Missed the fish, sucker.")
                 -- Remove fish from table
                 table.remove(fishTable, i)
             end)
