@@ -87,14 +87,26 @@ function _Fish.create(params)
 
   -- Moves the fish to the given x,y location
   function fish:moveTo(params)
+    if params.speed == nil then
+      params.speed = 20
+    end
+
     local dist = math.sqrt((params.x - fish.anim.x)^2 + (params.y - fish.anim.y)^2 )
 
-    transition.to(fish.anim, {x=params.x, y=params.y, 
-                              time=20*dist, 
+    transition.to(fish.anim, {x=params.x, 
+                              y=params.y, 
+                              time=params.speed*dist, 
+                              alpha=params.alpha,
                               transition=easing.outQuad,
                               onComplete=params.onComplete})
+
     fish.x, fish.y = params.x, params.y
-    transition.to(fish.los, {x=params.x, y=params.y, time=20*dist, transition=easing.outQuad}) 
+
+    transition.to(fish.los, {x=params.x, 
+                             y=params.y, 
+                             time=params.speed*dist, 
+                             alpha=params.alpha,
+                             transition=easing.outQuad}) 
   end
 
   -- Picks a random location in its bounding area
@@ -126,12 +138,29 @@ function _Fish.create(params)
     return "Fish Location: (" .. fish.x .. ", " .. fish.y .. ")"
   end
 
+  -- Destrcutor for the fish
+  -- Removes the display objects
   function fish:destroy()
-		timer.performWithDelay(1, function()
-			display.remove(fish.anim)
-      display.remove(fish.los)
-		end)
+    display.remove(fish.anim)
+    display.remove(fish.los)
 	end
+
+  -- Fish finds a new location and fades out
+  -- Calls destroy
+  function fish:scatter()
+    -- Pick a new location 
+    -- It can be out of bound because the fish is being destroyed
+    local newX = fish.anim.x + math.random(-100, 100)
+    local newY = fish.anim.y + math.random(-400, 400)
+
+    -- Rotate and move to new position
+    -- Alpha drops to zero as it moves
+    fish:rotateTo({x=newX, y=newY})
+    fish:moveTo({x=newX, 
+                 y=newY, alpha = 0, 
+                 onComplete = function() fish:destroy() end,
+                 speed = 5})
+  end
 
   -- Collsion method
   function fish.los:collision(event)
@@ -191,7 +220,7 @@ function _Fish.create(params)
     elseif fish.mode == "PURSUING" then
       transition.cancel(fish.anim)
       transition.cancel(fish.los)
-      fish:destroy()
+      fish:scatter()
       return 1
     -- Fish has nothing to do with the lure
     else
