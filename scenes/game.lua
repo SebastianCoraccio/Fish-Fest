@@ -66,22 +66,22 @@ function scene:create(event)
     -- Create the bobber
     bobber = newBobber(display.contentCenterX, display.contentCenterY + 500)
 
-    -- Create the fish
-    -- for i=1,3 do
-    --     addFish()
-    -- end
+    --Create the fish
+    for i=1,3 do
+        addFish()
+    end
 
     -- TEST
-    local fishCount = {0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-    for i=1,10000 do
-        fish = location.giveFish().fid + 1
-        fishCount[fish] = fishCount[fish] + 1
-    end
-
-    local fishInfo = require("locations.fishInfo")
-    for i=1,#fishCount do
-        print(fishInfo[i].name .. ":\t" .. tostring(fishCount[i]) .. ":\t" .. tostring(fishCount[i] / 100) .. "%")
-    end
+    -- local fishCount = {0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+    -- for i=1,1000000 do
+    --     fish = location.giveFish().fid + 1
+    --     fishCount[fish] = fishCount[fish] + 1
+    -- end
+    -- print("\n")
+    -- local fishInfo = require("locations.fishInfo")
+    -- for i=1,#fishCount do
+    --     print(tostring(fishCount[i]/10000) .. "%\t : " .. fishInfo[i].name)
+    -- end
     -- END
 
     -- Add catch event and related listeners
@@ -137,7 +137,7 @@ function scene:updateFish()
 
     if #fishTable < MAX_FISH then
         if math.random() < SPAWN_CHANCE then
-            addFish()
+            --addFish()
         end
     end
 end

@@ -14,13 +14,12 @@ function _Location.create(locationName)
     -- Calculate chance
     local chance = math.random() + math.random(0, 99)
 
-    local max = fish[1].spawnChance
+    local max = 0
     -- Loop through all the fish
     for i = 1, #fish, 1 do
+      max = max + fish[i].spawnChance
       if (chance <= max) then
         return fish[i]
-      else
-        max = max + fish[i].spawnChance
       end
     end
 
