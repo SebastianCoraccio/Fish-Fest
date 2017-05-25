@@ -5,7 +5,7 @@
 -- When the fish is pursuing it will hit the bobber, and eventually bite
 
 local physics = require('physics')
-
+local fishInfo = require('locations.fishInfo')
 local newSplash = require('classes.splash').create
 
 local _Fish = {}
@@ -26,6 +26,17 @@ function _Fish.create(params)
   -- Fish ID
   fish.fid = params.fid
   
+  -- Import info about fish
+  for i = 1, #fishInfo do
+    if (fish.fid == fishInfo[i].fid) then
+      fish.biteTime = fishInfo[i].biteTime
+      fish.size = fishInfo[i].size
+      fish.minSize = fishInfo[i].minSize
+      fish.maxSize = fishInfo[i].maxSize
+      break
+    end
+  end
+
   -- Max and Min define bounding area fish can move within
   fish.maxX, fish.maxY = params.maxX, params.maxY
   fish.minX, fish.minY = params.minX, params.minY
@@ -197,7 +208,7 @@ function _Fish.create(params)
                        fish.isBiting=true
 
                        -- TODO: Make timer dependent on fish id and its bite time
-                       fish.biteTimer = timer.performWithDelay(2000, function()
+                       fish.biteTimer = timer.performWithDelay(fish.biteTime, function()
                           fish:destroy()
                      end, 0) 
         end})  

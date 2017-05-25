@@ -67,9 +67,22 @@ function scene:create(event)
     bobber = newBobber(display.contentCenterX, display.contentCenterY + 500)
 
     -- Create the fish
-    for i=1,3 do
-        addFish()
+    -- for i=1,3 do
+    --     addFish()
+    -- end
+
+    -- TEST
+    local fishCount = {0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+    for i=1,10000 do
+        fish = location.giveFish().fid + 1
+        fishCount[fish] = fishCount[fish] + 1
     end
+
+    local fishInfo = require("locations.fishInfo")
+    for i=1,#fishCount do
+        print(fishInfo[i].name .. ":\t" .. tostring(fishCount[i]) .. ":\t" .. tostring(fishCount[i] / 100) .. "%")
+    end
+    -- END
 
     -- Add catch event and related listeners
     Runtime:addEventListener("touch", bobber.catch)

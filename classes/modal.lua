@@ -47,8 +47,9 @@ function _Modal.create(fid)
   -- Get fish name from fid
   local fishName = fid
   for i = 1, #fishInfo do
-    if (fishInfo[i].fid == fid) then
+    if (fid == fishInfo[i].fid) then
       fishName = fishInfo[i].name
+      break
     end
   end
 
@@ -57,7 +58,7 @@ function _Modal.create(fid)
 	   text = "You caught a " .. fishName .. "!",
      y = -200,
 	   width = 320,
-	   height = 160,
+
 	   fontSize = 50,
 	   align = "center"
 	}
