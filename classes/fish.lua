@@ -18,7 +18,10 @@ local _Fish = {}
 function _Fish.create(params)
 
   local fish = {}
-  fish.mode = "SEEKING"
+  fish.mode = "SPAWNING"
+
+  timer.performWithDelay(1000, function() fish.mode = "SEEKING" end)
+
   fish.isBiting = false
   fish.moveTimer = nil
   fish.biteTimer = nil
@@ -169,7 +172,9 @@ function _Fish.create(params)
     fish:rotateTo({x=newX, y=newY})
     fish:moveTo({x=newX, 
                  y=newY, alpha = 0, 
-                 onComplete = function() fish:destroy() end,
+                 onComplete = function() 
+                   fish.mode = "DELETE"
+                 end,
                  speed = 5})
   end
 
@@ -207,10 +212,12 @@ function _Fish.create(params)
                        newSplash({x=x, y=y, collide = false}) 
                        fish.isBiting=true
 
-                       -- TODO: Make timer dependent on fish id and its bite time
+                       -- TODO: Add timestamp for determining fish to catch
+                       -- in the case 2 or more bite at once
                        fish.biteTimer = timer.performWithDelay(fish.biteTime, function()
-                          fish:destroy()
-                     end, 0) 
+                          fish.isBiting = false
+                          fish:scatter()
+                       end) 
         end})  
       end
     end
@@ -224,14 +231,15 @@ function _Fish.create(params)
     -- Fish is caught
     if fish.isBiting then
       timer.cancel(fish.biteTimer)
-      fish:destroy()
       return 2
     -- Fish has not bit the lure yet but is pursuing
     -- Fish runs away
     elseif fish.mode == "PURSUING" then
       transition.cancel(fish.anim)
       transition.cancel(fish.los)
-      fish:scatter()
+      return 1
+    -- Fish timer has scattered and need to be deleted
+    elseif fish.mode == "DELETE" then
       return 1
     -- Fish has nothing to do with the lure
     else

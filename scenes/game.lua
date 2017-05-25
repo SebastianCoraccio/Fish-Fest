@@ -137,27 +137,60 @@ function scene:updateFish()
 
     if #fishTable < MAX_FISH then
         if math.random() < SPAWN_CHANCE then
-            --addFish()
+            addFish()
         end
     end
 end
 
 -- Checks if any fish were caught when the bobber was reeling in
 function scene:reelIn()
+
+    -- Becomes true when a fish is caught and prevents multiple catchs
+    fishCaught = false
+
     for i = #fishTable, 1, -1 do
+        
         local caught = fishTable[i].checkCaught()
+
+        -- The fish is currently biting
         if caught == 2 then
-            timer.performWithDelay(250, function()
-                -- Show modal
-                newModal(fishTable[i].fid) 
-                
-                -- Remove fish from table
-                table.remove(fishTable, i)
-            end)
+
+            -- TODO: Check bite timestamp and determine the fish that bit first
+            -- If no fish have been caught yet then catch this one
+            if not fishCaught then
+                fishCaught = true
+
+                -- TODO: Add in animation instead of just hiding the fish
+                fishTable[i].anim.alpha = 0
+                timer.performWithDelay(250, function()                    
+                    -- Show modal
+                    newModal(fishTable[i].fid) 
+
+                    -- Destroy the fish image objects and remove fish from table
+                    fishTable[i]:destroy()
+                    table.remove(fishTable, i)
+                end)
+
+            -- A fish has already been caught, so this fish scatters and is removed
+            else
+                fishTable[i].scatter()
+                timer.performWithDelay(500, function()
+                    -- Destroy the fish image objects and remove fish from table
+                    fishTable[i]:destroy()
+                    table.remove(fishTable, i)
+                end)
+            end
+            
+        -- The fish was preparing to bite, or already bit 
+        -- Scatters and is removed
         elseif caught == 1 then
-            print("Missed the fish, sucker.")
-            -- Remove fish from table
-            table.remove(fishTable, i)
+            fishTable[i].scatter()
+            timer.performWithDelay(500, function()
+                -- Destroy the fish image objects and remove fish from table
+                    fishTable[i]:destroy()
+                    table.remove(fishTable, i)
+            end)
+
         end
     end
 end
