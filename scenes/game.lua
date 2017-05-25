@@ -137,7 +137,7 @@ function scene:updateFish()
 
     if #fishTable < MAX_FISH then
         if math.random() < SPAWN_CHANCE then
-            addFish()
+            --addFish()
         end
     end
 end

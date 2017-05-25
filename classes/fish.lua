@@ -149,6 +149,13 @@ function _Fish.create(params)
     return "Fish Location: (" .. fish.x .. ", " .. fish.y .. ")"
   end
 
+  -- Destrcutor for the fish
+  -- Removes the display objects
+  function fish:destroy()
+    display.remove(fish.anim)
+    display.remove(fish.los)
+	end
+
   -- Fish finds a new location and fades out
   -- Calls destroy
   function fish:scatter()
@@ -161,8 +168,8 @@ function _Fish.create(params)
     -- Alpha drops to zero as it moves
     fish:rotateTo({x=newX, y=newY})
     fish:moveTo({x=newX, 
-                 y=newY, 
-                 alpha = 0, 
+                 y=newY, alpha = 0, 
+                 onComplete = function() fish:destroy() end,
                  speed = 5})
   end
 
@@ -202,10 +209,9 @@ function _Fish.create(params)
 
                        -- TODO: Make timer dependent on fish id and its bite time
                        fish.biteTimer = timer.performWithDelay(fish.biteTime, function()
-                          fish.isBiting=false
-                          fish:scatter()
+                          fish:destroy()
                      end, 0) 
-                   end})  
+        end})  
       end
     end
 
@@ -218,7 +224,7 @@ function _Fish.create(params)
     -- Fish is caught
     if fish.isBiting then
       timer.cancel(fish.biteTimer)
-      fish.anim.alpha = 0
+      fish:destroy()
       return 2
     -- Fish has not bit the lure yet but is pursuing
     -- Fish runs away
