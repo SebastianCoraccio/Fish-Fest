@@ -75,7 +75,7 @@ function scene:create(event)
   end
 
 -- TEST
--- local fishCount = {0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+-- local fishCount = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 -- for i=1,1000000 do
 --     fish = location.giveFish().fid + 1
 --     fishCount[fish] = fishCount[fish] + 1
@@ -154,6 +154,7 @@ function scene:reelIn()
   for i = #fishTable, 1, -1 do
 
     local caught = fishTable[i].checkCaught()
+    local fid = fishTable[i].fid
 
     -- The fish is currently biting
     if caught == 2 then
@@ -167,7 +168,7 @@ function scene:reelIn()
         fishTable[i].anim.alpha = 0
         timer.performWithDelay(250, function()
           -- Show modal
-          newModal(fishTable[i].fid)
+          newModal(fid)
 
           -- Destroy the fish image objects and remove fish from table
           fishTable[i]:destroy()
@@ -188,11 +189,13 @@ function scene:reelIn()
       -- Scatters and is removed
     elseif caught == 1 then
       fishTable[i].scatter()
-      timer.performWithDelay(500, function()
-        -- Destroy the fish image objects and remove fish from table
-        fishTable[i]:destroy()
-        table.remove(fishTable, i)
-      end)
+      if (fish) then 
+        timer.performWithDelay(500, function()
+          -- Destroy the fish image objects and remove fish from table
+          fishTable[i]:destroy()
+          table.remove(fishTable, i)
+        end)
+      end
     end
   end
 end

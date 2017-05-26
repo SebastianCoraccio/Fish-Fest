@@ -21,6 +21,7 @@ function _Fish.create(params)
   fish.mode = "SPAWNING"
 
   timer.performWithDelay(1000, function() fish.mode = "SEEKING" end)
+  local fishScales = {.6,.8,1,1.2}
 
   fish.isBiting = false
   fish.moveTimer = nil
@@ -33,7 +34,7 @@ function _Fish.create(params)
   for i = 1, #fishInfo do
     if (fish.fid == fishInfo[i].fid) then
       fish.biteTime = fishInfo[i].biteTime
-      fish.size = fishInfo[i].size
+      fish.sizeGroup = fishInfo[i].sizeGroup
       fish.minSize = fishInfo[i].minSize
       fish.maxSize = fishInfo[i].maxSize
       break
@@ -61,6 +62,9 @@ function _Fish.create(params)
   fish.anim.anchorY = 0
   fish.anim.myName = "fish"
   fish.anim.alpha = 0
+  if (type(fish.sizeGroup) == "number") then
+    fish.anim:scale(fishScales[fish.sizeGroup], fishScales[fish.sizeGroup])
+  end
   -- Line of sight - los
   fish.los = display.newPolygon(0, 0, lineOfSight)
   fish.los.myName = 'los'
@@ -194,7 +198,7 @@ function _Fish.create(params)
         local x = bobber.x
         local y = bobber.y
 
-
+        -- Calculations for transition to bobber
         if (fish.anim.x < bobber.x) then
           x = x - 25
         else

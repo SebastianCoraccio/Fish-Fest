@@ -15,6 +15,7 @@ function _Modal.create(fid)
   local msgText
   local button1
   local button2
+  local valueText
 
   -- Remove the modal
   local function _destroyModal()
@@ -46,9 +47,11 @@ function _Modal.create(fid)
 
   -- Get fish name from fid
   local fishName = fid
+  local value = 0
   for i = 1, #fishInfo do
     if (fid == fishInfo[i].fid) then
       fishName = fishInfo[i].name
+      value = fishInfo[i].value
       break
     end
   end
@@ -58,13 +61,24 @@ function _Modal.create(fid)
 	   text = "You caught a " .. fishName .. "!",
      y = -200,
 	   width = 320,
-
 	   fontSize = 50,
 	   align = "center"
 	}
 	msgText = display.newText(options)
-	msgText:setFillColor( 0 )
+	msgText:setFillColor(0)
 	modalGroup:insert(msgText)
+
+  -- Value and weight text
+  local valueOptions = {
+    text = "Worth: " .. value,
+    x = -115,
+    y = 140,
+    fontSize = 40,
+    align = "center"
+  }
+  valueText = display.newText(valueOptions)
+  valueText:setFillColor(0)
+  modalGroup:insert(valueText)
 
   -- Create the widget
   button1 = widget.newButton(
