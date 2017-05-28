@@ -58,7 +58,7 @@ function _Fish.create(params)
   local fishPolygon = { -37,15 , -51,-38 , -41,-77 , 13,-99 , 43,-77 , 50,-37 , 39,18 , -1, 100 }
   local lineOfSight = { 225,-225 , 75,0 , -75,0 , -225,-225 , -150,-300 , 150,-300 }
 
-  fish.anim = display.newImage("images/fish/silhouette.png", 0, 0)
+  fish.anim = display.newImage(params.group, "images/fish/silhouette.png", 0, 0)
   fish.anim.anchorY = 0
   fish.anim.myName = "fish"
   fish.anim.alpha = 0
@@ -66,7 +66,7 @@ function _Fish.create(params)
     fish.anim:scale(fishScales[fish.sizeGroup], fishScales[fish.sizeGroup])
   end
   -- Line of sight - los
-  fish.los = display.newPolygon(0, 0, lineOfSight)
+  fish.los = display.newPolygon(params.group, 0, 0, lineOfSight)
   fish.los.myName = 'los'
   fish.los.alpha = 0
   

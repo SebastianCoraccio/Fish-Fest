@@ -15,7 +15,7 @@ local _Bobber = {}
 -- local counter = SPEED_MAXIMUM
 
 -- Create a bobber at location (x,y)
-function _Bobber.create(x, y)
+function _Bobber.create(x, y, group)
     local bobber = {}
 
     -- Set the location
@@ -30,11 +30,11 @@ function _Bobber.create(x, y)
     bobber.back:toFront()
 
     -- Set the image
-    bobber.anim = display.newImage("images/bobber.png", x, y)
+    bobber.anim = display.newImage(group, "images/bobber.png", x, y)
     bobber.anim.myName = "bobber"
 
     -- Power meter
-    bobber.power = display.newRect(x, y - bobber.anim.height / 2, 50, 0)
+    bobber.power = display.newRect(group, x, y - bobber.anim.height / 2, 50, 0)
     bobber.power.anchorX = .5
     bobber.power.anchorY = 1
 
@@ -62,6 +62,12 @@ function _Bobber.create(x, y)
     -- Get bobber x, y
     function bobber:getLocation()
         return bobber.x, bobber.y
+    end
+
+    -- Switches the boolean of canBeCast
+    -- Used for showing the modal
+    function bobber:setCast()
+        bobber.canBeCast = not bobber.canBeCast
     end
 
     -- Function to be called when the player reeled in the bobber

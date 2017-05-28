@@ -6,7 +6,6 @@ local composer = require("composer")
 local newFish = require("classes.fish").create
 local newBobber = require("classes.bobber").create
 local physics = require("physics")
-local newModal = require("classes.modal").create
 local newLocation = require("classes.location").create
 
 -- Load the DB
@@ -29,6 +28,13 @@ local water = nil
 -- Bobber
 local bobber = nil
 
+-- Modal is showing
+local modalIsShowing = false
+
+-- Display groups
+local backgroundGroup
+local mainGroup
+
 -- Location
 -- TODO: Need to get users pick for location. Passed from composer scene
 local location = newLocation('river')
@@ -43,7 +49,8 @@ function addFish()
                      maxY=display.contentHeight - 150,
                      minX=0,
                      minY=-100,
-                     fid=fishToAdd.fid})
+                     fid=fishToAdd.fid,
+                     group=mainGroup})
   table.insert(fishTable, f)
 end
 
@@ -54,24 +61,29 @@ end
 -- create()
 function scene:create(event)
   local sceneGroup = self.view
+
+  -- Define groups
+  backgroundGroup = display.newGroup()
+  sceneGroup:insert(backgroundGroup)
+
+  mainGroup = display.newGroup()
+  sceneGroup:insert(mainGroup)
+
   -- Code here runs when the scene is first created but has not yet appeared on screen
-  background = display.newImage("images/backgrounds/bg_sand.png")
+  background = display.newImage(backgroundGroup, "images/backgrounds/bg_sand.png")
   background.x = display.contentCenterX
   background.y = display.contentCenterY
 
-  water = display.newImage("images/backgrounds/bg_water.png")
+  water = display.newImage(backgroundGroup, "images/backgrounds/bg_water.png")
   water.x = display.contentCenterX
   water.y = display.contentCenterY - 550
 
   -- Create the bobber
-  bobber = newBobber(display.contentCenterX, display.contentCenterY + 500)
+  bobber = newBobber(display.contentCenterX, display.contentCenterY + 500, mainGroup)
 
   --Create the fish
   for i=1,3 do
     addFish()
-
-
-    
   end
 
 -- TEST
@@ -129,20 +141,35 @@ function scene:destroy( event )
 end
 
 function scene:updateFish()
-  for i = #fishTable, 1, -1 do
-    fishTable[i].update()
-  end
+  if (modalIsShowing == false) then
+    for i = #fishTable, 1, -1 do
+      fishTable[i].update()
+    end
 
-  -- Check if adding a fish is needed, and try to do so it yes
-  -- TODO: Create an attributes table for each of the locations
-  local MAX_FISH = 5
-  local SPAWN_CHANCE = .25
+    -- Check if adding a fish is needed, and try to do so it yes
+    -- TODO: Create an attributes table for each of the locations
+    local MAX_FISH = 5
+    local SPAWN_CHANCE = .25
 
-  if #fishTable < MAX_FISH then
-    if math.random() < SPAWN_CHANCE then
-      addFish()
+    if #fishTable < MAX_FISH then
+      if math.random() < SPAWN_CHANCE then
+        addFish()
+      end
     end
   end
+end
+
+-- Custom function for resuming the game (from pause state)
+function scene:resumeGame()
+    -- Code to resume game
+   modalIsShowing = false
+   bobber.setCast()
+end
+
+-- Pause the fish spawning and fish movement
+function pauseGame()
+  modalIsShowing = true
+  bobber.setCast()
 end
 
 -- Checks if any fish were caught when the bobber was reeling in
@@ -168,7 +195,17 @@ function scene:reelIn()
         fishTable[i].anim.alpha = 0
         timer.performWithDelay(250, function()
           -- Show modal
-          newModal(fid)
+          -- Options table for the overlay scene "modal.lua"
+          pauseGame()
+          local options = {
+              isModal = true,
+              effect = "fade",
+              time = 400,
+              params = {
+                  fid = fid
+              }
+          }
+          composer.showOverlay("scenes.modal", options)
 
           -- Destroy the fish image objects and remove fish from table
           fishTable[i]:destroy()
