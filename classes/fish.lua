@@ -50,6 +50,12 @@ function _Fish.create(params)
   local fishY = math.random(fish.minY, fish.maxY)
   fish.dir = math.random(0, 360)
 
+  -- DEBUGGING
+  -- Fish spawns at display center and rotation to 0 
+  -- local fishX = display.contentCenterX
+  -- local fishY = display.contentCenterY
+  -- fish.dir = 0 
+
   -- Define a scale for the fish which will appropriately scale the fish components
   fish.scale = 0.6
 
@@ -150,6 +156,37 @@ function _Fish.create(params)
     fish:moveTo({x=newX, y=newY})
   end
 
+  -- -- Fish darts away from the given x and y position
+  -- function fish:scare(params)
+
+  --   fish.mode = "SCARED"
+
+  --   -- Picks a location in the other direction of the given x and y
+  --   local newX = fish.anim.x + math.random(-100, 100)
+  --   local newY = fish.anim.y + math.random(-400, 400)
+    
+  --   -- Check new x and y are in the bounding area
+  --   if newX > fish.maxX then
+  --     newX = fish.maxX
+  --   elseif newX < fish.minX then
+  --     newX = fish.minX
+  --   end
+
+  --   if newY > fish.maxY then
+  --     newY = fish.maxY
+  --   elseif newY < fish.minY then
+  --     newY = fish.minY
+  --   end
+
+  --   -- Rotate and move to new position
+  --   fish:rotateTo({x=newX, y=newY, speed=8})
+  --   fish:moveTo({x=newX, y=newY, 
+  --                speed=8, 
+  --                onComplete=function()
+  --                  fish.mode = "SEEKING"
+  --                end})
+  -- end
+
   -- To String method, returns string with x and y coordinate.
   function fish:tostring()
     return "Fish Location: (" .. fish.x .. ", " .. fish.y .. ")"
@@ -230,15 +267,15 @@ function _Fish.create(params)
 
   -- Collsion method
   -- TODO: Fix this 
-  function fish.anim:collision(event)
-    -- Check the other body that collided
-    if event.other.myName == "splash" then
-      if event.other.isActive and fish.mode == "SEEKING" then
-        fish:changeLocation({speed=1000})
-      end
-    end
-  end
-  fish.anim:addEventListener('collision')
+  -- function fish.anim:collision(event)
+  --   -- Check the other body that collided
+  --   if event.other.myName == "splash" then
+  --     if event.other.isActive and fish.mode == "SEEKING" then
+  --       fish:scare({x=event.other.x, y=event.other.y})
+  --     end
+  --   end
+  -- end
+  -- fish.anim:addEventListener('collision')
 
   -- Checks if a fish is caught
   function fish:checkCaught(event)
