@@ -148,7 +148,6 @@ function _Fish.create(params)
     -- Rotate and move to new position
     fish:rotateTo({x=newX, y=newY})
     fish:moveTo({x=newX, y=newY})
-    
   end
 
   -- To String method, returns string with x and y coordinate.
@@ -228,6 +227,18 @@ function _Fish.create(params)
 
   end
   fish.los:addEventListener('collision')
+
+  -- Collsion method
+  -- TODO: Fix this 
+  function fish.anim:collision(event)
+    -- Check the other body that collided
+    if event.other.myName == "splash" then
+      if event.other.isActive and fish.mode == "SEEKING" then
+        fish:changeLocation({speed=1000})
+      end
+    end
+  end
+  fish.anim:addEventListener('collision')
 
   -- Checks if a fish is caught
   function fish:checkCaught(event)
