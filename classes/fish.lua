@@ -137,16 +137,13 @@ function _Fish.create(params)
   -- Fish moves to the point, creates a ripple, then returns to original spot
   function fish:tap(params)
 
-    -- Save the original point the fish is at
-    local oldX = fish.anim.x
-    local oldY = fish.anim.y
-
     -- Move to the point and create a ripple
-    fish:moveTo({x=params.x, y=params.y, 
+    fish:moveTo({x=params.bobberEdgeX, y=params.bobberEdgeY, 
                  onComplete=function()
-                   newRipple({x=params.bx, y=params.by}) 
+                   newRipple({x=params.bobberCenterX, y=params.bobberCenterY}) 
                    -- Move back to orginal position
-                    fish:moveTo({x=oldX, y=oldY})
+                   fish:rotateTo({x=params.bobberEdgeX, y=params.bobberEdgeY})
+                   fish:moveTo({x=params.lpointX, y=params.lpointY})
                 end})
 
     
@@ -252,8 +249,6 @@ function _Fish.create(params)
         local bobberEdge = utils.getPointBetween(bobber.x, bobber.y, fish.anim.x, fish.anim.y, 135)
         local lookingPoint = utils.getPointBetween(bobber.x, bobber.y, fish.anim.x, fish.anim.y, 300)
 
-        fish:moveTo({x=lookingPoint.x, y=lookingPoint.y})
-
         local numTaps = math.random(0,4)
 
         -- The delay increases with each tap to make the multiple taps
@@ -261,7 +256,9 @@ function _Fish.create(params)
         local delay = 1000
         for i=1, numTaps do
           t = timer.performWithDelay(delay, function() 
-            fish:tap({x=bobberEdge.x, y=bobberEdge.y, bx=x, by=y}) 
+            fish:tap({bobberEdgeX=bobberEdge.x, bobberEdgeY=bobberEdge.y, 
+                      bobberCenterX=x, bobberCenterY=y,
+                      lpointX=lookingPoint.x, lpointY=lookingPoint.y}) 
           end)  
 
           --  Insert it into the table so it can be canceled if 

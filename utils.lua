@@ -30,10 +30,9 @@ function utils.getPointBetween(x1, y1, x2, y2, distance)
   
 
   local distBetweenPoints = utils.dist(x1, y1, x2, y2)
-  if distBetweenPoints < distance then
-    distance = distBetweenPoints
-  end
-  print(distance)
+--   if distBetweenPoints < distance then
+--     distance = distBetweenPoints
+--   end
   -- Calculate the slope of the line created by points (x1, y1), (x2, y2)
   local slope = (y2 - y1) / (x2 - x1)
 
@@ -46,10 +45,10 @@ function utils.getPointBetween(x1, y1, x2, y2, distance)
   local yp2 = slope * (xp2 - x1) + y1
 
   -- Find the point that is closer to point 2
-  local dist1 = utils.dist(x1, y1, xp1, yp1)
-  local dist2 = utils.dist(x1, y1, xp2, yp2)
-  
-  if utils.dist(x2, y2, xp1, yp1) + dist1 == distBetweenPoints then
+  local dist1 = utils.dist(x2, y2, xp1, yp1)
+  local dist2 = utils.dist(x2, y2, xp2, yp2)
+
+  if math.min(dist1, dist2) == dist1 then
     return {x=xp1, y=yp1}
   else
     return {x=xp2, y=yp2}
