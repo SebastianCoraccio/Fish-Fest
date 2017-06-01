@@ -87,16 +87,21 @@ function scene:create(event)
   end
 
 -- TEST
--- local fishCount = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+-- local fishCount = {0,0,0,0,0,0,0,0,0,0,0,0}
 -- for i=1,1000000 do
---     fish = location.giveFish().fid + 1
---     fishCount[fish] = fishCount[fish] + 1
+--     local f = location.giveFish()
+--     if f.fid == 99 then
+--       fishCount[#fishCount] = fishCount[#fishCount] + 1
+--     else
+--       fishCount[f.fid + 1] = fishCount[f.fid + 1] + 1
+--     end
 -- end
 -- print("\n")
 -- local fishInfo = require("locations.fishInfo")
--- for i=1,#fishCount do
+-- for i=1,#fishCount - 1 do
 --     print(tostring(fishCount[i]/10000) .. "%\t : " .. fishInfo[i].name)
 -- end
+-- print(tostring(fishCount[#fishCount]/10000) .. "%\t : " .. fishInfo[#fishInfo].name)
 -- END
 
     -- Add catch event and related listeners
