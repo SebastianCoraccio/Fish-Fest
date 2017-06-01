@@ -4,10 +4,11 @@
 -- If a bobber is within their line of site they will switch to pursing.
 -- When the fish is pursuing it will hit the bobber, and eventually bite
 
+local utils = require('utils')
 local physics = require('physics')
 local fishInfo = require('locations.fishInfo')
 local newSplash = require('classes.splash').create
-
+local newRipple = require('classes.ripple').create
 local _Fish = {}
 
 -- Fish = { MAX_BOBS = 5 }
@@ -26,6 +27,7 @@ function _Fish.create(params)
   fish.isBiting = false
   fish.moveTimer = nil
   fish.biteTimer = nil
+  fish.tapTimers = {}
 
   -- Fish ID
   fish.fid = params.fid
@@ -65,12 +67,11 @@ function _Fish.create(params)
   local lineOfSight = { 225,-225 , 75,0 , -75,0 , -225,-225 , -150,-300 , 150,-300 }
 
   fish.anim = display.newImage(params.group, "images/fish/silhouette.png", 0, 0)
-  fish.anim.anchorY = 0
   fish.anim.myName = "fish"
   fish.anim.alpha = 0
-  if (type(fish.sizeGroup) == "number") then
-    fish.anim:scale(fishScales[fish.sizeGroup], fishScales[fish.sizeGroup])
-  end
+--   if (type(fish.sizeGroup) == "number") then
+--     fish.anim:scale(fishScales[fish.sizeGroup], fishScales[fish.sizeGroup])
+--   end
   -- Line of sight - los
   fish.los = display.newPolygon(params.group, 0, 0, lineOfSight)
   fish.los.myName = 'los'
@@ -100,13 +101,12 @@ function _Fish.create(params)
   end
 
   -- Rotates the fish towards the given x,y location
-  -- TODO: Rotate around center now that anchor point has been changed
   function fish:rotateTo(params)
+    -- TODO: Use utils function
     fish.dir = math.atan2(fish.anim.y - params.y, fish.anim.x - params.x) * (180/math.pi) - 90
-
     -- Rotate towards new position
-    transition.to(fish.anim, {rotation = fish.dir % 360, time=1000})
-    transition.to(fish.los, {rotation = fish.dir % 360, time=1000})
+    transition.to(fish.anim, {rotation = fish.dir, time=1000})
+    transition.to(fish.los, {rotation = fish.dir, time=1000})
   end
 
   -- Moves the fish to the given x,y location
@@ -115,7 +115,7 @@ function _Fish.create(params)
       params.speed = 20
     end
 
-    local dist = math.sqrt((params.x - fish.anim.x)^2 + (params.y - fish.anim.y)^2 )
+    local dist = utils.dist(fish.anim.x, fish.anim.y, params.x, params.y)
 
     transition.to(fish.anim, {x=params.x, 
                               y=params.y, 
@@ -131,6 +131,25 @@ function _Fish.create(params)
                              time=params.speed*dist, 
                              alpha=params.alpha,
                              transition=easing.outQuad}) 
+  end
+
+
+  -- Fish moves to the point, creates a ripple, then returns to original spot
+  function fish:tap(params)
+
+    -- Save the original point the fish is at
+    local oldX = fish.anim.x
+    local oldY = fish.anim.y
+
+    -- Move to the point and create a ripple
+    fish:moveTo({x=params.x, y=params.y, 
+                 onComplete=function()
+                   newRipple({x=params.bx, y=params.by}) 
+                   -- Move back to orginal position
+                    fish:moveTo({x=oldX, y=oldY})
+                end})
+
+    
   end
 
   -- Picks a random location in its bounding area
@@ -187,12 +206,7 @@ function _Fish.create(params)
   --                end})
   -- end
 
-  -- To String method, returns string with x and y coordinate.
-  function fish:tostring()
-    return "Fish Location: (" .. fish.x .. ", " .. fish.y .. ")"
-  end
-
-  -- Destrcutor for the fish
+  -- Destructor for the fish
   -- Removes the display objects
   function fish:destroy()
     display.remove(fish.anim)
@@ -234,31 +248,46 @@ function _Fish.create(params)
         local x = bobber.x
         local y = bobber.y
 
-        -- Calculations for transition to bobber
-        if (fish.anim.x < bobber.x) then
-          x = x - 25
-        else
-          x = x + 25
-        end
+        -- Get the point at the bobbers edge, and the point the fish will move back and forth between
+        local bobberEdge = utils.getPointBetween(bobber.x, bobber.y, fish.anim.x, fish.anim.y, 135)
+        local lookingPoint = utils.getPointBetween(bobber.x, bobber.y, fish.anim.x, fish.anim.y, 300)
 
-        if (fish.anim.y < bobber.y) then
-          y = y - 25
-        else
-          y = y + 25
-        end
+        fish:moveTo({x=lookingPoint.x, y=lookingPoint.y})
 
-        fish:moveTo({x=x, y=y, 
-                     onComplete=function()
-                       newSplash({x=x, y=y, collide = false}) 
-                       fish.isBiting=true
+        local numTaps = math.random(0,4)
 
-                       -- TODO: Add timestamp for determining fish to catch
-                       -- in the case 2 or more bite at once
-                       fish.biteTimer = timer.performWithDelay(fish.biteTime, function()
-                          fish.isBiting = false
-                          fish:scatter()
-                       end) 
-        end})  
+        -- The delay increases with each tap to make the multiple taps
+        -- happen at the correct intervals
+        local delay = 1000
+        for i=1, numTaps do
+          t = timer.performWithDelay(delay, function() 
+            fish:tap({x=bobberEdge.x, y=bobberEdge.y, bx=x, by=y}) 
+          end)  
+
+          --  Insert it into the table so it can be canceled if 
+          -- fish isreeled in too quickly
+          table.insert( fish.tapTimers, t)
+
+          delay = delay + 2500
+        end     
+        
+        t = timer.performWithDelay(delay, function() 
+              fish:moveTo({x=bobberEdge.x, y=bobberEdge.y, 
+                           onComplete=function()
+                             newSplash({x=x, y=y, collide = false}) 
+                             fish.isBiting=true
+
+                             -- TODO: Add timestamp for determining fish to catch
+                             -- in the case 2 or more bite at once
+                             fish.biteTimer = timer.performWithDelay(fish.biteTime, function()
+                               fish.isBiting = false
+                               fish:scatter()
+                           end) 
+              end})
+            end)
+
+        table.insert(fish.tapTimers, t)
+
       end
     end
 
@@ -287,6 +316,9 @@ function _Fish.create(params)
     -- Fish has not bit the lure yet but is pursuing
     -- Fish runs away
     elseif fish.mode == "PURSUING" then
+      for i=#fish.tapTimers, 1, -1 do
+        timer.cancel(fish.tapTimers[i])
+      end
       transition.cancel(fish.anim)
       transition.cancel(fish.los)
       return 1
