@@ -12,7 +12,7 @@ local scene = composer.newScene()
 
 -- Local pieces of modal
 local modalBox
-local msgText
+local title
 local closeButton
 local valueText
 local bigPicture
@@ -20,9 +20,32 @@ local description
 local timeDisplay
 local useButton
 local buyButton
+local baitButtons = {}
 
 -- Display group
 local modalGroup
+
+-- Get bait info
+local baitInfo = require("data.baitInfo")
+
+-- Selected bait
+-- TODO: Set up so we save the last bait used
+local selectedBait = 1
+
+-- Function to handle changing the top display to the selected bait
+local function changeBait()
+  -- Change title
+  title.text = baitInfo[selectedBait].name
+
+  -- Set big picture image
+
+
+  -- Set description text
+  description.text = "Description\n" .. baitInfo[selectedBait].description
+
+  -- Set time effictiveness text
+  timeDisplay.text = "Time Effectiveness\n" .. baitInfo[selectedBait].time / 60000 .. " minutes"
+end
 
 -- Function to handle close button
 local function handleButtonEventClose(event)
@@ -42,6 +65,26 @@ end
 local function handleButtonEventUse(event)
   if (event.phase == "ended") then
     print("use bait")
+  end
+end
+
+-- Reset button color
+local function resetButton(event)
+  -- Reset all buttons
+  for i=1, #baitButtons do
+    baitButtons[i]:setFillColor(utils.hexToRGB("660000"))
+  end
+
+  -- Set button to be 'pressed'
+  event:setFillColor(utils.hexToRGB("a36666"))
+end
+
+-- Function to handle use button
+local function handleButtonEventBait(event)
+  if (event.phase == "ended") then
+    selectedBait = event.target.id
+    changeBait()
+    resetButton(event.target)
   end
 end
 
@@ -70,14 +113,14 @@ function scene:create(event)
 
   -- Options for primary text
 	local options = {
-	   text = "Bait",
+	   text = baitInfo[selectedBait].name,
      x = (modalGroup.width / 3.2) * -1,
      y = -450,
 	   fontSize = 50
 	}
-	msgText = display.newText(options)
-	msgText:setFillColor(0)
-	modalGroup:insert(msgText)
+	title = display.newText(options)
+	title:setFillColor(0)
+	modalGroup:insert(title)
 
   -- Create the close button
   closeButton = widget.newButton({
@@ -102,8 +145,9 @@ function scene:create(event)
   -- Insert the button
   modalGroup:insert(closeButton)
 
-  -- Get bait info
-  local baitInfo = require("data.baitInfo")
+  -- Get info
+  local descriptionString = baitInfo[selectedBait].description
+  local timeString = baitInfo[selectedBait].time
 
   -- Set up selected bait area
   -- big picture
@@ -115,20 +159,24 @@ function scene:create(event)
 
   -- description
   description = display.newText({
-    text = "Description\n",
+    text = "Description\n" .. descriptionString,
     x = 150,
-    y = -340,
-    fontSize = 35
+    y = -310,
+    width = display.contentWidth / 2,
+    fontSize = 35,
+    align = "center"
   })
   description:setFillColor(0)
 	modalGroup:insert(description)
 
   -- time display
   timeDisplay = display.newText({
-    text = "Time Effectiveness\n",
+    text = "Time Effectiveness\n" .. timeString / 60000 .. " minutes",
     x = 150,
-    y = -140,
-    fontSize = 35
+    y = -100,
+    width = display.contentWidth / 2,
+    fontSize = 35,
+    align = "center"
   })
   timeDisplay:setFillColor(0)
 	modalGroup:insert(timeDisplay)
@@ -178,6 +226,33 @@ function scene:create(event)
   
   -- Insert the button
   modalGroup:insert(buyButton)
+
+  -- Create widgets for all the different kinds of baits
+  -- TODO: Fix placement
+  for i=1, #baitInfo do
+    baitButtons[i] = widget.newButton({
+      label = baitInfo[i].name,
+      fontSize = 40,
+      labelColor = {default={utils.hexToRGB("FFFFFF")}, over={utils.hexToRGB("000000")}},
+      onEvent = handleButtonEventBait,
+      emboss = false,
+      -- Properties for a rounded rectangle button
+      shape = "roundedRect",
+      width = 125,
+      height = 75,
+      cornerRadius = 25,
+      fillColor = {default={utils.hexToRGB("660000")}, over={utils.hexToRGB("a36666")}},
+      strokeColor = {default={utils.hexToRGB("a36666")}, over={utils.hexToRGB("660000")}},
+      strokeWidth = 4,
+      id = i,
+    })
+    baitButtons[i].x = -200 + ((i - 1) * 175)
+    baitButtons[i].y = 175
+    modalGroup:insert(baitButtons[i])
+  end
+
+  -- Finally call resetButton to set the button to be already pressed
+  resetButton(baitButtons[selectedBait])
 end
 
 -- show()
