@@ -4,6 +4,8 @@
 -- Physics
 local physics = require('physics')
 local newSplash = require('classes.splash').create
+local utils = require('utils')
+
 -- Bobber object
 local _Bobber = {}
 
@@ -52,12 +54,6 @@ function _Bobber.create(x, y, group)
     -- Physics body
     physics.addBody(bobber.anim, "dynamic", {filter = {groupIndex=-1}})
     bobber.anim.linearDamping = 1
-
-    -- Convert hex code to Corona RGB
-    local function hexToRGB(hexCode)
-        local hexCode = hexCode:gsub("#","")
-        return tonumber("0x"..hexCode:sub(1,2))/255,tonumber("0x"..hexCode:sub(3,4))/255,tonumber("0x"..hexCode:sub(5,6))/255;
-    end
 
     -- Get bobber x, y
     function bobber:getLocation()
@@ -131,7 +127,7 @@ function _Bobber.create(x, y, group)
             -- Set power meter color
             local height = math.floor(bobber.power.height / 50) + 1
             if height > 10 then height = height - 1 end
-            bobber.power:setFillColor(hexToRGB(bobber.power.colors[height]))
+            bobber.power:setFillColor(utils.hexToRGB(bobber.power.colors[height]))
 
             -- Stated cast
             bobber.startedCast = true

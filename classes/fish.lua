@@ -6,7 +6,7 @@
 
 local utils = require('utils')
 local physics = require('physics')
-local fishInfo = require('locations.fishInfo')
+local fishInfo = require('data.fishInfo')
 local newSplash = require('classes.splash').create
 local newRipple = require('classes.ripple').create
 local _Fish = {}

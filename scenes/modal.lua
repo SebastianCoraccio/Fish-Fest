@@ -3,7 +3,7 @@
 
 -- Imports
 local composer = require( "composer" )
-local fishInfo = require("locations.fishInfo")
+local fishInfo = require("data.fishInfo")
 local widget = require("widget")
 
 -- This scene

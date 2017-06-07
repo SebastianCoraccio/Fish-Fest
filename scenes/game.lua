@@ -7,6 +7,7 @@ local newFish = require("classes.fish").create
 local newBobber = require("classes.bobber").create
 local physics = require("physics")
 local newLocation = require("classes.location").create
+local newBaitButton = require("classes.baitButton").create
 
 -- Load the DB
 -- local sqlite3 = require("sqlite3")
@@ -34,6 +35,7 @@ local modalIsShowing = false
 -- Display groups
 local backgroundGroup
 local mainGroup
+local baitButton
 
 -- Location
 -- TODO: Need to get users pick for location. Passed from composer scene
@@ -81,6 +83,9 @@ function scene:create(event)
   -- Create the bobber
   bobber = newBobber(display.contentCenterX, display.contentCenterY + 500, mainGroup)
 
+  -- Create bait button
+  baitButton = newBaitButton(display.contentCenterX + display.contentWidth / 3, display.contentHeight, mainGroup)
+
   --Create the fish
   for i=1,3 do
     addFish()
@@ -97,7 +102,7 @@ function scene:create(event)
 --     end
 -- end
 -- print("\n")
--- local fishInfo = require("locations.fishInfo")
+-- local fishInfo = require("data.fishInfo")
 -- for i=1,#fishCount - 1 do
 --     print(tostring(fishCount[i]/10000) .. "%\t : " .. fishInfo[i].name)
 -- end
@@ -107,6 +112,7 @@ function scene:create(event)
     -- Add catch event and related listeners
   Runtime:addEventListener("touch", bobber.catch)
   bobber.anim:addEventListener("catchEvent", scene.reelIn)
+  baitButton.anim:addEventListener("pauseEvent", pauseGame)
 end
 
 -- show()

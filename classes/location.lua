@@ -7,10 +7,10 @@ function _Location.create(locationName)
   local location = {}
 
   -- Get fish information for that location
-  local fish = require("locations." .. locationName).fish
+  local fish = require("data." .. locationName).fish
   
   -- Information about trash
-  local trash = require("locations.trash")
+  local trash = require("data.trash")
 
   local function giveTrash()
     return trash[math.random(1,3)]

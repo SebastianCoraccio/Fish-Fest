@@ -1,12 +1,17 @@
 -- Utility functions used numerous times in the project
 local utils = {}
 
+-- Convert hex code to Corona RGB
+function utils.hexToRGB(hexCode)
+    local hexCode = hexCode:gsub("#","")
+    return tonumber("0x"..hexCode:sub(1,2))/255,tonumber("0x"..hexCode:sub(3,4))/255,tonumber("0x"..hexCode:sub(5,6))/255;
+end
+
 -- Returns the distance between two given points
 -- Params: (x1, y1) , (x2, y2)
 function utils.dist(x1, y1, x2, y2)
   return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 )
 end
-
 
 -- Returns, in degrees, the rotation 
 -- Params: (x1, y1) , (x2, y2)
