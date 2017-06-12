@@ -7,6 +7,10 @@ local fishInfo = require("data.fishInfo")
 local widget = require("widget")
 local utils = require("utils")
 
+-- Set up DB
+local newDB = require("database.db").create
+local db = newDB()
+
 -- This scene
 local scene = composer.newScene()
 
@@ -21,6 +25,9 @@ local timeDisplay
 local useButton
 local buyButton
 local baitButtons = {}
+
+-- Current location
+local location
 
 -- Display group
 local modalGroup
@@ -64,7 +71,21 @@ end
 -- Function to handle use button
 local function handleButtonEventUse(event)
   if (event.phase == "ended") then
-    print("use bait")
+  -- get table of current date and time
+  local t = os.date('*t')
+  -- Bait Start time
+  local startTime = os.time(t)
+  -- Calculate end time based on bait
+  t.min = t.min + baitInfo[selectedBait].time
+  local endTime = os.time(t)
+  
+  -- Add entry to DB
+  local insert = [[INSERT INTO BaitUsages VALUES (']] .. location .. [[', ']] .. baitInfo[selectedBait].name .. [[', ']] .. 
+    startTime .. [[', ']] .. endTime .. [[');]] 
+  db:insert(insert)
+  db:print()
+
+  -- TODO: Set up a push notification
   end
 end
 
@@ -102,6 +123,9 @@ function scene:create(event)
   -- Place the group
 	modalGroup.x = display.contentWidth / 2
 	modalGroup.y = display.contentHeight / 2
+
+  -- Set the location
+  location = event.params.location
 
   -- Code here runs when the scene is first created but has not yet appeared on screen
   -- Background

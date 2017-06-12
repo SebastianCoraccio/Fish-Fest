@@ -9,10 +9,12 @@ local physics = require("physics")
 local newLocation = require("classes.location").create
 local newBaitButton = require("classes.baitButton").create
 
--- Load the DB
--- local sqlite3 = require("sqlite3")
--- local path = system.pathForFile("database.db", system.DocumentsDirectory)
--- local db = sqlite3.open(path)
+-- Fish info
+local fishInfo = require("data.fishInfo")
+
+-- Set up DB
+local newDB = require("database.db").create
+local db = newDB()
 
 -- Start the physics with no gravity
 -- physics.setDrawMode( "hybrid" )
@@ -37,6 +39,10 @@ local backgroundGroup
 local mainGroup
 local baitButton
 
+-- Current rod upgrade
+-- TODO: Decide how much we want to increase the timer per rod upgrade
+local rod = db:getRows("StoreItems")[1].currentRodUpgrade * 150
+
 -- Location
 -- TODO: Need to get users pick for location. Passed from composer scene
 local location = newLocation('river')
@@ -52,7 +58,8 @@ function addFish()
                      minX=0,
                      minY=-100,
                      fid=fishToAdd.fid,
-                     group=mainGroup})
+                     group=mainGroup,
+                     rod=rod})
   table.insert(fishTable, f)
 end
 
@@ -84,7 +91,7 @@ function scene:create(event)
   bobber = newBobber(display.contentCenterX, display.contentCenterY + 500, mainGroup)
 
   -- Create bait button
-  baitButton = newBaitButton(display.contentCenterX + display.contentWidth / 3, display.contentHeight, mainGroup)
+  baitButton = newBaitButton(display.contentCenterX + display.contentWidth / 3, display.contentHeight, mainGroup, 'river')
 
   --Create the fish
   for i=1,3 do
@@ -102,7 +109,6 @@ function scene:create(event)
 --     end
 -- end
 -- print("\n")
--- local fishInfo = require("data.fishInfo")
 -- for i=1,#fishCount - 1 do
 --     print(tostring(fishCount[i]/10000) .. "%\t : " .. fishInfo[i].name)
 -- end
@@ -217,6 +223,41 @@ function scene:reelIn()
               }
           }
           composer.showOverlay("scenes.modal", options)
+          
+          -- Check if that fish has already been caught before
+          local fishCaught = db:getRows("FishCaught")
+          local updated = false
+          for i=1, #fishCaught do
+            -- Update row
+            if (fishCaught[i].fid == fid) then
+              -- TODO: Use actually gaussian weight insetad of 69.69
+              local insert = [[UPDATE FishCaught SET numberCaught=]] .. fishCaught[i].numberCaught + 1 .. 
+                [[, largestCaught=]] .. math.max(fishCaught[i].largestCaught, 69.69) .. [[ WHERE fid=]] .. 
+                fid .. [[;]]
+              db:insert(insert)
+              updated = true
+              break
+            end
+          end
+
+          if (updated == false) then
+            -- Insert new row
+            local insert = [[INSERT INTO FishCaught VALUES (]] .. fid .. [[, ]] .. 69.69 .. [[, ]] .. 1 .. [[);]]
+            db:insert(insert)
+          end
+
+          -- Get current coin total
+          local currentCoins = db:getRows("StoreItems")[1].coins
+
+          -- Add coins to users total
+          for i=1, #fishInfo do
+            if (fishInfo[i].fid == fid) then
+              local insert = [[UPDATE StoreItems SET coins=]] .. currentCoins + fishInfo[i].value .. [[;]]
+              db:insert(insert)
+            end
+          end
+        
+          db:print()
 
           -- Destroy the fish image objects and remove fish from table
           fishTable[i]:destroy()

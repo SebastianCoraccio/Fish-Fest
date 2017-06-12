@@ -14,22 +14,23 @@ display.setStatusBar(display.HiddenStatusBar)
 math.randomseed(os.time())
 
 -- Set up DB
-require("database.db")
+local newDB = require("database.db").create
+local db = newDB()
 
--- Load the DB
-local sqlite3 = require("sqlite3")
-local path = system.pathForFile("database.db", system.DocumentsDirectory)
-local db = sqlite3.open(path)
+-- Create tables
+-- TODO: Delete this line eventually
+-------------------------------------
+-- db.delete() -- TESTING ONLY
+-------------------------------------
+db.createTables()
 
 -- Close the database
 local function onSystemEvent( event )
-    if ( event.type == "applicationExit" ) then
-        if ( db and db:isopen() ) then
-            db:close()
-        end
-    end
+  if ( event.type == "applicationExit" ) then
+    db.closeDb()
+  end
 end
-Runtime:addEventListener( "system", onSystemEvent )
+Runtime:addEventListener("system", onSystemEvent)
 
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now

@@ -9,7 +9,7 @@ local composer = require("composer")
 local _BaitButton = {}
 
 -- Create a bait button in the display group, 'group'
-function _BaitButton.create(x, y, group)
+function _BaitButton.create(x, y, group, loc)
   local baitButton = {}
 
   -- Open bait modal
@@ -20,7 +20,7 @@ function _BaitButton.create(x, y, group)
         effect = "fade",
         time = 400,
         params = {
-          fid = fid
+          location = loc
         }
       }
       composer.showOverlay("scenes.baitModal", options)
