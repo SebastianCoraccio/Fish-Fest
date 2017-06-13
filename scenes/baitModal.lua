@@ -51,7 +51,7 @@ local function changeBait()
   description.text = "Description\n" .. baitInfo[selectedBait].description
 
   -- Set time effictiveness text
-  timeDisplay.text = "Time Effectiveness\n" .. baitInfo[selectedBait].time / 60000 .. " minutes"
+  timeDisplay.text = "Time Effectiveness\n" .. baitInfo[selectedBait].time .. " minutes"
 end
 
 -- Function to handle close button
@@ -82,7 +82,7 @@ local function handleButtonEventUse(event)
   -- Add entry to DB
   local insert = [[INSERT INTO BaitUsages VALUES (']] .. location .. [[', ']] .. baitInfo[selectedBait].name .. [[', ']] .. 
     startTime .. [[', ']] .. endTime .. [[');]] 
-  db:insert(insert)
+  db:update(insert)
   db:print()
 
   -- TODO: Set up a push notification
@@ -195,7 +195,7 @@ function scene:create(event)
 
   -- time display
   timeDisplay = display.newText({
-    text = "Time Effectiveness\n" .. timeString / 60000 .. " minutes",
+    text = "Time Effectiveness\n" .. timeString .. " minutes",
     x = 150,
     y = -100,
     width = display.contentWidth / 2,

@@ -6,6 +6,27 @@
 
 -- Set up the composer
 local composer = require('composer')
+
+-- Set up DB
+local newDB = require("database.db").create
+local db = newDB()
+
+local function checkBaits()
+  local baits = db:getRows("BaitUsages")
+  -- Check if it still active
+  -- get table of current date and time
+  local t = os.date('*t')
+  -- Get current time
+  local currentTime = os.time(t)
+
+  -- Check current time against time in db
+  for i=1, #baits do
+    -- Bait is expired
+    if (baits[i].endTime <= tostring(currentTime)) then
+      db:update("DELETE FROM BaitUsages WHERE location='" .. baits[i].location .. "';")
+    end
+  end
+end
  
 -- Hide status bar
 display.setStatusBar(display.HiddenStatusBar)
@@ -13,16 +34,17 @@ display.setStatusBar(display.HiddenStatusBar)
 -- Seed the random number generator
 math.randomseed(os.time())
 
--- Set up DB
-local newDB = require("database.db").create
-local db = newDB()
-
 -- Create tables
 -- TODO: Delete this line eventually
 -------------------------------------
 -- db.delete() -- TESTING ONLY
 -------------------------------------
 db.createTables()
+
+db:print()
+
+-- Check if there is a bait in a loop every second
+timer.performWithDelay(1000, checkBaits)
 
 -- Close the database
 local function onSystemEvent( event )

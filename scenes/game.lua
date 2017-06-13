@@ -178,9 +178,9 @@ end
 
 -- Custom function for resuming the game (from pause state)
 function scene:resumeGame()
-    -- Code to resume game
-   modalIsShowing = false
-   bobber.setCast()
+  -- Code to resume game
+  modalIsShowing = false
+  bobber.setCast()
 end
 
 -- Pause the fish spawning and fish movement
@@ -234,7 +234,7 @@ function scene:reelIn()
               local insert = [[UPDATE FishCaught SET numberCaught=]] .. fishCaught[i].numberCaught + 1 .. 
                 [[, largestCaught=]] .. math.max(fishCaught[i].largestCaught, 69.69) .. [[ WHERE fid=]] .. 
                 fid .. [[;]]
-              db:insert(insert)
+              db:update(insert)
               updated = true
               break
             end
@@ -243,7 +243,7 @@ function scene:reelIn()
           if (updated == false) then
             -- Insert new row
             local insert = [[INSERT INTO FishCaught VALUES (]] .. fid .. [[, ]] .. 69.69 .. [[, ]] .. 1 .. [[);]]
-            db:insert(insert)
+            db:update(insert)
           end
 
           -- Get current coin total
@@ -253,7 +253,7 @@ function scene:reelIn()
           for i=1, #fishInfo do
             if (fishInfo[i].fid == fid) then
               local insert = [[UPDATE StoreItems SET coins=]] .. currentCoins + fishInfo[i].value .. [[;]]
-              db:insert(insert)
+              db:update(insert)
             end
           end
         

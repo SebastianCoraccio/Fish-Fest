@@ -41,7 +41,7 @@ function _DB.create()
   end
 
   -- Insert into Db
-  function Db:insert(insertString)
+  function Db:update(insertString)
     print(insertString)
     db:exec(insertString)
   end
