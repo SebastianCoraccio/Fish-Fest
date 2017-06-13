@@ -12,6 +12,7 @@ local newDB = require("database.db").create
 local db = newDB()
 
 local function checkBaits()
+  print("here")
   local baits = db:getRows("BaitUsages")
   -- Check if it still active
   -- get table of current date and time
@@ -44,7 +45,7 @@ db.createTables()
 db:print()
 
 -- Check if there is a bait in a loop every second
-timer.performWithDelay(1000, checkBaits)
+timer.performWithDelay(1000, checkBaits, 0)
 
 -- Close the database
 local function onSystemEvent( event )
