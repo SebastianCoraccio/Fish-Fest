@@ -12,7 +12,6 @@ local newDB = require("database.db").create
 local db = newDB()
 
 local function checkBaits()
-  print("here")
   local baits = db:getRows("BaitUsages")
   -- Check if it still active
   -- get table of current date and time
@@ -41,6 +40,11 @@ math.randomseed(os.time())
 -- db.delete() -- TESTING ONLY
 -------------------------------------
 db.createTables()
+
+-- Check if main store info is in DB
+if (#db:getRows("StoreItems") == 0) then
+  db:update("INSERT INTO StoreItems VALUES (0, 0, 0, 0);")
+end
 
 db:print()
 

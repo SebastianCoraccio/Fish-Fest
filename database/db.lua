@@ -82,8 +82,8 @@ function _DB.create()
   -- Should only be used in testing
   function Db:delete()
     db:exec[[
-      DROP TABLE FishCaught;
-      DROP TABLE BaitUsages;
+      DELETE FROM FishCaught;
+      DELETE FROM BaitUsages;
       DELETE FROM StoreItems;
       INSERT INTO StoreItems VALUES (0, 0, 0, 0);
     ]]
