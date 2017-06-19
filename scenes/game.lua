@@ -93,7 +93,7 @@ function scene:create(event)
   -- Create bait button
   baitButton = newBaitButton(display.contentCenterX + display.contentWidth / 3, display.contentHeight, mainGroup, 'river')
 
-  --Create the fish
+  -- Create the fish
   for i=1,3 do
     addFish()
   end
@@ -133,7 +133,7 @@ function scene:show( event )
 
     -- Timer to spawn fish throughout
     -- TODO: Finalize time
-    self.fishUpdateTimer = timer.performWithDelay(3000, function()
+    self.fishUpdateTimer = timer.performWithDelay(7000, function()
       self:updateFish()
     end, 0 )
   end

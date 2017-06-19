@@ -95,7 +95,7 @@ function _Fish.create(params)
   function fish:update()
     if fish.mode == "SEEKING" then
       fish.anim:setFillColor(1,1,1)
-      wait = math.random(2, 5) * 1000 
+      wait = math.random(3, 5) * 1000 
       fish.moveTimer = timer.performWithDelay(wait, fish.changeLocation, 1)
     end  
   end
@@ -103,7 +103,8 @@ function _Fish.create(params)
   -- Rotates the fish towards the given x,y location
   function fish:rotateTo(params)
     -- TODO: Use utils function
-    fish.dir = math.atan2(fish.anim.y - params.y, fish.anim.x - params.x) * (180/math.pi) - 90
+    -- fish.dir = math.atan2(fish.anim.y - params.y, fish.anim.x - params.x) * (180/math.pi) - 90
+    fish.dir = utils.rotationTo(params.x, params.y, fish.anim.x, fish.anim.y, fish.dir)
     -- Rotate towards new position
     transition.to(fish.anim, {rotation = fish.dir, time=1000})
     transition.to(fish.los, {rotation = fish.dir, time=1000})

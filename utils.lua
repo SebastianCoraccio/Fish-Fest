@@ -16,16 +16,20 @@ end
 -- Returns, in degrees, the rotation 
 -- Params: (x1, y1) , (x2, y2)
 function utils.rotationTo(x1, y1, x2, y2, currentRotation)
-  local newRotation = math.atan2(y1 - y2, x1 - x2)
-
-  local changeInRotation = currentRotation - newRotation
-  if( changeInRotation > math.pi) then
-    changeInRotation = changeInRotation - (2 * math.pi)
-  elseif changeInRotation < -math.pi then
-    changeInRotation = changeInRotation + (2 * math.pi)
+  local newRotation = math.atan2(y1 - y2, x1 - x2) * (180/math.pi) + 90 
+  if( math.abs(newRotation) > 180 ) then
+    newRotation = (360 - math.abs(newRotation)) * ( -1 * newRotation / newRotation)
   end
+  print("Rotation: " .. tostring(newRotation))
 
-  return changeInRotation
+--   local changeInRotation = currentRotation - newRotation
+--   if( changeInRotation > math.pi) then
+--     changeInRotation = changeInRotation - (2 * math.pi)
+--   elseif changeInRotation < -math.pi then
+--     changeInRotation = changeInRotation + (2 * math.pi)
+--   end
+
+  return newRotation
 end
 
 -- Finds the point 'distance' away from (x1, y1) on the line formed by 
