@@ -278,13 +278,12 @@ function scene:reelIn()
       -- Scatters and is removed
     elseif caught == 1 then
       fishTable[i].scatter()
-      if (fish) then 
-        timer.performWithDelay(500, function()
-          -- Destroy the fish image objects and remove fish from table
-          fishTable[i]:destroy()
-          table.remove(fishTable, i)
-        end)
-      end
+    --   if (fish) then    * David had this, not sure why. Nil value caused crashed? IDK
+      timer.performWithDelay(1000, function()
+        -- Destroy the fish image objects and remove fish from table
+        fishTable[i]:destroy()
+        table.remove(fishTable, i)
+      end)
     end
   end
 end
