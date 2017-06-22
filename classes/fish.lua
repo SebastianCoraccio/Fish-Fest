@@ -277,7 +277,7 @@ function _Fish.create(params)
 
                              -- TODO: Add timestamp for determining fish to catch
                              -- in the case 2 or more bite at once
-                             fish.biteTimer = timer.performWithDelay(fish.biteTime + params.rod, function()
+                             fish.biteTimer = timer.performWithDelay(fish.biteTime + params.rod + 1000, function()
                                fish.isBiting = false
                                fish:scatter()
                            end) 

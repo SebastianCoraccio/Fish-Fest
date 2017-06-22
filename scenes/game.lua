@@ -90,7 +90,7 @@ function scene:create(event)
   bobber = newBobber(display.contentCenterX, display.contentCenterY + 500, mainGroup)
 
   -- Create bait button
-  baitButton = newBaitButton(display.contentCenterX + display.contentWidth / 3, display.contentHeight, mainGroup, 'river')
+  baitButton = newBaitButton(display.contentCenterX + display.contentWidth / 3, display.contentHeight, mainGroup, event.params.location)
 
   -- Get location
   location = newLocation(event.params.location)
