@@ -44,8 +44,7 @@ local baitButton
 local rod = db:getRows("StoreItems")[1].currentRodUpgrade * 150
 
 -- Location
--- TODO: Need to get users pick for location. Passed from composer scene
-local location = newLocation('river')
+local location
 
 -- Table to hold the fish
 fishTable = {}
@@ -92,6 +91,9 @@ function scene:create(event)
 
   -- Create bait button
   baitButton = newBaitButton(display.contentCenterX + display.contentWidth / 3, display.contentHeight, mainGroup, 'river')
+
+  -- Get location
+  location = newLocation(event.params.location)
 
   -- Create the fish
   for i=1,3 do

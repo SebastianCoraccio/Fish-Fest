@@ -22,7 +22,7 @@ return {
     {fid=18, name='Red Hake',               value=1150, minSize=0,      maxSize=0,      sizeGroup='medium', biteTime=400,   description=''},
     {fid=19, name='Bluefin Tuna',           value=1750, minSize=0,      maxSize=0,      sizeGroup='large',  biteTime=140,   description=''},
     {fid=20, name='Monkfish',               value=1000, minSize=0,      maxSize=0,      sizeGroup='medium', biteTime=120,   description=''},
-    {fid=20, name='Great White',            value=1000, minSize=0,      maxSize=0,      sizeGroup='shark',  biteTime=20,    description=''},
+    {fid=21, name='Great White',            value=1000, minSize=0,      maxSize=0,      sizeGroup='shark',  biteTime=20,    description=''},
     {fid=99, name='Trash',                  value=50,   minSize=0,      maxSize=0,      sizeGroup='medium', biteTime=10000, description=''},
     
 }
