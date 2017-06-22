@@ -192,6 +192,13 @@ end
 -- Checks if any fish were caught when the bobber was reeling in
 function scene:reelIn()
 
+
+  -- Destroy the fish image objects and remove fish from table
+  function removeFish(index)
+    fishTable[index]:destroy()
+    table.remove(fishTable, index)
+  end  
+
   -- Becomes true when a fish is caught and prevents multiple catchs
   fishCaught = false
 
@@ -227,18 +234,15 @@ function scene:reelIn()
           -- Update DB
           db:caughtFish(fid)
 
-          -- Destroy the fish image objects and remove fish from table
-          fishTable[i]:destroy()
-          table.remove(fishTable, i)
+          removeFish(i)
+
         end)
 
         -- A fish has already been caught, so this fish scatters and is removed
       else
         fishTable[i].scatter()
         timer.performWithDelay(500, function()
-          -- Destroy the fish image objects and remove fish from table
-          fishTable[i]:destroy()
-          table.remove(fishTable, i)
+          removeFish(i)
         end)
       end
 
@@ -248,9 +252,7 @@ function scene:reelIn()
       fishTable[i].scatter()
     --   if (fish) then    * David had this, not sure why. Nil value caused crashed? IDK
       timer.performWithDelay(1000, function()
-        -- Destroy the fish image objects and remove fish from table
-        fishTable[i]:destroy()
-        table.remove(fishTable, i)
+        removeFish(i)
       end)
     end
   end
