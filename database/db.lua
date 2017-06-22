@@ -78,6 +78,7 @@ function _DB.create()
     end
   end
 
+  -- Update DB when a fish is caught
   function Db:caughtFish(fid)
     -- Check if that fish has already been caught before
     local fishCaught = Db:getRows("FishCaught")
