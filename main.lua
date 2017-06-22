@@ -11,6 +11,7 @@ local composer = require('composer')
 local newDB = require("database.db").create
 local db = newDB()
 
+-- Function that gets called each second to check if any active baits need to be removed
 local function checkBaits()
   local baits = db:getRows("BaitUsages")
   -- Check if it still active

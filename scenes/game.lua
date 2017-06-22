@@ -223,41 +223,9 @@ function scene:reelIn()
               }
           }
           composer.showOverlay("scenes.modal", options)
-          
-          -- Check if that fish has already been caught before
-          local fishCaught = db:getRows("FishCaught")
-          local updated = false
-          for i=1, #fishCaught do
-            -- Update row
-            if (fishCaught[i].fid == fid) then
-              -- TODO: Use actually gaussian weight insetad of 69.69
-              local insert = [[UPDATE FishCaught SET numberCaught=]] .. fishCaught[i].numberCaught + 1 .. 
-                [[, largestCaught=]] .. math.max(fishCaught[i].largestCaught, 69.69) .. [[ WHERE fid=]] .. 
-                fid .. [[;]]
-              db:update(insert)
-              updated = true
-              break
-            end
-          end
 
-          if (updated == false) then
-            -- Insert new row
-            local insert = [[INSERT INTO FishCaught VALUES (]] .. fid .. [[, ]] .. 69.69 .. [[, ]] .. 1 .. [[);]]
-            db:update(insert)
-          end
-
-          -- Get current coin total
-          local currentCoins = db:getRows("StoreItems")[1].coins
-
-          -- Add coins to users total
-          for i=1, #fishInfo do
-            if (fishInfo[i].fid == fid) then
-              local insert = [[UPDATE StoreItems SET coins=]] .. currentCoins + fishInfo[i].value .. [[;]]
-              db:update(insert)
-            end
-          end
-        
-          db:print()
+          -- Update DB
+          db:caughtFish(fid)
 
           -- Destroy the fish image objects and remove fish from table
           fishTable[i]:destroy()
