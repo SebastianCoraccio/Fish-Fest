@@ -71,21 +71,35 @@ end
 -- Function to handle use button
 local function handleButtonEventUse(event)
   if (event.phase == "ended") then
-  -- get table of current date and time
-  local t = os.date('*t')
-  -- Bait Start time
-  local startTime = os.time(t)
-  -- Calculate end time based on bait
-  t.min = t.min + baitInfo[selectedBait].time
-  local endTime = os.time(t)
-  
-  -- Add entry to DB
-  local insert = [[INSERT INTO BaitUsages VALUES (']] .. location .. [[', ']] .. baitInfo[selectedBait].name .. [[', ']] .. 
-    startTime .. [[', ']] .. endTime .. [[');]] 
-  db:update(insert)
-  db:print()
+    -- Check if this location already has an active bait
+    local baits = db:getRows("baitUsages")
+    local duplicate = false
+    for i=1,#baits do
+      if (baits[i].location == location) then
+        duplicate = true
+        break
+      end
+    end
+    
+    if (duplicate == false) then
+      -- get table of current date and time
+      local t = os.date('*t')
+      -- Bait Start time
+      local startTime = os.time(t)
+      -- Calculate end time based on bait
+      t.min = t.min + baitInfo[selectedBait].time
+      local endTime = os.time(t)
+      -- Add entry to DB
+      local insert = [[INSERT INTO BaitUsages VALUES (']] .. location .. [[', ']] .. baitInfo[selectedBait].name .. [[', ']] .. 
+        startTime .. [[', ']] .. endTime .. [[');]] 
+      db:update(insert)
+      db:print()
+    else 
+      -- Show error
+      print("error")
+    end
 
-  -- TODO: Set up a push notification
+    -- TODO: Set up a push notification
   end
 end
 
@@ -135,12 +149,13 @@ function scene:create(event)
 	modalBox.strokeWidth = 4
 	modalGroup:insert(modalBox)
 
-  -- Options for primary text
+  -- Options for title text
 	local options = {
 	   text = baitInfo[selectedBait].name,
-     x = (modalGroup.width / 3.2) * -1,
+     x = -150,
      y = -450,
-	   fontSize = 50
+	   fontSize = 50,
+     align = "left"
 	}
 	title = display.newText(options)
 	title:setFillColor(0)
@@ -183,10 +198,10 @@ function scene:create(event)
 
   -- description
   description = display.newText({
-    text = "Description\n" .. descriptionString,
+    text = "Description:\n" .. descriptionString,
     x = 150,
     y = -310,
-    width = display.contentWidth / 2,
+    width = display.contentWidth / 2.5,
     fontSize = 35,
     align = "center"
   })
@@ -253,6 +268,8 @@ function scene:create(event)
 
   -- Create widgets for all the different kinds of baits
   -- TODO: Fix placement
+  local xCounter = 0
+  local yCounter = 0
   for i=1, #baitInfo do
     baitButtons[i] = widget.newButton({
       label = baitInfo[i].name,
@@ -262,7 +279,7 @@ function scene:create(event)
       emboss = false,
       -- Properties for a rounded rectangle button
       shape = "roundedRect",
-      width = 125,
+      width = 250,
       height = 75,
       cornerRadius = 25,
       fillColor = {default={utils.hexToRGB("660000")}, over={utils.hexToRGB("a36666")}},
@@ -270,8 +287,18 @@ function scene:create(event)
       strokeWidth = 4,
       id = i,
     })
-    baitButtons[i].x = -200 + ((i - 1) * 175)
-    baitButtons[i].y = 175
+    baitButtons[i].x = -150 + ((xCounter) * 300)
+    baitButtons[i].y = 175 + (yCounter * 100)
+
+    -- Increase the counters
+    xCounter = xCounter + 1
+
+    -- Reset counters if necessary
+    if (xCounter > 1) then 
+      xCounter = 0
+      yCounter = yCounter + 1
+    end
+
     modalGroup:insert(baitButtons[i])
   end
 
