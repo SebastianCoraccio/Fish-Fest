@@ -30,10 +30,10 @@ function _Location.create(locationName)
       if (baitUsages[i].location == locationName) then
         local baits = require("data.baitInfo")
         local bait
-        for i=1,#baits do
-          if (baitUsages[i].baitType == baits[i].name) then
-            bait = baits[i]
-            affectedFID = baits[i].affectedFish
+        for j=1,#baits do
+          if (baitUsages[i].baitType == baits[j].name) then
+            bait = baits[j]
+            affectedFID = baits[j].affectedFish
             break
           end
         end

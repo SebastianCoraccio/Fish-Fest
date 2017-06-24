@@ -52,6 +52,16 @@ local function changeBait()
 
   -- Set time effictiveness text
   timeDisplay.text = "Time Effectiveness\n" .. baitInfo[selectedBait].time .. " minutes"
+
+  -- Check if the use button needs to be changed
+  local baits = db:getRows("baitUsages")
+  for i=1,#baits do
+    if (baits[i].location == location) then
+      useButton:setLabel("Clear Bait")
+    else
+      useButton:setLabel("Use")
+    end
+  end
 end
 
 -- Function to handle close button
@@ -94,9 +104,13 @@ local function handleButtonEventUse(event)
         startTime .. [[', ']] .. endTime .. [[');]] 
       db:update(insert)
       db:print()
+      useButton:setLabel("Clear Bait")
     else 
       -- Show error
-      print("error")
+      local insert = [[DELETE FROM BaitUsages WHERE location = ']] .. location .. [[';]]
+      db:update(insert)
+      db:print()
+      useButton:setLabel("Use")
     end
 
     -- TODO: Set up a push notification
@@ -304,6 +318,7 @@ function scene:create(event)
 
   -- Finally call resetButton to set the button to be already pressed
   resetButton(baitButtons[selectedBait])
+  changeBait()
 end
 
 -- show()
