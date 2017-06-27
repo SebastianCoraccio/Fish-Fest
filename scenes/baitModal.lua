@@ -58,6 +58,7 @@ local function changeBait()
   for i=1,#baits do
     if (baits[i].location == location) then
       useButton:setLabel("Clear Bait")
+      break
     else
       useButton:setLabel("Use")
     end
