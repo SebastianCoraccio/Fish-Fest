@@ -165,9 +165,19 @@ function scene:updateFish()
       fishTable[i].update()
     end
 
+    -- Check if there is an active bait that needs to increase MAX_FISH
+    local maxFishIncrease = 0
+    local baits = db:getRows("baitUsages")
+    for i=1,#baits do
+      if (baits[i].location == location) then
+        maxFishIncrease = baits[i].maxFish
+        break
+      end
+    end
+
     -- Check if adding a fish is needed, and try to do so it yes
     -- TODO: Create an attributes table for each of the locations
-    local MAX_FISH = 5
+    local MAX_FISH = 5 + maxFishIncrease
     local SPAWN_CHANCE = .25
 
     if #fishTable < MAX_FISH then
