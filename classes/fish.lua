@@ -136,6 +136,10 @@ function _Fish.create(params)
 
 
   -- Fish moves to the point, creates a ripple, then returns to original spot
+  -- Params
+  -- bobberEdgeX, bobberEdgeY - Border of the bobber between the fish and bobber center 
+  -- bobberCenterX, bobberCenterY - Center of bobber
+  -- lpointX, lpointY - Point a distance away from the bobber, where the fish looks from
   function fish:tap(params)
 
     -- Move to the point and create a ripple
@@ -143,7 +147,7 @@ function _Fish.create(params)
                  onComplete=function()
                    newRipple({x=params.bobberCenterX, y=params.bobberCenterY}) 
                    -- Move back to orginal position
-                   fish:rotateTo({x=params.bobberEdgeX, y=params.bobberEdgeY})
+                --    fish:rotateTo({x=params.bobberEdgeX, y=params.bobberEdgeY})
                    fish:moveTo({x=params.lpointX, y=params.lpointY})
                 end})
 
