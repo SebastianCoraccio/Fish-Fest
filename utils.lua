@@ -21,12 +21,10 @@ function utils.rotationTo(x1, y1, x2, y2, currentRotation)
     newRotation = (360 - math.abs(newRotation)) * ( -1 * newRotation / newRotation)
   end
 
---   local changeInRotation = currentRotation - newRotation
---   if( changeInRotation > math.pi) then
---     changeInRotation = changeInRotation - (2 * math.pi)
---   elseif changeInRotation < -math.pi then
---     changeInRotation = changeInRotation + (2 * math.pi)
---   end
+  local changeInRotation = currentRotation - newRotation
+  if (changeInRotation > 180) then
+    newRotation = 360 - math.abs(newRotation)
+  end
 
   return newRotation
 end
