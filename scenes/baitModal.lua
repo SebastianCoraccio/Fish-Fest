@@ -205,10 +205,11 @@ function scene:create(event)
 
   -- Set up selected bait area
   -- big picture
-	bigPicture = display.newRoundedRect(-150, -200, display.contentWidth / 3, display.contentHeight / 3, 12)
-	bigPicture:setFillColor(0)
-	bigPicture:setStrokeColor(78, 179, 211)
-	bigPicture.strokeWidth = 4
+	bigPicture = display.newImage("images/baits/chum_large.png", -150, -200)
+	-- bigPicture = display.newRoundedRect(-150, -200, display.contentWidth / 3, display.contentHeight / 3, 12)
+	-- bigPicture:setFillColor(0)
+	-- bigPicture:setStrokeColor(78, 179, 211)
+	-- bigPicture.strokeWidth = 4
 	modalGroup:insert(bigPicture)
 
   -- description
