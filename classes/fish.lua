@@ -281,10 +281,20 @@ function _Fish.create(params)
 
                              -- TODO: Add timestamp for determining fish to catch
                              -- in the case 2 or more bite at once
-                             fish.biteTimer = timer.performWithDelay(fish.biteTime + params.rod + 1000, function()
-                               fish.isBiting = false
-                               fish:scatter()
-                           end) 
+                             local totalBiteTime = fish.biteTime + params.rod;
+                             -- Check if the bite times is negative. 
+                             -- If it is then the player has no chance to catch this fish
+                             -- Potentially add special sound or message 
+                             -- to alert player to upgrade rod
+                             if(totalBiteTime <= 0) then
+                                fish.isBiting = false
+                                fish:scatter()
+                             else
+                               fish.biteTimer = timer.performWithDelay(totalBiteTime, function()
+                                 fish.isBiting = false
+                                 fish:scatter()
+                               end)
+                             end 
               end})
             end)
 
