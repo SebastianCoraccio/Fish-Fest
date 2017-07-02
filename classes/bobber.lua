@@ -20,6 +20,8 @@ local _Bobber = {}
 function _Bobber.create(x, y, group)
     local bobber = {}
 
+    local bobberHit = audio.loadSound("audio/bobber_hit.wav")
+
     -- Set the location
     bobber.x, bobber.y = x, y
 
@@ -150,6 +152,7 @@ function _Bobber.create(x, y, group)
                 local function scaleDown()
                     transition.to(bobber.anim, {time=1100, xScale=.8, yScale=.8, 
                     onComplete=function()
+                        audio.play( bobberHit )
                         newSplash({x=bobber.anim.x, y=bobber.anim.y, collide = true})
                         bobber.anim.isActive = true
                         bobber.anim.isCatchable = true

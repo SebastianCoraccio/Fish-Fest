@@ -18,6 +18,8 @@ local _Fish = {}
 -- defined by two vertex (minX, minY), (maxX, maxY)
 function _Fish.create(params)
 
+  local fishBite = audio.loadSound("audio/fish_bite.wav")  
+
   local fish = {}
   fish.mode = "SPAWNING"
 
@@ -276,6 +278,7 @@ function _Fish.create(params)
         t = timer.performWithDelay(delay, function() 
               fish:moveTo({x=bobberEdge.x, y=bobberEdge.y, 
                            onComplete=function()
+                           audio.play(fishBite)
                              newSplash({x=x, y=y, collide = false}) 
                              fish.isBiting=true
 
