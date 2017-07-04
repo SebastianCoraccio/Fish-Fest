@@ -15,6 +15,7 @@ local store
 
 -- Keeps track of what scene to load based on the users swipe
 local sceneToLoad
+local slideDirection
 
 -- Function to detect which way the user swiped
 -- Loads corresponding 
@@ -25,22 +26,27 @@ local function handleSwipeEvent(event)
     if (dX > 200) then
       --swipe right
       sceneToLoad = 'store'
+      slideDirection = 'Left'
     elseif (dX < -200) then
       --swipe left
       sceneToLoad = 'game'
+      slideDirection = 'Right'
     elseif (dY > 200) then
       --swipe down
       sceneToLoad = 'up'
+      slideDirection = "Top"
     elseif (dY < -200) then
       --swipe up
       sceneToLoad = 'down'
+      slideDirection = "Bottom"
     end
   end
 
   if (event.phase == "ended") then
     -- Temporary if
     if (sceneToLoad == "game") then 
-      composer.gotoScene('scenes.' .. sceneToLoad, {params = {location='ocean'}})
+      -- Decide if we want to use slide or from effect
+      composer.gotoScene('scenes.' .. sceneToLoad, {params = {location='ocean'}, effect="from" .. slideDirection, time=800})
     end
   end
 end

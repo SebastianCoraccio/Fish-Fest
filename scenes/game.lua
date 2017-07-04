@@ -207,6 +207,7 @@ function scene:reelIn()
 
   -- Destroy the fish image objects and remove fish from table
   function removeFish(index)
+    -- print(index, #fishTable)
     fishTable[index]:destroy()
     table.remove(fishTable, index)
   end  
@@ -242,13 +243,11 @@ function scene:reelIn()
               }
           }
           composer.showOverlay("scenes.modal", options)
-
-          -- Update DB
-          db:caughtFish(fid)
-
-          removeFish(i)
-
         end)
+
+        -- Update DB and remove fish
+        db:caughtFish(fid)
+        removeFish(i)
 
         -- A fish has already been caught, so this fish scatters and is removed
       else
