@@ -107,7 +107,7 @@ local function handleButtonEventUse(event)
       db:print()
       useButton:setLabel("Clear Bait")
     else 
-      -- Show error
+      -- Clear bait
       local insert = [[DELETE FROM BaitUsages WHERE location = ']] .. location .. [[';]]
       db:update(insert)
       db:print()

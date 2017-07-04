@@ -161,6 +161,7 @@ function scene:create(event)
       height = 1000,
       scrollWidth = 0,
       backgroundColor = {1, 1, 1},
+      horizontalScrollDisabled = true,
       listener = scrollListener
     }
   )
