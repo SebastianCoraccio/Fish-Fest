@@ -62,4 +62,5 @@ Runtime:addEventListener("system", onSystemEvent)
 
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now
-composer.gotoScene('scenes.game', {params = {location='ocean'}})
+-- composer.gotoScene('scenes.game', {params = {location='ocean'}})
+composer.gotoScene('scenes.title')
