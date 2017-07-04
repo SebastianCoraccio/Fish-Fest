@@ -24,16 +24,16 @@ local function handleSwipeEvent(event)
     local dY = event.y - event.yStart
     if (dX > 200) then
       --swipe right
-      sceneToLoad = 'game'
+      sceneToLoad = 'store'
     elseif (dX < -200) then
       --swipe left
-      sceneToLoad = 'store'
+      sceneToLoad = 'game'
     elseif (dY > 200) then
       --swipe down
-      sceneToLoad = 'down'
+      sceneToLoad = 'up'
     elseif (dY < -200) then
       --swipe up
-      sceneToLoad = 'up'
+      sceneToLoad = 'down'
     end
   end
 
