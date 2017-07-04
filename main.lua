@@ -42,11 +42,6 @@ math.randomseed(os.time())
 -------------------------------------
 db.createTables()
 
--- Check if main store info is in DB
-if (#db:getRows("StoreItems") == 0) then
-  db:update("INSERT INTO StoreItems VALUES (0, 0, 0, 0);")
-end
-
 db:print()
 
 -- Check if there is a bait in a loop every second
@@ -60,7 +55,11 @@ local function onSystemEvent( event )
 end
 Runtime:addEventListener("system", onSystemEvent)
 
+-- Set background color
+display.setDefault("background", 1, 1, 1)
+
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now
 -- composer.gotoScene('scenes.game', {params = {location='ocean'}})
 composer.gotoScene('scenes.title')
+-- composer.gotoScene('scenes.store')

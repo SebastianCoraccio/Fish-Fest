@@ -207,7 +207,6 @@ function scene:reelIn()
 
   -- Destroy the fish image objects and remove fish from table
   function removeFish(index)
-    -- print(index, #fishTable)
     fishTable[index]:destroy()
     table.remove(fishTable, index)
   end  

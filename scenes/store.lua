@@ -2,8 +2,7 @@
 -- Popup for the modal when a user catches a fish
 
 -- Imports
-local composer = require( "composer" )
-local fishInfo = require("data.fishInfo")
+local composer = require('composer')
 local widget = require("widget")
 local utils = require("utils")
 
@@ -14,35 +13,56 @@ local db = newDB()
 -- This scene
 local scene = composer.newScene()
 
--- Local pieces of modal
-local modalBox
+-- Local groups
+local mainGroup
+local rodGroup
+local baitGroup
+
+-- Things
 local title
-local closeButton
-local valueText
-local bigPicture
-local description
-local timeDisplay
-local useButton
-local buyButton
-local baitButtons = {}
+local coins
+local scrollView
 
--- Current location
-local location
-
--- Display group
-local modalGroup
+-- Rod
+local rodBox
+local rodTitleText
 
 -- Get bait info
 local baitInfo = require("data.baitInfo")
-
--- Selected bait
--- TODO: Set up so we save the last bait used
+local baitBox
+local baitButtons = {}
 local selectedBait = 1
+local bigPicture
+local baitTitleText
+local description
+
+-- If the user swipes to the right
+local returnToTitle = false
+
+-- ScrollView listener
+local function scrollListener( event )
+    -- local phase = event.phase
+    -- if ( phase == "began" ) then print( "Scroll view was touched" )
+    -- elseif ( phase == "moved" ) then print( "Scroll view was moved" )
+    -- elseif ( phase == "ended" ) then print( "Scroll view was released" )
+    -- end
+ 
+    -- -- In the event a scroll limit is reached...
+    -- if ( event.limitReached ) then
+    --     if ( event.direction == "up" ) then print( "Reached bottom limit" )
+    --     elseif ( event.direction == "down" ) then print( "Reached top limit" )
+    --     elseif ( event.direction == "left" ) then print( "Reached right limit" )
+    --     elseif ( event.direction == "right" ) then print( "Reached left limit" )
+    --     end
+    -- end
+ 
+    -- return true
+end
 
 -- Function to handle changing the top display to the selected bait
 local function changeBait()
   -- Change title
-  title.text = baitInfo[selectedBait].name
+  baitTitleText.text = baitInfo[selectedBait].name
 
   -- Set big picture image
 
@@ -52,70 +72,6 @@ local function changeBait()
 
   -- Set time effictiveness text
   timeDisplay.text = "Time Effectiveness:\n" .. baitInfo[selectedBait].time .. " minutes"
-
-  -- Check if the use button needs to be changed
-  local baits = db:getRows("baitUsages")
-  for i=1,#baits do
-    if (baits[i].location == location) then
-      useButton:setLabel("Clear Bait")
-      break
-    else
-      useButton:setLabel("Use")
-    end
-  end
-end
-
--- Function to handle close button
-local function handleButtonEventClose(event)
-  if (event.phase == "ended") then
-    composer.hideOverlay(true, "fade", 400)
-  end
-end
-
--- Function to handle buy button
-local function handleButtonEventBuy(event)
-  if (event.phase == "ended") then
-    print("buy more bait")
-  end
-end
-
--- Function to handle use button
-local function handleButtonEventUse(event)
-  if (event.phase == "ended") then
-    -- Check if this location already has an active bait
-    local baits = db:getRows("baitUsages")
-    local duplicate = false
-    for i=1,#baits do
-      if (baits[i].location == location) then
-        duplicate = true
-        break
-      end
-    end
-    
-    if (duplicate == false) then
-      -- get table of current date and time
-      local t = os.date('*t')
-      -- Bait Start time
-      local startTime = os.time(t)
-      -- Calculate end time based on bait
-      t.min = t.min + baitInfo[selectedBait].time
-      local endTime = os.time(t)
-      -- Add entry to DB
-      local insert = [[INSERT INTO BaitUsages VALUES (']] .. location .. [[', ']] .. baitInfo[selectedBait].name .. [[', ']] .. 
-        startTime .. [[', ']] .. endTime .. [[');]] 
-      db:update(insert)
-      db:print()
-      useButton:setLabel("Clear Bait")
-    else 
-      -- Show error
-      local insert = [[DELETE FROM BaitUsages WHERE location = ']] .. location .. [[';]]
-      db:update(insert)
-      db:print()
-      useButton:setLabel("Use")
-    end
-
-    -- TODO: Set up a push notification
-  end
 end
 
 -- Reset button color
@@ -138,6 +94,29 @@ local function handleButtonEventBait(event)
   end
 end
 
+-- Function to handle buy button
+local function handleButtonEventBuy(event)
+  if (event.phase == "ended") then
+    print("buy more bait")
+  end
+end
+
+-- Function to detect which way the user swiped
+-- Loads corresponding 
+local function handleSwipeEvent(event)
+  if (event.phase == "moved") then
+    local dX = event.x - event.xStart
+    if (dX < -200) then
+      -- swipe right
+      returnToTitle = true
+    end
+  end
+
+  if (event.phase == "ended") and (returnToTitle == true) then
+    composer.gotoScene('scenes.title', {effect="fromRight", time=800})
+  end
+end
+
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -145,59 +124,91 @@ end
 -- create()
 function scene:create(event)
   local sceneGroup = self.view
-   -- New display group to add modal too
-  modalGroup = display.newGroup()
-  sceneGroup:insert(modalGroup)
+  -- New display group
+  mainGroup = display.newGroup()
+  sceneGroup:insert(mainGroup)
 
-  -- Place the group
-	modalGroup.x = display.contentWidth / 2
-	modalGroup.y = display.contentHeight / 2
+  -- Title text
+  local options = {
+    text = "Shop",
+    x = 150,
+    y = 0,
+	  fontSize = 50,
+    align = "left"
+  }
+  title = display.newText(options)
+  title:setFillColor(0)
+  mainGroup:insert(title)
 
-  -- Set the location
-  location = event.params.location
+  -- Coins
+  options = {
+    text = db:getRows("StoreItems")[1].coins,
+    x = display.contentWidth - 150,
+    y = 0,
+	  fontSize = 50,
+    align = "right"
+  }
+  coins = display.newText(options)
+  coins:setFillColor(0)
+  mainGroup:insert(coins)
 
-  -- Code here runs when the scene is first created but has not yet appeared on screen
+  -- Scroll view
+  scrollView = widget.newScrollView(
+    {
+      top = 100,
+      left = 50,
+      width = display.contentWidth - 100,
+      height = 1000,
+      scrollWidth = 0,
+      backgroundColor = {1, 1, 1},
+      listener = scrollListener
+    }
+  )
+  mainGroup:insert(scrollView)
+
+  -- Rod group
+  rodGroup = display.newGroup()
+  scrollView:insert(rodGroup)
+
+  -- Rod box
+  rodBox = display.newRoundedRect(0, 0, display.contentWidth - 100, 700, 12)
+  rodBox:setFillColor(.8, .8, .8)
+  rodBox.anchorX = 0
+  rodBox.anchorY = 0
+  rodGroup:insert(rodBox)
+
+  -- Title text for rod
+  options = {
+    text = "Rod",
+    x = 100,
+    y = 50,
+	  fontSize = 50,
+    align = "left"
+  }
+  rodTitleText = display.newText(options)
+  rodGroup:insert(rodTitleText)
+
+  -- Bait group
+  baitGroup = display.newGroup()
+  scrollView:insert(baitGroup)
+
   -- Background
-	modalBox = display.newRoundedRect(0, 0, display.contentWidth / 1.25, display.contentHeight, 12)
-	modalBox:setFillColor( 255 )
-	modalBox:setStrokeColor(78, 179, 211)
-	modalBox.strokeWidth = 4
-	modalGroup:insert(modalBox)
+	baitBox = display.newRoundedRect(0, 750, display.contentWidth - 100, 1000, 12)
+	baitBox:setFillColor(.8, .8, .8)
+  baitBox.anchorX = 0
+  baitBox.anchorY = 0
+	baitGroup:insert(baitBox)
 
-  -- Options for title text
-	local options = {
-	   text = baitInfo[selectedBait].name,
-     x = -150,
-     y = -450,
-	   fontSize = 50,
-     align = "left"
+  -- Options for bait text
+	options = {
+	  text = baitInfo[selectedBait].name,
+    x = 100,
+    y = 800,
+	  fontSize = 50,
+    align = "left"
 	}
-	title = display.newText(options)
-	title:setFillColor(0)
-	modalGroup:insert(title)
-
-  -- Create the close button
-  closeButton = widget.newButton({
-    label = "X",
-    fontSize = 40,
-    labelColor = {default={utils.hexToRGB("000000")}, over={utils.hexToRGB("FFFFFF")}},
-    onEvent = handleButtonEventClose,
-    emboss = false,
-    -- Properties for a rounded rectangle button
-    shape = "roundedRect",
-    width = 75,
-    height = 75,
-    cornerRadius = 12,
-    fillColor = {default={utils.hexToRGB("FFFFFF")}, over={utils.hexToRGB("000000")}},
-    strokeColor = {default={utils.hexToRGB("000000")}, over={utils.hexToRGB("FFFFFF")}},
-    strokeWidth = 4
-  })
-  -- Center the button
-  closeButton.x = modalGroup.width / 3
-  closeButton.y = -450
-  
-  -- Insert the button
-  modalGroup:insert(closeButton)
+  baitTitleText = display.newText(options)
+	baitGroup:insert(baitTitleText)
 
   -- Get info
   local descriptionString = baitInfo[selectedBait].description
@@ -205,59 +216,36 @@ function scene:create(event)
 
   -- Set up selected bait area
   -- big picture
-	bigPicture = display.newImage("images/baits/chum_large.png", -150, -200)
+	bigPicture = display.newImage("images/baits/chum_large.png", 175, 1000)
 	-- bigPicture = display.newRoundedRect(-150, -200, display.contentWidth / 3, display.contentHeight / 3, 12)
 	-- bigPicture:setFillColor(0)
 	-- bigPicture:setStrokeColor(78, 179, 211)
 	-- bigPicture.strokeWidth = 4
-	modalGroup:insert(bigPicture)
+	baitGroup:insert(bigPicture)
 
   -- description
   description = display.newText({
     text = "Description:\n" .. descriptionString,
-    x = 150,
-    y = -310,
+    x = 500,
+    y = 890,
     width = display.contentWidth / 2.5,
     fontSize = 35,
     align = "center"
   })
   description:setFillColor(0)
-	modalGroup:insert(description)
+	baitGroup:insert(description)
 
   -- time display
   timeDisplay = display.newText({
-    text = "Time Effectiveness:\n" .. timeString .. " minutes",
-    x = 150,
-    y = -100,
+    text = "Time Effectiveness\n" .. timeString .. " minutes",
+    x = 500,
+    y = 1090,
     width = display.contentWidth / 2,
     fontSize = 35,
     align = "center"
   })
   timeDisplay:setFillColor(0)
-	modalGroup:insert(timeDisplay)
-
-  -- use button
-  useButton = widget.newButton({
-    label = "Use",
-    fontSize = 40,
-    labelColor = {default={utils.hexToRGB("FFFFFF")}, over={utils.hexToRGB("000000")}},
-    onEvent = handleButtonEventUse,
-    emboss = false,
-    -- Properties for a rounded rectangle button
-    shape = "roundedRect",
-    width = 250,
-    height = 75,
-    cornerRadius = 25,
-    fillColor = {default={utils.hexToRGB("007F00")}, over={utils.hexToRGB("66b266")}},
-    strokeColor = {default={utils.hexToRGB("66b266")}, over={utils.hexToRGB("007F00")}},
-    strokeWidth = 4
-  })
-  -- Center the button
-  useButton.x = -150
-  useButton.y = 50
-  
-  -- Insert the button
-  modalGroup:insert(useButton)
+	baitGroup:insert(timeDisplay)
 
   -- buy button
   buyButton = widget.newButton({
@@ -276,11 +264,11 @@ function scene:create(event)
     strokeWidth = 4
   })
   -- Center the button
-  buyButton.x = 150
-  buyButton.y = 50
+  buyButton.x = 500
+  buyButton.y = 1250
   
   -- Insert the button
-  modalGroup:insert(buyButton)
+  baitGroup:insert(buyButton)
 
   -- Create widgets for all the different kinds of baits
   -- TODO: Fix placement
@@ -303,8 +291,8 @@ function scene:create(event)
       strokeWidth = 4,
       id = i,
     })
-    baitButtons[i].x = -150 + ((xCounter) * 300)
-    baitButtons[i].y = 175 + (yCounter * 100)
+    baitButtons[i].x = 200 + ((xCounter) * 300)
+    baitButtons[i].y = 1375 + (yCounter * 100)
 
     -- Increase the counters
     xCounter = xCounter + 1
@@ -315,7 +303,7 @@ function scene:create(event)
       yCounter = yCounter + 1
     end
 
-    modalGroup:insert(baitButtons[i])
+    baitGroup:insert(baitButtons[i])
   end
 
   -- Finally call resetButton to set the button to be already pressed
@@ -331,7 +319,8 @@ function scene:show( event )
     -- Code here runs when the scene is still off screen (but is about to come on screen)
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
-
+    -- Swipe event
+    Runtime:addEventListener("touch", handleSwipeEvent)
   end
 end
 
@@ -339,11 +328,10 @@ end
 function scene:hide(event)
   local sceneGroup = self.view
   local phase = event.phase
-  local parent = event.parent  -- Reference to the parent scene object
 
   if ( phase == "will" ) then
     -- Code here runs when the scene is on screen (but is about to go off screen)
-    parent:resumeGame()
+    Runtime:removeEventListener("touch", handleSwipeEvent) -- Remove event listener
   elseif ( phase == "did" ) then
     -- Code here runs immediately after the scene goes entirely off screen
   end

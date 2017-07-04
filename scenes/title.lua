@@ -47,6 +47,8 @@ local function handleSwipeEvent(event)
     if (sceneToLoad == "game") then 
       -- Decide if we want to use slide or from effect
       composer.gotoScene('scenes.' .. sceneToLoad, {params = {location='ocean'}, effect="from" .. slideDirection, time=800})
+    elseif (sceneToLoad == "store") then
+      composer.gotoScene('scenes.' .. sceneToLoad, {effect="from" .. slideDirection, time=800})
     end
   end
 end
@@ -71,8 +73,10 @@ function scene:create(event)
     align = "center"
   }
   title = display.newText(options)
+  title:setFillColor(0)
   mainGroup:insert(title)
 
+  -- Game
   options = {
     text = "Game",
     x = display.contentWidth - 100,
@@ -81,8 +85,10 @@ function scene:create(event)
     align = "center"
   }
   game = display.newText(options)
+  game:setFillColor(0)
   mainGroup:insert(game)
 
+  -- Store
   options = {
     text = "Store",
     x = 100,
@@ -91,9 +97,9 @@ function scene:create(event)
     align = "center"
   }
   store = display.newText(options)
+  store:setFillColor(0)
   mainGroup:insert(store)
 
-  Runtime:addEventListener("touch", handleSwipeEvent)
 end
 
 -- show()
@@ -104,7 +110,8 @@ function scene:show( event )
     -- Code here runs when the scene is still off screen (but is about to come on screen)
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
-
+    -- Swipe event
+    Runtime:addEventListener("touch", handleSwipeEvent)
   end
 end
 
@@ -115,6 +122,7 @@ function scene:hide(event)
 
   if ( phase == "will" ) then
     -- Code here runs when the scene is on screen (but is about to go off screen)
+    Runtime:removeEventListener("touch", handleSwipeEvent)
   elseif ( phase == "did" ) then
     -- Code here runs immediately after the scene goes entirely off screen
   end

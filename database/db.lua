@@ -34,6 +34,8 @@ function _DB.create()
       (
         currentRodUpgrade INT NOT NULL,
         chumCount INT NOT NULL,
+        goldFlakeCount INT NOT NULL,
+        gazelleMeatCount INT NOT NULL,
         cherryCount INT NOT NULL,
         coins INT NOT NULL
       );
@@ -125,7 +127,7 @@ function _DB.create()
       DELETE FROM FishCaught;
       DELETE FROM BaitUsages;
       DELETE FROM StoreItems;
-      INSERT INTO StoreItems VALUES (0, 0, 0, 0);
+      INSERT INTO StoreItems VALUES (0, 0, 0, 103700);
     ]]
   end
 
