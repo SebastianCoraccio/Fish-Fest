@@ -76,7 +76,7 @@ function _DB.create()
     -- StoreItems
     print("StoreItems")
     for row in db:nrows("SELECT * FROM StoreItems") do
-      print(row.currentRodUpgrade .. ",\t" .. row.chumCount .. ",\t" .. row.cherryCount .. ",\t" .. row.coins)
+      print(row.currentRodUpgrade .. ",\t" .. row.chumCount .. ",\t" .. row.goldFlakeCount  .. ",\t" .. row.gazelleMeatCount .. ",\t" .. row.cherryCount .. ",\t" .. row.coins)
     end
   end
 
@@ -127,7 +127,7 @@ function _DB.create()
       DELETE FROM FishCaught;
       DELETE FROM BaitUsages;
       DELETE FROM StoreItems;
-      INSERT INTO StoreItems VALUES (0, 0, 0, 103700);
+      INSERT INTO StoreItems VALUES (0, 0, 0, 0, 0, 0);
     ]]
   end
 

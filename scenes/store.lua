@@ -66,6 +66,17 @@ local function changeBait()
 
   -- Set big picture image
 
+  -- Check if the buy button needs to be changed
+  if (baitInfo[selectedBait].cost > db:getRows("StoreItems")[1].coins) then
+    -- grey out buy button
+    buyButton:setFillColor(.8, .8, .8)
+    buyButtonDisabled = true
+    buyButton:setEnabled(false)
+  else 
+    buyButton:setFillColor({default={utils.hexToRGB("660000")}, over={utils.hexToRGB("a36666")}})
+    buyButtonDisabled = true
+    buyButton:setEnabled(true)
+  end
 
   -- Set description text
   description.text = "Description:\n" .. baitInfo[selectedBait].description

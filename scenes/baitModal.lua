@@ -53,6 +53,18 @@ local function changeBait()
   -- Set time effictiveness text
   timeDisplay.text = "Time Effectiveness:\n" .. baitInfo[selectedBait].time .. " minutes"
 
+  -- Check if the buy button needs to be changed
+  if (baitInfo[selectedBait].cost > db:getRows("StoreItems")[1].coins) then
+    -- grey out buy button
+    buyButton:setFillColor(.8, .8, .8)
+    buyButtonDisabled = true
+    buyButton:setEnabled(false)
+  else 
+    buyButton:setFillColor({default={utils.hexToRGB("660000")}, over={utils.hexToRGB("a36666")}})
+    buyButtonDisabled = true
+    buyButton:setEnabled(true)
+  end
+
   -- Check if the use button needs to be changed
   local baits = db:getRows("baitUsages")
   for i=1,#baits do
@@ -75,6 +87,7 @@ end
 -- Function to handle buy button
 local function handleButtonEventBuy(event)
   if (event.phase == "ended") then
+    print(buyButton:getFillColor())
     print("buy more bait")
   end
 end
