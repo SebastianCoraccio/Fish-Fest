@@ -278,7 +278,8 @@ function _Fish.create(params)
         t = timer.performWithDelay(delay, function() 
               fish:moveTo({x=bobberEdge.x, y=bobberEdge.y, 
                            onComplete=function()
-                           audio.play(fishBite)
+                             system.vibrate()   
+                             audio.play(fishBite)
                              newSplash({x=x, y=y, collide = false}) 
                              fish.isBiting=true
 
