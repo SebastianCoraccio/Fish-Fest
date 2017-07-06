@@ -26,6 +26,10 @@ local scrollView
 -- Rod
 local rodBox
 local rodTitleText
+local rodInfo = require("data.rodInfo")
+local rodDescription
+local rodPicture
+local rodBuyButton
 
 -- Get bait info
 local baitInfo = require("data.baitInfo")
@@ -57,6 +61,35 @@ local function scrollListener( event )
     -- end
  
     -- return true
+end
+
+-- Function to handle changing the displays for the rod
+local function changeRod()
+  if (db:getRows("StoreItems")[1].currentRodUpgrade < #rodInfo) then 
+    -- Check if buy button needs to be changed
+    rodBuyButton:setLabel("Buy for " .. rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].cost)
+    if (rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].cost > db:getRows("StoreItems")[1].coins) then
+      -- grey out buy button
+      rodBuyButton:setFillColor(.8, .8, .8)
+      rodBuyButton:setEnabled(false)
+    else 
+      rodBuyButton:setFillColor(utils.hexToRGB("660000"))
+      rodBuyButton:setEnabled(true)
+    end
+
+    -- Upgrade title
+    rodTitleText.text = rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].name
+
+    -- Upgrade description text
+    rodDescription.text = rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].description
+
+    -- Set rod image
+  else
+    -- No more rod upgrades
+    rodBuyButton:setFillColor(.8, .8, .8)
+    rodBuyButton:setEnabled(false)
+    rodBuyButton:setLabel("No more rod upgrades")
+  end
 end
 
 -- Function to handle changing the top display to the selected bait
@@ -116,8 +149,31 @@ local function handleButtonEventBuy(event)
     db:update(insert)
     db:print()
 
+    -- Update total coin display
+    coins.text = db:getRows("StoreItems")[1].coins
+
     -- Update button text
     changeBait()
+  end
+end
+
+-- Function to handle rod buy button
+local function handleButtonEventRodBuy(event)
+  if (event.phase == "ended") then
+    -- Subtract coins
+    local insert = [[UPDATE StoreItems SET coins=]] .. db:getRows("StoreItems")[1].coins - rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].cost .. [[;]]
+    db:update(insert)
+
+    -- Add one to bait count
+    insert = [[UPDATE StoreItems SET currentRodUpgrade=]] .. db:getRows("StoreItems")[1].currentRodUpgrade + 1 .. [[;]]
+    db:update(insert)
+    db:print()
+
+    -- Update total coin display
+    coins.text = db:getRows("StoreItems")[1].coins
+
+    -- Update button text
+    changeRod()
   end
 end
 
@@ -200,14 +256,56 @@ function scene:create(event)
 
   -- Title text for rod
   options = {
-    text = "Rod",
-    x = 100,
+    text = rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].name,
+    x = 180,
     y = 50,
 	  fontSize = 50,
     align = "left"
   }
   rodTitleText = display.newText(options)
   rodGroup:insert(rodTitleText)
+
+  -- Rod description
+  rodDescription = display.newText({
+    text = rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].description,
+    x = 25,
+    y = 100,
+    width = 325,
+    fontSize = 40,
+    align = "left"
+  })
+  rodDescription.anchorX = 0
+  rodDescription.anchorY = 0
+  rodGroup:insert(rodDescription)
+
+  -- Rod image
+  rodPicture = display.newImage("images/baits/chum_large.png", 350, -60)
+  rodPicture.anchorX = 0
+  rodPicture.anchorY = 0
+  rodGroup:insert(rodPicture)
+
+  -- Rod buy button
+  rodBuyButton = widget.newButton({
+    label = "Buy",
+    fontSize = 40,
+    labelColor = {default={utils.hexToRGB("FFFFFF")}, over={utils.hexToRGB("000000")}},
+    onEvent = handleButtonEventRodBuy,
+    emboss = false,
+    -- Properties for a rounded rectangle button
+    shape = "roundedRect",
+    width = 500,
+    height = 75,
+    cornerRadius = 25,
+    fillColor = {default={utils.hexToRGB("660000")}, over={utils.hexToRGB("a36666")}},
+    strokeColor = {default={utils.hexToRGB("a36666")}, over={utils.hexToRGB("660000")}},
+    strokeWidth = 4
+  })
+  rodBuyButton.anchorX = .5
+  rodBuyButton.anchorY = .5
+  rodBuyButton.x = rodBox.width / 2
+  rodBuyButton.y = 500
+  rodGroup:insert(rodBuyButton)
+
 
   -- Bait group
   baitGroup = display.newGroup()
@@ -330,6 +428,7 @@ function scene:create(event)
   -- Finally call resetButton to set the button to be already pressed
   resetButton(baitButtons[selectedBait])
   changeBait()
+  changeRod()
 end
 
 -- show()
