@@ -25,6 +25,7 @@ local timeDisplay
 local useButton
 local buyButton
 local baitButtons = {}
+local totalCoins
 
 -- Current location
 local location
@@ -42,7 +43,7 @@ local selectedBait = 1
 -- Function to handle changing the top display to the selected bait
 local function changeBait()
   -- Change title
-  title.text = baitInfo[selectedBait].name
+  title.text = baitInfo[selectedBait].name .. " x" .. db:getRows("StoreItems")[1][baitInfo[selectedBait].dbName]
 
   -- Set big picture image
 
@@ -53,16 +54,27 @@ local function changeBait()
   -- Set time effictiveness text
   timeDisplay.text = "Time Effectiveness:\n" .. baitInfo[selectedBait].time .. " minutes"
 
+  -- Change total coin text
+  totalCoins.text = ("Total Coins:\n" .. db:getRows("StoreItems")[1].coins)
+
   -- Check if the buy button needs to be changed
+  buyButton:setLabel("Buy for " .. baitInfo[selectedBait].cost)
   if (baitInfo[selectedBait].cost > db:getRows("StoreItems")[1].coins) then
     -- grey out buy button
     buyButton:setFillColor(.8, .8, .8)
-    buyButtonDisabled = true
     buyButton:setEnabled(false)
   else 
-    buyButton:setFillColor({default={utils.hexToRGB("660000")}, over={utils.hexToRGB("a36666")}})
-    buyButtonDisabled = true
+    buyButton:setFillColor(utils.hexToRGB("660000"))
     buyButton:setEnabled(true)
+  end
+  
+  -- Check if the use button needs to be changed
+  if (db:getRows("StoreItems")[1][baitInfo[selectedBait].dbName] <= 0) and (useButton:getLabel() == "Use") then
+    useButton:setFillColor(.8, .8, .8)
+    useButton:setEnabled(false)
+  else
+    useButton:setFillColor(utils.hexToRGB("007F00"))
+    useButton:setEnabled(true)
   end
 
   -- Check if the use button needs to be changed
@@ -87,8 +99,17 @@ end
 -- Function to handle buy button
 local function handleButtonEventBuy(event)
   if (event.phase == "ended") then
-    print(buyButton:getFillColor())
-    print("buy more bait")
+    -- Subtract coins
+    local insert = [[UPDATE StoreItems SET coins=]] .. db:getRows("StoreItems")[1].coins - baitInfo[selectedBait].cost .. [[;]]
+    db:update(insert)
+
+    -- Add one to bait count
+    insert = [[UPDATE StoreItems SET ]] .. baitInfo[selectedBait].dbName .. [[=]] .. db:getRows("StoreItems")[1][baitInfo[selectedBait].dbName] + 1 .. [[;]]
+    db:update(insert)
+    db:print()
+
+    -- Update button text
+    changeBait()
   end
 end
 
@@ -117,7 +138,13 @@ local function handleButtonEventUse(event)
       local insert = [[INSERT INTO BaitUsages VALUES (']] .. location .. [[', ']] .. baitInfo[selectedBait].name .. [[', ']] .. 
         startTime .. [[', ']] .. endTime .. [[');]] 
       db:update(insert)
+
+      -- Subtract one from count
+      insert = [[UPDATE StoreItems SET ]] .. baitInfo[selectedBait].dbName .. [[=]] .. db:getRows("StoreItems")[1][baitInfo[selectedBait].dbName] - 1 .. [[;]]
+      db:update(insert)
       db:print()
+
+      -- Set label
       useButton:setLabel("Clear Bait")
     else 
       -- Clear bait
@@ -126,6 +153,9 @@ local function handleButtonEventUse(event)
       db:print()
       useButton:setLabel("Use")
     end
+
+    -- Update button if necessary
+    changeBait()
 
     -- TODO: Set up a push notification
   end
@@ -180,10 +210,10 @@ function scene:create(event)
   -- Options for title text
 	local options = {
 	   text = baitInfo[selectedBait].name,
-     x = -150,
+     x = -130,
      y = -450,
 	   fontSize = 50,
-     align = "left"
+     align = "right"
 	}
 	title = display.newText(options)
 	title:setFillColor(0)
@@ -241,13 +271,25 @@ function scene:create(event)
   timeDisplay = display.newText({
     text = "Time Effectiveness:\n" .. timeString .. " minutes",
     x = 150,
-    y = -100,
+    y = -260 + description.height,
     width = display.contentWidth / 2,
     fontSize = 35,
     align = "center"
   })
   timeDisplay:setFillColor(0)
 	modalGroup:insert(timeDisplay)
+
+  -- Total coin display
+  totalCoins = display.newText({
+    text = "Coins:\n" .. db:getRows("StoreItems")[1].coins,
+    x = 150,
+    y = -220 + description.height + timeDisplay.height,
+    width = display.contentWidth / 2,
+    fontSize = 35,
+    align = "center"
+  })
+  totalCoins:setFillColor(0)
+  modalGroup:insert(totalCoins)
 
   -- use button
   useButton = widget.newButton({

@@ -62,19 +62,18 @@ end
 -- Function to handle changing the top display to the selected bait
 local function changeBait()
   -- Change title
-  baitTitleText.text = baitInfo[selectedBait].name
+  baitTitleText.text = baitInfo[selectedBait].name .. " x" .. db:getRows("StoreItems")[1][baitInfo[selectedBait].dbName]
 
   -- Set big picture image
 
   -- Check if the buy button needs to be changed
+  buyButton:setLabel("Buy for " .. baitInfo[selectedBait].cost)
   if (baitInfo[selectedBait].cost > db:getRows("StoreItems")[1].coins) then
     -- grey out buy button
     buyButton:setFillColor(.8, .8, .8)
-    buyButtonDisabled = true
     buyButton:setEnabled(false)
   else 
-    buyButton:setFillColor({default={utils.hexToRGB("660000")}, over={utils.hexToRGB("a36666")}})
-    buyButtonDisabled = true
+    buyButton:setFillColor(utils.hexToRGB("660000"))
     buyButton:setEnabled(true)
   end
 
@@ -108,7 +107,17 @@ end
 -- Function to handle buy button
 local function handleButtonEventBuy(event)
   if (event.phase == "ended") then
-    print("buy more bait")
+    -- Subtract coins
+    local insert = [[UPDATE StoreItems SET coins=]] .. db:getRows("StoreItems")[1].coins - baitInfo[selectedBait].cost .. [[;]]
+    db:update(insert)
+
+    -- Add one to bait count
+    insert = [[UPDATE StoreItems SET ]] .. baitInfo[selectedBait].dbName .. [[=]] .. db:getRows("StoreItems")[1][baitInfo[selectedBait].dbName] + 1 .. [[;]]
+    db:update(insert)
+    db:print()
+
+    -- Update button text
+    changeBait()
   end
 end
 
@@ -214,10 +223,10 @@ function scene:create(event)
   -- Options for bait text
 	options = {
 	  text = baitInfo[selectedBait].name,
-    x = 100,
+    x = 180,
     y = 800,
 	  fontSize = 50,
-    align = "left"
+    align = "right"
 	}
   baitTitleText = display.newText(options)
 	baitGroup:insert(baitTitleText)

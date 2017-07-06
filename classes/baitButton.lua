@@ -33,7 +33,7 @@ function _BaitButton.create(x, y, group, loc)
   
   baitButton.anim = widget.newButton(
   {
-    label = "Bait",
+    label = "Chum",
     fontSize = 40,
     onEvent = openBaitModal,
     emboss = false,
