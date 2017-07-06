@@ -129,6 +129,18 @@ function _DB.create()
       DELETE FROM StoreItems;
       INSERT INTO StoreItems VALUES (0, 0, 0, 0, 0, 0);
     ]]
+    Db:createTables()
+    Db:delete()
+  end
+
+  -- Delete everything in DB and redo it
+  function Db:restart()
+    db:exec[[
+      DROP TABLE FishCaught;
+      DROP TABLE BaitUsages;
+      DROP TABLE StoreItems;
+    ]]
+    
   end
 
   -- Close the DB at the end of the game
