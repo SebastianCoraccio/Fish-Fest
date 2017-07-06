@@ -38,6 +38,7 @@ math.randomseed(os.time())
 -- Create tables
 -- TODO: Delete this line eventually
 -------------------------------------
+-- db.restart() -- TESTING ONLY
 -- db.delete() -- TESTING ONLY
 -------------------------------------
 db.createTables()
