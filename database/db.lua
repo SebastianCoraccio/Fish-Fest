@@ -129,8 +129,6 @@ function _DB.create()
       DELETE FROM StoreItems;
       INSERT INTO StoreItems VALUES (0, 0, 0, 0, 0, 0);
     ]]
-    Db:createTables()
-    Db:delete()
   end
 
   -- Delete everything in DB and redo it
@@ -140,7 +138,8 @@ function _DB.create()
       DROP TABLE BaitUsages;
       DROP TABLE StoreItems;
     ]]
-    
+    Db:createTables()
+    Db:delete()
   end
 
   -- Close the DB at the end of the game
