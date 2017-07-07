@@ -10,7 +10,15 @@ function _DB.create()
   local path = system.pathForFile("database.db", system.DocumentsDirectory)
   local db = sqlite3.open(path)
 
+  -- IF SCHEMA CHANGES MAKE SURE TO CHANGE THESE VARIABLES
+  -- ALSO CHANGE TYPE TO CHANGE IT TO IN FUNCTION CHANGEDB
+  local fishCaughtCols = {"fid", "largestCaught", "numberCaught"}
+  local baitUsagesCols = {"location", "baitType", "startTime", "endTime"}
+  local storeItemsCols = {"currentRodUpgrade", "chumCount", "goldFlakeCount", "gazelleMeatCount", "cherryCount", "coins"}
+
   -- Function to create the tables if they don't already exist
+  -- IF SCHEMA CHANGES MAKE SURE TO CHANGE VARIABLES ABOVE
+  -- ALSO CHANGE TYPE TO CHANGE IT TO IN FUNCTION CHANGEDB
   function Db:createTables()
     db:exec[[
       CREATE TABLE IF NOT EXISTS FishCaught
@@ -64,19 +72,29 @@ function _DB.create()
     -- FishCaught
     print("FishCaught")
     for row in db:nrows("SELECT * FROM FishCaught") do
-      print(row.fid .. ",\t" .. row.largestCaught .. ",\t" .. row.numberCaught)
+      local str = ""
+      for k, v in pairs(row) do
+        str = str .. ("  " .. k .. ": " .. v)
+      end
+      print(str)
     end
 
     -- BaitUsages
     print("BaitUsages")
     for row in db:nrows("SELECT * FROM BaitUsages") do
-      print(row.location .. ",\t" .. row.baitType .. ",\t" .. row.startTime .. ",\t" .. row.endTime)
+      local str = ""
+      for k, v in pairs(row) do
+        str = str .. ("  " .. k .. ": " .. v)
+      end
+      print(str)
     end
 
     -- StoreItems
     print("StoreItems")
     for row in db:nrows("SELECT * FROM StoreItems") do
-      print(row.currentRodUpgrade .. ",\t" .. row.chumCount .. ",\t" .. row.goldFlakeCount  .. ",\t" .. row.gazelleMeatCount .. ",\t" .. row.cherryCount .. ",\t" .. row.coins)
+      for k, v in pairs(row) do
+        print("  " .. k .. "\t" .. v)
+      end
     end
   end
 
@@ -138,8 +156,52 @@ function _DB.create()
       DROP TABLE BaitUsages;
       DROP TABLE StoreItems;
     ]]
-    Db:createTables()
-    Db:delete()
+    -- Db:createTables()
+    -- Db:delete()
+  end
+
+  function Db:checkDb()
+    -- Check if FishCaught table has changed
+    for row in db:nrows("SELECT * FROM FishCaught") do
+      for k, v in pairs(row) do
+        table.remove(fishCaughtCols, table.indexOf(fishCaughtCols, k))
+      end
+    end
+    if (#fishCaughtCols > 0) and (#Db:getRows("FishCaught") > 0) then
+      for i = 1, #fishCaughtCols do
+        print("Add to FishCaught: " .. fishCaughtCols[i])
+        db:exec([[ALTER TABLE FishCaught ADD COLUMN ]] ..  fishCaughtCols[i] .. [[ INT DEFAULT 0;]])
+      end
+    end
+
+    -- Check if BaitUsages table has changed
+    for row in db:nrows("SELECT * FROM BaitUsages") do
+      for k, v in pairs(row) do
+        table.remove(baitUsagesCols, table.indexOf(baitUsagesCols, k))
+      end
+    end
+    if (#baitUsagesCols > 0) and (#Db:getRows("BaitUsages") > 0) then
+      for i = 1, #baitUsagesCols do
+        print("Add to BaitUsages: " .. baitUsagesCols[i])
+        db:exec([[ALTER TABLE BaitUsages ADD COLUMN ]] ..  baitUsagesCols[i] .. [[ INT DEFAULT 0;]])
+      end
+    end
+
+    -- Check if StoreItems table has changed
+    for row in db:nrows("SELECT * FROM StoreItems") do
+      for k, v in pairs(row) do
+        table.remove(storeItemsCols, table.indexOf(storeItemsCols, k))
+      end
+    end
+    if (#storeItemsCols > 0) and (#Db:getRows("StoreItems") > 0) then
+      for i = 1, #storeItemsCols do
+        print("Add to StoreItems: " .. storeItemsCols[i])
+        db:exec([[ALTER TABLE StoreItems ADD COLUMN ]] ..  storeItemsCols[i] .. [[ INT DEFAULT 0;]])
+      end
+    end
+    if (#Db:getRows("StoreItems") == 0) then
+      db:exec[[INSERT INTO StoreItems VALUES (0, 0, 0, 0, 0, 0);]]
+    end
   end
 
   -- Close the DB at the end of the game

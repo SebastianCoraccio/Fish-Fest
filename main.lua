@@ -41,7 +41,9 @@ math.randomseed(os.time())
 -- db.restart() -- TESTING ONLY
 -- db.delete() -- TESTING ONLY
 -------------------------------------
-db.createTables()
+-- Check if DB is different
+db:createTables()
+db:checkDb()
 
 db:print()
 
@@ -62,5 +64,5 @@ display.setDefault("background", 1, 1, 1)
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now
 -- composer.gotoScene('scenes.game', {params = {location='ocean'}})
--- composer.gotoScene('scenes.title')
-composer.gotoScene('scenes.store')
+composer.gotoScene('scenes.title')
+-- composer.gotoScene('scenes.store')
