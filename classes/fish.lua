@@ -88,7 +88,7 @@ function _Fish.create(params)
     }
   }
 
-  fish.anim = display.newSprite(sheetFishAnim, sequenceAnim)
+  fish.anim = display.newSprite(params.group, sheetFishAnim, sequenceAnim)
   fish.anim:scale(0.31, 0.25)
   fish.anim:play()
 --   fish.anim = display.newImage(params.group, "images/fish/silhouette.png", 0, 0)
