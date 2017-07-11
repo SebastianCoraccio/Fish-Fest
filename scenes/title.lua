@@ -99,7 +99,6 @@ function scene:create(event)
   store = display.newText(options)
   store:setFillColor(0)
   mainGroup:insert(store)
-
 end
 
 -- show()

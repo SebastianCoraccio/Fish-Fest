@@ -8,6 +8,7 @@ local newBobber = require("classes.bobber").create
 local physics = require("physics")
 local newLocation = require("classes.location").create
 local newBaitButton = require("classes.baitButton").create
+local widget = require("widget")
 
 -- Fish info
 local fishInfo = require("data.fishInfo")
@@ -38,6 +39,7 @@ local modalIsShowing = false
 local backgroundGroup
 local mainGroup
 local baitButton
+local backButton
 
 -- Current rod upgrade
 -- TODO: Decide how much we want to increase the timer per rod upgrade
@@ -60,6 +62,14 @@ function addFish()
                      group=mainGroup,
                      rod=rod})
   table.insert(fishTable, f)
+end
+
+-- Back button
+local function handleButtonEventBack(event)
+  if (event.phase == "ended") then
+    -- TODO: Change to location page when implemeneted
+    composer.gotoScene('scenes.title', {effect="fromLeft", time=800})
+  end
 end
 
 -- -----------------------------------------------------------------------------------
@@ -94,6 +104,27 @@ function scene:create(event)
 
   -- Get location
   location = newLocation(event.params.location)
+
+  -- Create back button
+  backButton = widget.newButton(
+  {
+    label = "Back",
+    fontSize = 40,
+    onEvent = handleButtonEventBack,
+    emboss = false,
+    -- Properties for a rounded rectangle button
+    shape = "roundedRect",
+    width = 150,
+    height = 75,
+    cornerRadius = 12,
+    fillColor = { default={1,0,0,1}, over={1,0.1,0.7,0.4} },
+    strokeColor = { default={1,0.4,0,1}, over={0.8,0.8,1,1} },
+    strokeWidth = 4
+  })
+  -- Center the button
+  backButton.x = display.contentCenterX - display.contentWidth / 3
+  backButton.y = display.contentHeight
+  mainGroup:insert(backButton) -- Insert the button
 
   -- Create the fish
   for i=1,3 do
