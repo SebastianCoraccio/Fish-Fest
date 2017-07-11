@@ -15,6 +15,7 @@ local msgText
 local button1
 local button2
 local valueText
+local fishImage
 
 local modalGroup
 
@@ -45,7 +46,7 @@ function scene:create(event)
   sceneGroup:insert(modalGroup)
   -- Code here runs when the scene is first created but has not yet appeared on screen
   -- Background
-	modalBox = display.newRoundedRect(0, 0, display.contentWidth / 1.5, display.contentHeight / 1.5, 12)
+	modalBox = display.newRoundedRect(0, 0, display.contentWidth / 1.25, display.contentHeight / 1.4, 12)
 	modalBox:setFillColor( 255 )
 	modalBox:setStrokeColor(78, 179, 211)
 	modalBox.strokeWidth = 4
@@ -65,10 +66,17 @@ function scene:create(event)
   end
 
   -- Options for primary text
+  -- Check if first letter is vowell
+  local firstLetter = string.sub(string.lower(fishName), 1,1)
+  local a = "a "
+  if (firstLetter == "a") or (firstLetter == "e") or (firstLetter == "i") or (firstLetter == "o") or
+     (firstLetter == "u") then
+    a = "an "
+  end
 	local options = {
-	   text = "You caught a " .. fishName .. "!",
+	   text = "You caught " .. a .. fishName .. "!",
      y = -200,
-	   width = 320,
+	   width = 500,
 	   fontSize = 50,
 	   align = "center"
 	}
@@ -79,8 +87,8 @@ function scene:create(event)
   -- Value and weight text
   local valueOptions = {
     text = "Worth: " .. value,
-    x = -115,
-    y = 140,
+    x = modalBox.contentCenterX,
+    y = 160,
     fontSize = 40,
     align = "center"
   }
@@ -88,7 +96,7 @@ function scene:create(event)
   valueText:setFillColor(0)
   modalGroup:insert(valueText)
 
-  -- Create the widget
+  -- Create the Details button
   button1 = widget.newButton(
   {
       label = "Details",
@@ -97,7 +105,7 @@ function scene:create(event)
       emboss = false,
       -- Properties for a rounded rectangle button
       shape = "roundedRect",
-      width = 150,
+      width = 200,
       height = 75,
       cornerRadius = 12,
       fillColor = { default={1,0,0,1}, over={1,0.1,0.7,0.4} },
@@ -105,15 +113,17 @@ function scene:create(event)
       strokeWidth = 4
     }
   )
- 
   -- Center the button
-  button1.x = -115
+  button1.x = (modalBox.width / -2) + 150
   button1.y = 270
-  
-  -- Insert the button
-  modalGroup:insert(button1)
+  modalGroup:insert(button1) -- Insert the button
 
-  -- Create the widget
+  -- Insert image
+  -- TODO: Change 11 to fid
+  fishImage = display.newImage("images/fish/" .. "11" .. "_large.png", modalBox.contentCenterX, 500)
+  modalGroup:insert(fishImage)
+
+  -- Create the close button
   button2 = widget.newButton(
   {
       label = "Close",
@@ -122,7 +132,7 @@ function scene:create(event)
       emboss = false,
       -- Properties for a rounded rectangle button
       shape = "roundedRect",
-      width = 150,
+      width = 200,
       height = 75,
       cornerRadius = 12,
       fillColor = { default={1,0,0,1}, over={1,0.1,0.7,0.4} },
@@ -130,13 +140,10 @@ function scene:create(event)
       strokeWidth = 4
     }
   )
- 
   -- Center the button
-  button2.x = 115
+  button2.x = (modalBox.width / 2) - 150
   button2.y = 270
-  
-  -- Insert the button
-  modalGroup:insert(button2)
+  modalGroup:insert(button2) -- Insert the button
 
   -- Place the group
 	modalGroup.x = display.contentWidth / 2
