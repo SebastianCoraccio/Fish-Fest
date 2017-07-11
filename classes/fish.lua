@@ -68,7 +68,30 @@ function _Fish.create(params)
   local fishPolygon = { -37,15 , -51,-38 , -41,-77 , 13,-99 , 43,-77 , 50,-37 , 39,18 , -1, 100 }
   local lineOfSight = { 225,-225 , 75,0 , -75,0 , -225,-225 , -150,-300 , 150,-300 }
 
-  fish.anim = display.newImage(params.group, "images/fish/silhouette.png", 0, 0)
+
+  local sheetOptions =
+  {
+    width = 323,
+    height = 978,
+    numFrames = 8
+  }
+
+  local sheetFishAnim = graphics.newImageSheet("images/fish/silhouette/medium.png", sheetOptions);
+
+  local sequenceAnim = {
+    {
+      name = "swim",
+      start = 1,
+      count = 8, 
+      time = 1000,
+      loopDirection = "forward"
+    }
+  }
+
+  fish.anim = display.newSprite(sheetFishAnim, sequenceAnim)
+  fish.anim:scale(0.31, 0.25)
+  fish.anim:play()
+--   fish.anim = display.newImage(params.group, "images/fish/silhouette.png", 0, 0)
   fish.anim.myName = "fish"
   fish.anim.alpha = 0
 --   if (type(fish.sizeGroup) == "number") then
@@ -91,7 +114,7 @@ function _Fish.create(params)
   fish.anim.isSensor = true
   fish.los.isSensor = true
 
-  transition.to(fish.anim, {alpha = .7, time = 1000})
+  transition.to(fish.anim, {alpha = .6, time = 1000})
   
   -- Updates what the fix will do now based on its state
   function fish:update()
