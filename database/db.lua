@@ -93,7 +93,7 @@ function _DB.create()
     print("StoreItems")
     for row in db:nrows("SELECT * FROM StoreItems") do
       for k, v in pairs(row) do
-        print("  " .. k .. "\t" .. v)
+        print("  " .. k .. ": " .. v)
       end
     end
   end

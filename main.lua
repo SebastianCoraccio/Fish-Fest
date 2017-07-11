@@ -6,6 +6,7 @@
 
 -- Set up the composer
 local composer = require('composer')
+local admob = require("plugin.admob")
 
 -- Set up DB
 local newDB = require("database.db").create
@@ -34,6 +35,17 @@ display.setStatusBar(display.HiddenStatusBar)
  
 -- Seed the random number generator
 math.randomseed(os.time())
+
+-- Init admob
+-- AdMob listener function
+local function adListener(event)
+  if (event.phase == "init") then  -- Successful initialization
+    print(event.provider)
+  end
+end
+ 
+-- Initialize the AdMob plugin
+-- admob.init(adListener, {appId="YOUR_ADMOB_APP_ID" })
 
 -- Create tables
 -- TODO: Delete this line eventually
@@ -64,5 +76,5 @@ display.setDefault("background", 1, 1, 1)
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now
 -- composer.gotoScene('scenes.game', {params = {location='ocean'}})
-composer.gotoScene('scenes.title')
--- composer.gotoScene('scenes.store')
+-- composer.gotoScene('scenes.title')
+composer.gotoScene('scenes.store')

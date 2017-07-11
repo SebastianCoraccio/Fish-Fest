@@ -21,6 +21,14 @@ settings =
 		android = { "Icon.png", "Icon-Small-*.png", "Icon*@2x.png", },
 	},
 
+	plugins = 
+	{
+		["plugin.admob"] =
+        {
+            publisherId = "com.coronalabs"
+        },
+	},
+
 	--
 	-- iOS Section
 	--

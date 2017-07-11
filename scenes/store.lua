@@ -5,6 +5,7 @@
 local composer = require('composer')
 local widget = require("widget")
 local utils = require("utils")
+local admob = require("plugin.admob")
 
 -- Set up DB
 local newDB = require("database.db").create
@@ -22,6 +23,7 @@ local baitGroup
 local title
 local coins
 local scrollView
+local advertisementButton
 
 -- Rod
 local rodBox
@@ -45,22 +47,15 @@ local returnToTitle = false
 
 -- ScrollView listener
 local function scrollListener( event )
-    -- local phase = event.phase
-    -- if ( phase == "began" ) then print( "Scroll view was touched" )
-    -- elseif ( phase == "moved" ) then print( "Scroll view was moved" )
-    -- elseif ( phase == "ended" ) then print( "Scroll view was released" )
-    -- end
- 
-    -- -- In the event a scroll limit is reached...
-    -- if ( event.limitReached ) then
-    --     if ( event.direction == "up" ) then print( "Reached bottom limit" )
-    --     elseif ( event.direction == "down" ) then print( "Reached top limit" )
-    --     elseif ( event.direction == "left" ) then print( "Reached right limit" )
-    --     elseif ( event.direction == "right" ) then print( "Reached left limit" )
-    --     end
-    -- end
- 
-    -- return true
+  local phase = event.phase
+  local dX = 0
+  if (phase == "ended") then
+    dX = event.xStart - event.x
+  end
+
+  if (dX > 200) then
+    composer.gotoScene('scenes.title', {effect="fromRight", time=800})
+  end  
 end
 
 -- Function to handle changing the displays for the rod
@@ -126,6 +121,12 @@ local function resetButton(event)
 
   -- Set button to be 'pressed'
   event:setFillColor(utils.hexToRGB("a36666"))
+end
+
+local function handleButtonEventAdvertisement(event)
+  if (event.phase == "ended") then
+    print("open advertisement")
+  end
 end
 
 -- Function to handle use button
@@ -219,7 +220,7 @@ function scene:create(event)
   -- Coins
   options = {
     text = db:getRows("StoreItems")[1].coins,
-    x = display.contentWidth - 150,
+    x = display.contentWidth - 220,
     y = 0,
 	  fontSize = 50,
     align = "right"
@@ -227,6 +228,26 @@ function scene:create(event)
   coins = display.newText(options)
   coins:setFillColor(0)
   mainGroup:insert(coins)
+
+  -- Adertisement button
+  advertisementButton = widget.newButton({
+    label = '+',
+    fontSize = 40,
+    labelColor = {default={utils.hexToRGB("000000")}, over={utils.hexToRGB("FFFFFF")}},
+    onEvent = handleButtonEventAdvertisement,
+    emboss = false,
+    -- Properties for a rounded rectangle button
+    shape = "roundedRect",
+    width = 65,
+    height = 65,
+    cornerRadius = 25,
+    fillColor = {default={utils.hexToRGB("FFFFFF")}, over={utils.hexToRGB("000000")}},
+    strokeColor = {default={utils.hexToRGB("000000")}, over={utils.hexToRGB("FFFFFF")}},
+    strokeWidth = 4
+  })
+  advertisementButton.x = display.contentWidth - 100
+  advertisementButton.y = 0
+  mainGroup:insert(advertisementButton)
 
   -- Scroll view
   scrollView = widget.newScrollView(
@@ -375,7 +396,7 @@ function scene:create(event)
     emboss = false,
     -- Properties for a rounded rectangle button
     shape = "roundedRect",
-    width = 250,
+    width = 500,
     height = 75,
     cornerRadius = 25,
     fillColor = {default={utils.hexToRGB("660000")}, over={utils.hexToRGB("a36666")}},
@@ -383,7 +404,7 @@ function scene:create(event)
     strokeWidth = 4
   })
   -- Center the button
-  buyButton.x = 500
+  buyButton.x = rodBox.width / 2
   buyButton.y = 1250
   
   -- Insert the button
@@ -410,7 +431,7 @@ function scene:create(event)
       strokeWidth = 4,
       id = i,
     })
-    baitButtons[i].x = 200 + ((xCounter) * 300)
+    baitButtons[i].x = 175 + ((xCounter) * 325)
     baitButtons[i].y = 1375 + (yCounter * 100)
 
     -- Increase the counters
