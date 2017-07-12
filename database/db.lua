@@ -128,12 +128,8 @@ function _DB.create()
     local currentCoins = Db:getRows("StoreItems")[1].coins
 
     -- Add coins to users total
-    for i=1, #fishInfo do
-      if (fishInfo[i].fid == fid) then
-        local insert = [[UPDATE StoreItems SET coins=]] .. currentCoins + fishInfo[i].value .. [[;]]
-        Db:update(insert)
-      end
-    end
+    local insert = [[UPDATE StoreItems SET coins=]] .. currentCoins + fishInfo[fid].value .. [[;]]
+    Db:update(insert)
 
     Db:print()
   end

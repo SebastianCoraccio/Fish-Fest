@@ -61,7 +61,8 @@ function _Location.create(locationName)
       max = max + fish[i].spawnChance
       if (chance <= max) then
         local fish = fish[i]
-        if (fish.fid == 99) then
+        -- CHANGE TRASH ID WHEN NEW FISH ARE ADDED
+        if (fish.fid == 23) then
           return giveTrash()
         end
         return fish

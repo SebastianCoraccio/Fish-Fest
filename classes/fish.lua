@@ -21,10 +21,10 @@ function _Fish.create(params)
   local fishBite = audio.loadSound("audio/fish_bite.wav")  
 
   local fish = {}
+  
+  -- Start fish as spawning so it will ignore the bobber as it fades in
   fish.mode = "SPAWNING"
-
   timer.performWithDelay(1000, function() fish.mode = "SEEKING" end)
-  local fishScales = {.6,.8,1,1.2}
 
   fish.isBiting = false
   fish.moveTimer = nil
@@ -33,46 +33,23 @@ function _Fish.create(params)
 
   -- Fish ID
   fish.fid = params.fid
-  
+  print("Fish id " .. fish.fid)
   -- Import info about fish
-  for i = 1, #fishInfo do
-    if (fish.fid == fishInfo[i].fid) then
-      fish.biteTime = fishInfo[i].biteTime
-      fish.sizeGroup = fishInfo[i].sizeGroup
-      fish.minSize = fishInfo[i].minSize
-      fish.maxSize = fishInfo[i].maxSize
-      break
-    end
-  end
+  fish.biteTime = fishInfo[fish.fid].biteTime
+  fish.sizeGroup = fishInfo[fish.fid].sizeGroup
+  fish.minSize = fishInfo[fish.fid].minSize
+  fish.maxSize = fishInfo[fish.fid].maxSize
 
   -- Max and Min define bounding area fish can move within
   fish.maxX, fish.maxY = params.maxX, params.maxY
   fish.minX, fish.minY = params.minX, params.minY
 
-  -- Pick a random location for the fish to start as well as a rotation
-  local fishX = math.random(fish.minX, fish.maxX)
-  local fishY = math.random(fish.minY, fish.maxY)
-  fish.dir = math.random(0, 360)
-
-  -- DEBUGGING
-  -- Fish spawns at display center and rotation to 0 
-  -- local fishX = display.contentCenterX
-  -- local fishY = display.contentCenterY
-  -- fish.dir = 0 
-
-  -- Define a scale for the fish which will appropriately scale the fish components
-  fish.scale = 0.6
-
-  -- Create fish components
-  -- TODO: Decide if scaling is what we want, or 4-5 predefined polygons for each fish size
-  local fishPolygon = { -37,15 , -51,-38 , -41,-77 , 13,-99 , 43,-77 , 50,-37 , 39,18 , -1, 100 }
   local lineOfSight = { 225,-225 , 75,0 , -75,0 , -225,-225 , -150,-300 , 150,-300 }
-
 
   local sheetOptions =
   {
-    width = 323,
-    height = 978,
+    width = 66,
+    height = 200,
     numFrames = 8
   }
 
@@ -80,34 +57,47 @@ function _Fish.create(params)
 
   local sequenceAnim = {
     {
-      name = "swim",
+      name = "stationary",
       start = 1,
       count = 8, 
-      time = 1000,
+      time = 1200,
+      loopDirection = "forward"
+    },
+    {
+      name = "moving",
+      start = 1,
+      count = 8, 
+      time = 800,
       loopDirection = "forward"
     }
   }
 
+  -- Generate start (x, y) position and rotation
+  local startX = math.random(fish.minX, fish.maxX)
+  local startY = math.random(fish.minY, fish.maxY)
+  local startRotation = math.random(0, 360)
+  
   fish.anim = display.newSprite(params.group, sheetFishAnim, sequenceAnim)
-  fish.anim:scale(0.31, 0.25)
-  fish.anim:play()
---   fish.anim = display.newImage(params.group, "images/fish/silhouette.png", 0, 0)
   fish.anim.myName = "fish"
   fish.anim.alpha = 0
---   if (type(fish.sizeGroup) == "number") then
---     fish.anim:scale(fishScales[fish.sizeGroup], fishScales[fish.sizeGroup])
---   end
-  -- Line of sight - los
-  fish.los = display.newPolygon(params.group, 0, 0, lineOfSight)
+  fish.anim:setSequence("stationary")
+  fish.anim:play()
+  
+  -- Create Fish Line of Sight (los) polygon
+  fish.los = display.newPolygon(params.group, startX, startY, lineOfSight)
   fish.los.myName = 'los'
   fish.los.alpha = 0
   
-  -- Move shapes to their new locations
-  transition.to(fish.anim, {x=fishX, y=fishY, time=0})
-  transition.to(fish.los, {x=fishX, y=fishY, time=0})
-  transition.to(fish.anim, {rotation = fish.dir, time=0})
-  transition.to(fish.los, {rotation = fish.dir, time=0})
+  -- Move the fish and los to the correct location and rotation
+  transition.to(fish.anim, {
+    x=startX, 
+    y=startY,
+    rotation = startRotation,
+    time = 0
+  })
   
+  transition.to(fish.los, {rotation = startRotation, time=0})
+
   -- Create physics bodies
   physics.addBody(fish.anim, "dynamic", {shape=fff, isSensor=true, filter = {groupIndex=-2}})
   physics.addBody(fish.los, "dynamic", {shape=lineOfSight, isSenor=true, filter = {groupIndex=-2}})
@@ -119,7 +109,6 @@ function _Fish.create(params)
   -- Updates what the fix will do now based on its state
   function fish:update()
     if fish.mode == "SEEKING" then
-      fish.anim:setFillColor(1,1,1)
       wait = math.random(3, 5) * 1000 
       fish.moveTimer = timer.performWithDelay(wait, fish.changeLocation, 1)
     end  
@@ -127,12 +116,10 @@ function _Fish.create(params)
 
   -- Rotates the fish towards the given x,y location
   function fish:rotateTo(params)
-    -- TODO: Use utils function
-    -- fish.dir = math.atan2(fish.anim.y - params.y, fish.anim.x - params.x) * (180/math.pi) - 90
-    fish.dir = utils.rotationTo(params.x, params.y, fish.anim.x, fish.anim.y, fish.dir)
+    local rotation = utils.rotationTo(params.x, params.y, fish.anim.x, fish.anim.y, fish.anim.rotation)
     -- Rotate towards new position
-    transition.to(fish.anim, {rotation = fish.dir, time=1000})
-    transition.to(fish.los, {rotation = fish.dir, time=1000})
+    transition.to(fish.anim, {rotation = rotation, time=1000})
+    transition.to(fish.los, {rotation = rotation, time=1000})
   end
 
   -- Moves the fish to the given x,y location
@@ -149,8 +136,6 @@ function _Fish.create(params)
                               alpha=params.alpha,
                               transition=easing.outQuad,
                               onComplete=params.onComplete})
-
-    fish.x, fish.y = params.x, params.y
 
     transition.to(fish.los, {x=params.x, 
                              y=params.y, 
