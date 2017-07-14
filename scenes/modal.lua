@@ -27,6 +27,13 @@ local function handleButtonEventDetails(event)
   end
 end
 
+local function doesFileExist(theFile, path)
+  local thePath = path or system.DocumentsDirectory
+  local filePath = system.pathForFile(theFile, thePath)
+
+  return filePath
+end
+
 -- Function to handle close button
 local function handleButtonEventClose(event)
   if (event.phase == "ended") then
@@ -119,8 +126,12 @@ function scene:create(event)
   modalGroup:insert(button1) -- Insert the button
 
   -- Insert image
-  -- TODO: Change 11 to fid
-  fishImage = display.newImage("images/fish/" .. "11" .. "_large.png", modalBox.contentCenterX, 500)
+  -- TODO: Remove this
+  if (doesFileExist("images/fish/" .. fid .. "_large.png", system.ResourceDirectory)) then
+    fishImage = display.newImage("images/fish/" .. fid .. "_large.png", modalBox.contentCenterX, 500)
+  else
+    fishImage = display.newImage("images/fish/" .. "11" .. "_large.png", modalBox.contentCenterX, 500)
+  end
   modalGroup:insert(fishImage)
 
   -- Create the close button

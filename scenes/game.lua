@@ -38,6 +38,7 @@ local modalIsShowing = false
 -- Display groups
 local backgroundGroup
 local mainGroup
+local uiGroup
 local baitButton
 local backButton
 
@@ -61,6 +62,7 @@ function addFish()
                      fid=fishToAdd.fid,
                      group=mainGroup,
                      rod=rod})
+  uiGroup:toFront()
   table.insert(fishTable, f)
 end
 
@@ -84,6 +86,9 @@ function scene:create(event)
   backgroundGroup = display.newGroup()
   sceneGroup:insert(backgroundGroup)
 
+  uiGroup = display.newGroup()
+  sceneGroup:insert(uiGroup)
+
   mainGroup = display.newGroup()
   sceneGroup:insert(mainGroup)
 
@@ -97,10 +102,10 @@ function scene:create(event)
   water.y = display.contentCenterY - 550
 
   -- Create the bobber
-  bobber = newBobber(display.contentCenterX, display.contentCenterY + 500, mainGroup)
+  bobber = newBobber(display.contentCenterX, display.contentCenterY + 500, uiGroup)
 
   -- Create bait button
-  baitButton = newBaitButton(display.contentCenterX + display.contentWidth / 3, display.contentHeight, mainGroup, event.params.location)
+  baitButton = newBaitButton(display.contentCenterX + display.contentWidth / 3, display.contentHeight, uiGroup, event.params.location)
 
   -- Get location
   location = newLocation(event.params.location)
@@ -124,7 +129,7 @@ function scene:create(event)
   -- Center the button
   backButton.x = display.contentCenterX - display.contentWidth / 3
   backButton.y = display.contentHeight
-  mainGroup:insert(backButton) -- Insert the button
+  uiGroup:insert(backButton) -- Insert the button
 
   -- Create the fish
   for i=1,3 do
