@@ -130,7 +130,7 @@ function scene:create(event)
   if (doesFileExist("images/fish/" .. fid .. "_large.png", system.ResourceDirectory)) then
     fishImage = display.newImage("images/fish/" .. fid .. "_large.png", modalBox.contentCenterX, 500)
   else
-    fishImage = display.newImage("images/fish/" .. "11" .. "_large.png", modalBox.contentCenterX, 500)
+    fishImage = display.newImage("images/fish/" .. "default" .. "_large.png", modalBox.contentCenterX, 500)
   end
   modalGroup:insert(fishImage)
 
