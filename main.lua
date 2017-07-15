@@ -6,7 +6,6 @@
 
 -- Set up the composer
 local composer = require('composer')
-local admob = require("plugin.admob")
 
 -- Set up DB
 local newDB = require("database.db").create

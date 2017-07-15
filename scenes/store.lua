@@ -5,7 +5,6 @@
 local composer = require('composer')
 local widget = require("widget")
 local utils = require("utils")
-local admob = require("plugin.admob")
 
 -- Set up DB
 local newDB = require("database.db").create
