@@ -26,11 +26,11 @@ local function handleSwipeEvent(event)
     if (dX > 200) then
       --swipe right
       sceneToLoad = 'store'
-      slideDirection = 'Left'
+      slideDirection = 'Right'
     elseif (dX < -200) then
       --swipe left
       sceneToLoad = 'game'
-      slideDirection = 'Right'
+      slideDirection = 'Left'
     elseif (dY > 200) then
       --swipe down
       sceneToLoad = 'up'
@@ -46,9 +46,9 @@ local function handleSwipeEvent(event)
     -- Temporary if
     if (sceneToLoad == "game") then 
       -- Decide if we want to use slide or from effect
-      composer.gotoScene('scenes.' .. sceneToLoad, {params = {location='ocean'}, effect="from" .. slideDirection, time=800})
+      composer.gotoScene('scenes.' .. sceneToLoad, {params = {location='river'}, effect="slide" .. slideDirection, time=800})
     elseif (sceneToLoad == "store") then
-      composer.gotoScene('scenes.' .. sceneToLoad, {effect="from" .. slideDirection, time=800})
+      composer.gotoScene('scenes.' .. sceneToLoad, {effect="slide" .. slideDirection, time=800})
     end
   end
 end

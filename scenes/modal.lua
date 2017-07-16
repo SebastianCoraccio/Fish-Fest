@@ -126,12 +126,7 @@ function scene:create(event)
   modalGroup:insert(button1) -- Insert the button
 
   -- Insert image
-  -- TODO: Remove this
-  if (doesFileExist("images/fish/" .. fid .. "_large.png", system.ResourceDirectory)) then
-    fishImage = display.newImage("images/fish/" .. fid .. "_large.png", modalBox.contentCenterX, 500)
-  else
-    fishImage = display.newImage("images/fish/" .. "default" .. "_large.png", modalBox.contentCenterX, 500)
-  end
+  local fishImage = display.newImage("images/fish/" .. fid .. "_large.png", modalBox.contentCenterX, 500)
   modalGroup:insert(fishImage)
 
   -- Create the close button

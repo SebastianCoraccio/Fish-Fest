@@ -189,7 +189,7 @@ local function handleSwipeEvent(event)
   end
 
   if (event.phase == "ended") and (returnToTitle == true) then
-    composer.gotoScene('scenes.title', {effect="fromRight", time=800})
+    composer.gotoScene('scenes.title', {effect="slideLeft", time=800})
   end
 end
 
