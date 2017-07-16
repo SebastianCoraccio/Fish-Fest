@@ -42,6 +42,9 @@ local uiGroup
 local baitButton
 local backButton
 
+-- tutorial
+local tutorial = false
+
 -- Current rod upgrade
 -- TODO: Decide how much we want to increase the timer per rod upgrade
 local rod = db:getRows("StoreItems")[1].currentRodUpgrade * 150
@@ -70,7 +73,7 @@ end
 local function handleButtonEventBack(event)
   if (event.phase == "ended") then
     -- TODO: Change to location page when implemeneted
-    composer.gotoScene('scenes.title', {effect="fromLeft", time=800})
+    composer.gotoScene('scenes.title', {effect="fromLeft", time=800, params={}})
   end
 end
 
@@ -153,7 +156,10 @@ function scene:create(event)
 -- print(tostring(fishCount[#fishCount]/10000) .. "%\t : " .. fishInfo[#fishInfo].name)
 -- END
 
-    -- Add catch event and related listeners
+  -- Check if tutorial is going on
+  tutorial = event.params.tutorial
+
+  -- Add catch event and related listeners
   Runtime:addEventListener("touch", bobber.catch)
   bobber.anim:addEventListener("catchEvent", scene.reelIn)
   baitButton.anim:addEventListener("pauseEvent", pauseGame)
@@ -168,7 +174,12 @@ function scene:show( event )
     -- Code here runs when the scene is still off screen (but is about to come on screen)
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
-
+    if (tutorial) then
+      print('here')
+      composer.showOverlay("scenes.tutorialModal", {params = {text = 
+      [[Here is where you do all the fishing. You can hit the back button to go back to the title and hit the bait button to view, use, and buy baits.
+To fish, press and drag the bobber to cast. A power meter will show how far the bobber will go. Press next to try casting.]]}})
+    end
     -- Timer to spawn fish throughout
     -- TODO: Finalize time
     self.fishUpdateTimer = timer.performWithDelay(7000, function()

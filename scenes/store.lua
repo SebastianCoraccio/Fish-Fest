@@ -44,6 +44,18 @@ local description
 -- If the user swipes to the right
 local returnToTitle = false
 
+-- if true, activate tutorial
+local tutorial
+local tutorialComplete = false
+
+-- Custom function for resuming the game (from pause state)
+function scene:resumeGame(tutorial2)
+  if (tutorial2) then
+    -- Code to resume game
+    tutorial = true
+  end
+end
+
 -- ScrollView listener
 local function scrollListener( event )
   local phase = event.phase
@@ -52,8 +64,8 @@ local function scrollListener( event )
     dX = event.xStart - event.x
   end
 
-  if (dX > 200) then
-    composer.gotoScene('scenes.title', {effect="fromRight", time=800})
+  if (dX > 200) and ((tutorial == false) or (tutorialComplete == true)) then
+    composer.gotoScene('scenes.title', {effect="fromRight", time=800, params={tutorial="store"}})
   end  
 end
 
@@ -174,6 +186,15 @@ local function handleButtonEventRodBuy(event)
 
     -- Update button text
     changeRod()
+
+    -- Check if that was for the tutorial
+    if (tutorial) then
+      tutorialComplete = true
+      composer.showOverlay("scenes.tutorialModal", {params = {text = 
+      [[Congratulations! You just bought your first fishing rod upgrade.
+Hit next and try swiping back to the title screen.]]}, 
+      effect="fade", time=800})
+    end
   end
 end
 
@@ -188,7 +209,7 @@ local function handleSwipeEvent(event)
     end
   end
 
-  if (event.phase == "ended") and (returnToTitle == true) then
+  if (event.phase == "ended") and (returnToTitle == true) and ((tutorial == false) or (tutorialComplete == true)) then
     composer.gotoScene('scenes.title', {effect="slideLeft", time=800})
   end
 end
@@ -203,6 +224,9 @@ function scene:create(event)
   -- New display group
   mainGroup = display.newGroup()
   sceneGroup:insert(mainGroup)
+
+  -- check if in tutorial mode
+  tutorial = event.params.tutorial
 
   -- Title text
   local options = {
@@ -460,6 +484,13 @@ function scene:show( event )
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
     -- Swipe event
+    -- Make tutorial modal if needed
+  if (tutorial) then
+    composer.showOverlay("scenes.tutorialModal", {params = {text = 
+      [[This is the store. Here is where you can buy different types of bait and where you can upgrade your fishing rod.
+Hit next to buy your first rod upgrade.]]}, 
+      effect="fade", time=800})
+  end
     Runtime:addEventListener("touch", handleSwipeEvent)
   end
 end

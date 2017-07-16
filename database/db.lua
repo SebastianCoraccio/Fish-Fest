@@ -47,6 +47,11 @@ function _DB.create()
         cherryCount INT NOT NULL,
         coins INT NOT NULL
       );
+
+      CREATE TABLE IF NOT EXISTS Flags
+      (
+        watchedTutorial INT NOT NULL DEFAULT 0
+      );
     ]]
   end
 
@@ -96,6 +101,14 @@ function _DB.create()
         print("  " .. k .. ": " .. v)
       end
     end
+    
+    -- Flags
+    print("Flags")
+    for row in db:nrows("SELECT * FROM Flags") do
+      for k, v in pairs(row) do
+        print(" " .. k .. ": " .. v)
+      end
+    end
   end
 
   -- Update DB when a fish is caught
@@ -142,6 +155,7 @@ function _DB.create()
       DELETE FROM BaitUsages;
       DELETE FROM StoreItems;
       INSERT INTO StoreItems VALUES (0, 0, 0, 0, 0, 0);
+      INSERT INTO Flags VALUES (0)
     ]]
   end
 
