@@ -66,7 +66,7 @@ local function handleSwipeEvent(event)
 
   if (event.phase == "ended") then
     -- Temporary if
-    if (sceneToLoad == "game") and (tutorial == false) then 
+    if (sceneToLoad == "game") and (tutorial == false) or (db:getRows("Flags")[1].watchedTutorial == 1) then 
       -- Decide if we want to use slide or from effect
       composer.gotoScene('scenes.' .. sceneToLoad, {params = {location='river', tutorial=tutorialStore}, effect="slide" .. slideDirection, time=800})
     elseif (sceneToLoad == "store") and (tutorialStore == false) then

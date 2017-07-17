@@ -53,6 +53,8 @@ function scene:resumeGame(tutorial2)
   if (tutorial2) then
     -- Code to resume game
     tutorial = true
+  else 
+    tutorialComplete = true
   end
 end
 
@@ -65,7 +67,11 @@ local function scrollListener( event )
   end
 
   if (dX > 200) and ((tutorial == false) or (tutorialComplete == true)) then
-    composer.gotoScene('scenes.title', {effect="fromRight", time=800, params={tutorial="store"}})
+    if (db:getRows("Flags")[1].watchedTutorial == 0) then
+      composer.gotoScene('scenes.title', {effect="fromRight", time=800, params={tutorial="store"}})
+    else
+      composer.gotoScene('scenes.title', {effect="fromRight", time=800, params={}})
+    end
   end  
 end
 
@@ -210,7 +216,7 @@ local function handleSwipeEvent(event)
   end
 
   if (event.phase == "ended") and (returnToTitle == true) and ((tutorial == false) or (tutorialComplete == true)) then
-    composer.gotoScene('scenes.title', {effect="slideLeft", time=800})
+    composer.gotoScene('scenes.title', {effect="slideLeft", time=800, params={}})
   end
 end
 
@@ -485,7 +491,7 @@ function scene:show( event )
     -- Code here runs when the scene is entirely on screen
     -- Swipe event
     -- Make tutorial modal if needed
-  if (tutorial) then
+  if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
     composer.showOverlay("scenes.tutorialModal", {params = {text = 
       [[This is the store. Here is where you can buy different types of bait and where you can upgrade your fishing rod.
 Hit next to buy your first rod upgrade.]]}, 

@@ -45,8 +45,9 @@ math.randomseed(os.time())
 db:createTables()
 db:checkDb()
 
--- db:update("UPDATE StoreItems SET currentRodUpgrade = 0;")
--- db:update("UPDATE Flags SET watchedTutorial = 0")
+-- Tutorial reset
+db:update("UPDATE StoreItems SET currentRodUpgrade = 0;")
+db:update("UPDATE Flags SET watchedTutorial = 0")
 
 db:print()
 

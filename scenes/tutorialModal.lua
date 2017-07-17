@@ -37,6 +37,7 @@ end
 local function handleButtonEventSkip(event)
   if (event.phase == "ended") then
     db:update("UPDATE Flags SET watchedTutorial = 1")
+    tutorial = false
     composer.hideOverlay(true, "fade", 400)
   end
 end
@@ -62,7 +63,7 @@ function scene:create(event)
   -- Text information
   local text = display.newText({
     text = event.params.text,
-     y = -100,
+     y = -80,
 	   width = 500,
 	   fontSize = 50,
 	   align = "center"

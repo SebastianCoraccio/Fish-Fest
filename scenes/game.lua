@@ -174,11 +174,10 @@ function scene:show( event )
     -- Code here runs when the scene is still off screen (but is about to come on screen)
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
-    if (tutorial) then
-      print('here')
+    if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
       composer.showOverlay("scenes.tutorialModal", {params = {text = 
       [[Here is where you do all the fishing. You can hit the back button to go back to the title and hit the bait button to view, use, and buy baits.
-To fish, press and drag the bobber to cast. A power meter will show how far the bobber will go. Press next to try casting.]]}})
+Hit next to learn how to fish.]]}})
     end
     -- Timer to spawn fish throughout
     -- TODO: Finalize time
