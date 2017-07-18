@@ -50,7 +50,7 @@ function _DB.create()
 
       CREATE TABLE IF NOT EXISTS Flags
       (
-        watchedTutorial INT NOT NULL DEFAULT 0
+        watchedTutorial INT NOT NULL
       );
     ]]
   end
@@ -209,8 +209,14 @@ function _DB.create()
         db:exec([[ALTER TABLE StoreItems ADD COLUMN ]] ..  storeItemsCols[i] .. [[ INT DEFAULT 0;]])
       end
     end
+    -- Prime StoreItems Table
     if (#Db:getRows("StoreItems") == 0) then
       db:exec[[INSERT INTO StoreItems VALUES (0, 0, 0, 0, 0, 0);]]
+    end
+
+    -- Prime Flags table
+    if (#Db:getRows("Flags") == 0) then
+      db:exec[[INSERT INTO Flags VALUES (0);]]
     end
   end
 

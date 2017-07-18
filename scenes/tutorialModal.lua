@@ -55,7 +55,7 @@ function scene:create(event)
   sceneGroup:insert(modalGroup)
   -- Code here runs when the scene is first created but has not yet appeared on screen
   -- Background
-	modalBox = display.newRoundedRect(0, 0, display.contentWidth / 1.25, display.contentHeight / 1.4, 12)
+	modalBox = display.newRoundedRect(0, 0, display.contentWidth / 1.25, display.contentHeight / 1.3, 12)
 	modalBox:setFillColor( 255 )
 	modalBox:setStrokeColor(0)
 	modalBox.strokeWidth = 4
