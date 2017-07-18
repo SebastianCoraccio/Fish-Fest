@@ -199,7 +199,7 @@ local function handleButtonEventRodBuy(event)
       composer.showOverlay("scenes.tutorialModal", {params = {text = 
       [[Congratulations! You just bought your first fishing rod upgrade.
 Hit next and try swiping back to the title screen.]]}, 
-      effect="fade", time=800})
+      effect="fade", time=800, isModal=true})
     end
   end
 end
@@ -495,7 +495,7 @@ function scene:show( event )
     composer.showOverlay("scenes.tutorialModal", {params = {text = 
       [[This is the store. Here is where you can buy different types of bait and where you can upgrade your fishing rod.
 Hit next to buy your first rod upgrade.]]}, 
-      effect="fade", time=800})
+      effect="fade", time=800, isModal=true})
   end
     Runtime:addEventListener("touch", handleSwipeEvent)
   end

@@ -17,6 +17,7 @@ local modalBox
 local text
 local nextButton
 local skipButton
+local finishButton
 
 -- Modal group
 local modalGroup
@@ -94,7 +95,6 @@ function scene:create(event)
   modalGroup:insert(nextButton) -- Insert the button
 
   -- Skip button
-  -- Create the close button
   skipButton = widget.newButton(
   {
       label = "Skip",
@@ -115,6 +115,33 @@ function scene:create(event)
   skipButton.x = (modalBox.width / 2) - 150
   skipButton.y = 270
   modalGroup:insert(skipButton) -- Insert the button
+
+  if (event.params.finishButton) then
+    -- Skip button
+    finishButton = widget.newButton(
+    {
+        label = "Skip",
+        fontSize = 40,
+        onEvent = handleButtonEventSkip,
+        emboss = false,
+        -- Properties for a rounded rectangle button
+        shape = "roundedRect",
+        width = 500,
+        height = 75,
+        cornerRadius = 12,
+        fillColor = { default={1,0,0,1}, over={1,0.1,0.7,0.4} },
+        strokeColor = { default={1,0.4,0,1}, over={0.8,0.8,1,1} },
+        strokeWidth = 4
+      }
+    )
+    -- Center the button
+    finishButton.x = 0
+    finishButton.y = 270
+    modalGroup:insert(finishButton) -- Insert the button
+
+    modalGroup:remove(nextButton)
+    modalGroup:remove(skipButton)
+  end
 
   -- Place the group
 	modalGroup.x = display.contentWidth / 2

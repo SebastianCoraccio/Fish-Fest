@@ -11,6 +11,10 @@ local newSplash = require('classes.splash').create
 local newRipple = require('classes.ripple').create
 local _Fish = {}
 
+-- Set up DB
+local newDB = require("database.db").create
+local db = newDB()
+
 -- Fish = { MAX_BOBS = 5 }
 -- Fish.__index = Fish
 
@@ -286,23 +290,29 @@ function _Fish.create(params)
         t = timer.performWithDelay(delay, function() 
               fish:moveTo({x=bobberEdge.x, y=bobberEdge.y, 
                            onComplete=function()
-                             system.vibrate()   
-                             audio.play(fishBite)
-                             newSplash({x=x, y=y, collide = false}) 
-                             fish.isBiting=true
+                              system.vibrate()   
+                              audio.play(fishBite)
+                              newSplash({x=x, y=y, collide = false}) 
+                              fish.isBiting=true
 
-                             -- TODO: Add timestamp for determining fish to catch
-                             -- in the case 2 or more bite at once
-                             local totalBiteTime = fish.biteTime + params.rod;
-                             -- Check if the bite times is negative. 
-                             -- If it is then the player has no chance to catch this fish
-                             -- Potentially add special sound or message 
-                             -- to alert player to upgrade rod
-                             if(totalBiteTime <= 0) then
+                              -- TODO: Add timestamp for determining fish to catch
+                              -- in the case 2 or more bite at once
+                              local totalBiteTime = fish.biteTime + params.rod;
+
+                              -- Add in extra time if in tutorial
+                              if (db:getRows("Flags")[1].watchedTutorial == 0) then
+                                totalBiteTime = totalBiteTime + 1000
+                              end
+
+                              -- Check if the bite times is negative. 
+                              -- If it is then the player has no chance to catch this fish
+                              -- Potentially add special sound or message 
+                              -- to alert player to upgrade rod
+                              if(totalBiteTime <= 0) then
                                 fish.isBiting = false
                                 fish:scatter()
-                             else
-                               fish.biteTimer = timer.performWithDelay(totalBiteTime, function()
+                              else
+                                 fish.biteTimer = timer.performWithDelay(totalBiteTime, function()
                                  fish.isBiting = false
                                  fish:scatter()
                                end)

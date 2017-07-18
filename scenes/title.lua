@@ -127,7 +127,7 @@ function scene:create(event)
     composer.showOverlay("scenes.tutorialModal", {params = {text = 
       [[Welcome to TNAC! This is the title screen. To move from menu to menu, swipe in said direction. 
 Hit next to try going to the store.]]}, 
-      effect="fade", time=800})
+      effect="fade", time=800, isModal=true})
   end
 end
 
@@ -148,7 +148,7 @@ function scene:show(event)
       composer.showOverlay("scenes.tutorialModal", {params = {text = 
       [[Lets move onto gameplay.
 Hit next to try and swipe to the game.]]},
-      effect="fade", time=800})
+      effect="fade", time=800, isModal=true})
     end
     Runtime:addEventListener("touch", handleSwipeEvent)
   end
