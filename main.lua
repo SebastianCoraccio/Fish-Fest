@@ -67,6 +67,6 @@ display.setDefault("background", 1, 1, 1)
 
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now
-composer.gotoScene('scenes.game', {params = {location='river'}})
+-- composer.gotoScene('scenes.game', {params = {location='river'}})
 -- composer.gotoScene('scenes.title', {params={}})
--- composer.gotoScene('scenes.store')
+composer.gotoScene('scenes.settings')

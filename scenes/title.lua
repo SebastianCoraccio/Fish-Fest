@@ -16,6 +16,7 @@ local mainGroup
 local title
 local game
 local store
+local settings
 
 -- Keeps track of what scene to load based on the users swipe
 local sceneToLoad
@@ -55,22 +56,24 @@ local function handleSwipeEvent(event)
       slideDirection = 'Left'
     elseif (dY > 200) then
       --swipe down
-      sceneToLoad = 'up'
-      slideDirection = "Top"
+      sceneToLoad = 'settings'
+      slideDirection = "Down"
     elseif (dY < -200) then
       --swipe up
       sceneToLoad = 'down'
-      slideDirection = "Bottom"
+      slideDirection = "Up"
     end
   end
 
   if (event.phase == "ended") then
     -- Temporary if
-    if (sceneToLoad == "game") and (tutorial == false) or (db:getRows("Flags")[1].watchedTutorial == 1) then 
+    if (sceneToLoad == "game") and ((tutorial == false) or (db:getRows("Flags")[1].watchedTutorial == 1)) then 
       -- Decide if we want to use slide or from effect
       composer.gotoScene('scenes.' .. sceneToLoad, {params = {location='river', tutorial=tutorialStore}, effect="slide" .. slideDirection, time=800})
     elseif (sceneToLoad == "store") and (tutorialStore == false) then
       composer.gotoScene('scenes.' .. sceneToLoad, {effect="slide" .. slideDirection, time=800, params={tutorial=tutorial}})
+    elseif (sceneToLoad == "settings") and (db:getRows("Flags")[1].watchedTutorial == 1) then
+      composer.gotoScene('scenes.' .. sceneToLoad, {effect="slide" .. slideDirection, time=800})
     end
   end
 end
@@ -121,6 +124,16 @@ function scene:create(event)
   store = display.newText(options)
   store:setFillColor(0)
   mainGroup:insert(store)
+
+  settings = display.newText({
+    text = "Settings",
+    x = display.contentCenterX,
+    y = 0,
+    fontSize = 50,
+    align = "center"
+  })
+  settings:setFillColor(0)
+  mainGroup:insert(settings)
 
   -- Check if tutorial needs to be shown
   if (db:getRows("Flags")[1].watchedTutorial == 0) then
