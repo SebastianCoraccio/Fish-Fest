@@ -168,7 +168,9 @@ function _Bobber.create(x, y, group)
                 local function scaleDown()
                     transition.to(bobber.anim, {time=1100, xScale=.8, yScale=.8, 
                     onComplete=function()
-                        audio.play( bobberHit )
+                        if (db:getRows("Flags")[1].soundEffects == 1) then
+                            audio.play(bobberHit)
+                        end
                         newSplash({x=bobber.anim.x, y=bobber.anim.y, collide = true})
                         bobber.anim.isActive = true
                         bobber.anim.isCatchable = true

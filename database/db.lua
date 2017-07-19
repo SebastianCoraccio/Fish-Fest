@@ -50,7 +50,9 @@ function _DB.create()
 
       CREATE TABLE IF NOT EXISTS Flags
       (
-        watchedTutorial INT NOT NULL
+        watchedTutorial INT NOT NULL,
+        vibration INT NOT NULL,
+        soundEffects INT NOT NULL
       );
     ]]
   end
@@ -161,7 +163,7 @@ function _DB.create()
       DELETE FROM StoreItems;
       DELETE FROM Flags;
       INSERT INTO StoreItems VALUES (0, 0, 0, 0, 0, 0);
-      INSERT INTO Flags VALUES (0);
+      INSERT INTO Flags VALUES (0, 1, 1);
     ]]
   end
 
@@ -171,8 +173,9 @@ function _DB.create()
       DROP TABLE FishCaught;
       DROP TABLE BaitUsages;
       DROP TABLE StoreItems;
+      DROP TABLE Flags;
     ]]
-    -- Db:createTables()
+    Db:createTables()
     -- Db:delete()
   end
 
@@ -222,7 +225,7 @@ function _DB.create()
 
     -- Prime Flags table
     if (#Db:getRows("Flags") == 0) then
-      db:exec[[INSERT INTO Flags VALUES (0);]]
+      db:exec[[INSERT INTO Flags VALUES (0, 1, 1);]]
     end
   end
 

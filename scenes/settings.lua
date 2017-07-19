@@ -15,7 +15,10 @@ local db = newDB()
 -- Local things
 local mainGroup
 local title
-local vibration
+local vibrationText
+local vibrationSwitch
+local soundEffectsText
+local soundEffectsSwitch
 
 -- Keeps track of what scene to load based on the users swipe
 local sceneToLoad
@@ -44,8 +47,13 @@ end
 
 -- Handle press events for the checkbox
 local function onSwitchPress( event )
-    local switch = event.target
-    print( "Switch with ID '"..switch.id.."' is on: "..tostring(switch.isOn) )
+  local switch = event.target
+  if (switch.isOn) then
+    db:update("UPDATE Flags SET " .. switch.id .. " = 0;")
+  else
+    db:update("UPDATE Flags SET " .. switch.id .. " = 1;")
+  end
+  db:print()
 end
 
 -- -----------------------------------------------------------------------------------
@@ -73,16 +81,69 @@ function scene:create(event)
   mainGroup:insert(title)
 
   -- Vibration
-  vibration = widget.newSwitch({
-    left = display.contentCenterX,
-    top = display.contentCenterY,
-    width = 100,
-    height = 100,
+  -- Text
+  vibrationText = display.newText({
+    text = "Vibration: ",
+    x = 50,
+    y = 200,
+    fontSize = 50,
+    align = "center"
+  })
+  vibrationText.anchorX = 0
+  vibrationText.anchorY = 0
+  vibrationText:setFillColor(0)
+  mainGroup:insert(vibrationText)
+
+  -- Sound effects
+  -- Text
+  soundEffectsText = display.newText({
+    text = "Sound effects: ",
+    x = 50,
+    y = 400,
+    fontSize = 50,
+    align = "center"
+  })
+  soundEffectsText.anchorX = 0
+  soundEffectsText.anchorY = 0
+  soundEffectsText:setFillColor(0)
+  mainGroup:insert(soundEffectsText)
+
+  -- Switch
+  local isSwitchOn = true
+  if (db:getRows("Flags")[1].soundEffects == 0) then
+    isSwitchOn = false
+  end
+  soundEffectsSwitch = widget.newSwitch({
+    left = display.contentWidth - 200,
+    top = soundEffectsText.y - 20,
     style = "onOff",
-    id = "onOff",
+    initialSwitchState = isSwitchOn,
+    id = "soundEffects",
     onPress = onSwitchPress
   })
-  mainGroup:insert(vibration)
+  soundEffectsSwitch.anchorX = 0
+  soundEffectsSwitch.anchorY = 0
+  soundEffectsSwitch:scale(2,2)
+  mainGroup:insert(soundEffectsSwitch)
+
+  -- Vibration
+  -- Switch
+  isSwitchOn = true
+  if (db:getRows("Flags")[1].vibration == 0) then
+    isSwitchOn = false
+  end
+  vibrationSwitch = widget.newSwitch({
+    left = display.contentWidth - 200,
+    top = vibrationText.y - 20,
+    style = "onOff",
+    initialSwitchState = isSwitchOn,
+    id = "vibration",
+    onPress = onSwitchPress
+  })
+  vibrationSwitch.anchorX = 0
+  vibrationSwitch.anchorY = 0
+  vibrationSwitch:scale(2,2)
+  mainGroup:insert(vibrationSwitch)
 end
 
 -- show()
