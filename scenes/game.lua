@@ -345,7 +345,7 @@ function scene:reelIn()
         end)
 
         -- Update DB and remove fish
-        db:caughtFish(fid)
+        -- db:caughtFish(fid)
         removeFish(i)
 
         -- A fish has already been caught, so this fish scatters and is removed

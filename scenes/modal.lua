@@ -6,6 +6,10 @@ local composer = require( "composer" )
 local fishInfo = require("data.fishInfo")
 local widget = require("widget")
 
+-- Set up DB
+local newDB = require("database.db").create
+local db = newDB()
+
 -- This scene
 local scene = composer.newScene()
 
@@ -16,6 +20,7 @@ local button1
 local button2
 local valueText
 local fishImage
+local weightText
 
 local modalGroup
 
@@ -25,13 +30,6 @@ local function handleButtonEventDetails(event)
   if (event.phase == "ended") then
     print("Open encylopedia of that fish")
   end
-end
-
-local function doesFileExist(theFile, path)
-  local thePath = path or system.DocumentsDirectory
-  local filePath = system.pathForFile(theFile, thePath)
-
-  return filePath
 end
 
 -- Function to handle close button
@@ -94,7 +92,7 @@ function scene:create(event)
   -- Value and weight text
   local valueOptions = {
     text = "Worth: " .. value,
-    x = modalBox.contentCenterX,
+    x = (modalBox.width / -2) + 165,
     y = 160,
     fontSize = 40,
     align = "center"
@@ -102,6 +100,22 @@ function scene:create(event)
   valueText = display.newText(valueOptions)
   valueText:setFillColor(0)
   modalGroup:insert(valueText)
+
+  -- Calculate weight
+  local one = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
+  local two = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
+  local three = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
+  local weight = math.round(((one + two + three) / 3.0) * 100) * 0.01
+
+  local weightText = display.newText({
+    text = "Weight: " .. weight,
+    x = (modalBox.width / 2) - 165,
+    y = 160,
+    fontSize = 40,
+    align = "center"
+  })
+  weightText:setFillColor(0)
+  modalGroup:insert(weightText)
 
   -- Create the Details button
   button1 = widget.newButton(
@@ -150,6 +164,9 @@ function scene:create(event)
   button2.x = (modalBox.width / 2) - 150
   button2.y = 270
   modalGroup:insert(button2) -- Insert the button
+
+  -- Update the DB
+  db:caughtFish(fid, weight)
 
   -- Place the group
 	modalGroup.x = display.contentWidth / 2

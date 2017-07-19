@@ -112,16 +112,16 @@ function _DB.create()
   end
 
   -- Update DB when a fish is caught
-  function Db:caughtFish(fid)
+  function Db:caughtFish(fid, weight)
     -- Check if that fish has already been caught before
     local fishCaught = Db:getRows("FishCaught")
     local fishInfo = require("data.fishInfo")
 
     -- Set weights
-    local one = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
-    local two = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
-    local three = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
-    local weight = math.round(((one + two + three) / 3.0) * 100) * 0.01
+    -- local one = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
+    -- local two = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
+    -- local three = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
+    -- local weight = math.round(((one + two + three) / 3.0) * 100) * 0.01
 
     local updated = false
     for i=1, #fishCaught do
