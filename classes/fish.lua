@@ -29,7 +29,8 @@ function _Fish.create(params)
   -- Start fish as spawning so it will ignore the bobber as it fades in
   fish.mode = "SPAWNING"
   timer.performWithDelay(1000, function() fish.mode = "SEEKING" end)
-
+  
+  
   fish.isBiting = false
   fish.moveTimer = nil
   fish.biteTimer = nil
@@ -44,12 +45,24 @@ function _Fish.create(params)
   fish.minSize = fishInfo[fish.fid].minSize
   fish.maxSize = fishInfo[fish.fid].maxSize
 
+  -- @DELETE
+  local fishScale;
+  if(fish.sizeGroup == 'tiny') then fishScale = .6
+  elseif(fish.sizeGroup == 'small') then fishScale = .8
+  elseif(fish.sizeGroup == 'large') then fishScale = 1.2
+  elseif(fish.sizeGroup == 'tiger') then fishScale = 1.2
+  else fishScale = 1 end
+  print(sizeGroup)
+  print(fishScale)
   -- Max and Min define bounding area fish can move within
   fish.maxX, fish.maxY = params.maxX, params.maxY
   fish.minX, fish.minY = params.minX, params.minY
+  
+--   local lineOfSight = { 225,-225 , 75,0 , -75,0 , -225,-225 , -150,-300 , 150,-300 }
 
-  local lineOfSight = { 225,-225 , 75,0 , -75,0 , -225,-225 , -150,-300 , 150,-300 }
-
+  -- @DELETE  
+  local lineOfSight = { 225*fishScale,-225*fishScale , 75*fishScale,0 , -75*fishScale,0 , -225*fishScale,-225*fishScale , -150*fishScale,-300*fishScale , 150*fishScale,-300*fishScale }
+    
   local sheetOptions =
   {
     width = 66,
@@ -82,6 +95,7 @@ function _Fish.create(params)
   local startRotation = math.random(0, 360)
   
   fish.anim = display.newSprite(params.group, sheetFishAnim, sequenceAnim)
+  fish.anim:scale(fishScale, fishScale) --@DELETE
   fish.anim.myName = "fish"
   fish.anim.alpha = 0
   fish.anim:setSequence("stationary")
@@ -265,7 +279,7 @@ function _Fish.create(params)
         local y = bobber.y
 
         -- Get the point at the bobbers edge, and the point the fish will move back and forth between
-        local bobberEdge = utils.getPointBetween(bobber.x, bobber.y, fish.anim.x, fish.anim.y, 135)
+        local bobberEdge = utils.getPointBetween(bobber.x, bobber.y, fish.anim.x, fish.anim.y, 135 * fishScale) -- @DELETE
         local lookingPoint = utils.getPointBetween(bobber.x, bobber.y, fish.anim.x, fish.anim.y, 300)
 
         local numTaps = math.random(0,4)
