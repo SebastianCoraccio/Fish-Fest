@@ -117,13 +117,18 @@ function _DB.create()
     local fishCaught = Db:getRows("FishCaught")
     local fishInfo = require("data.fishInfo")
 
+    -- Set weights
+    local one = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
+    local two = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
+    local three = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
+    local weight = math.round(((one + two + three) / 3.0) * 100) * 0.01
+
     local updated = false
     for i=1, #fishCaught do
       -- Update row
       if (fishCaught[i].fid == fid) then
-        -- TODO: Use actually gaussian weight insetad of 69.69
         local insert = [[UPDATE FishCaught SET numberCaught=]] .. fishCaught[i].numberCaught + 1 .. 
-          [[, largestCaught=]] .. math.max(fishCaught[i].largestCaught, 69.69) .. [[ WHERE fid=]] .. 
+          [[, largestCaught=]] .. math.max(fishCaught[i].largestCaught, weight) .. [[ WHERE fid=]] .. 
           fid .. [[;]]
         Db:update(insert)
         updated = true
@@ -133,7 +138,7 @@ function _DB.create()
 
     if (updated == false) then
       -- Insert new row
-      local insert = [[INSERT INTO FishCaught VALUES (]] .. fid .. [[, ]] .. 69.69 .. [[, ]] .. 1 .. [[);]]
+      local insert = [[INSERT INTO FishCaught VALUES (]] .. fid .. [[, ]] .. weight .. [[, ]] .. 1 .. [[);]]
       Db:update(insert)
     end
 
@@ -154,8 +159,9 @@ function _DB.create()
       DELETE FROM FishCaught;
       DELETE FROM BaitUsages;
       DELETE FROM StoreItems;
+      DELETE FROM Flags;
       INSERT INTO StoreItems VALUES (0, 0, 0, 0, 0, 0);
-      INSERT INTO Flags VALUES (0)
+      INSERT INTO Flags VALUES (0);
     ]]
   end
 

@@ -191,7 +191,7 @@ function scene:show( event )
     if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
       pauseGame()
       composer.showOverlay("scenes.tutorialModal", {params = {text = 
-      [[Here is where you do all the fishing. You can hit the back button to go back to the title and hit the bait button to view, use, and buy baits.
+      [[Here is where you do all the fishing. You can hit the back button to go back to the title and hit the chum button to view, use, and buy chums.
 Hit next to learn how to fish.]]}, effect="fade", time=800, isModal=true})
     end
     -- Timer to spawn fish throughout
@@ -283,7 +283,7 @@ Hit next to try and cast!]]}, effect="fade", time=800, isModal=true})
   if (final) and (db:getRows("Flags")[1].watchedTutorial == 0) then
     pauseGame()
     composer.showOverlay("scenes.tutorialModal", {params = {text = 
-    [[Congratulations! You completed the tutorial! Now go out there and try and catch every fish!!]], finishButton=true}, effect="fade", time=800, isModal=true})
+    [[Congratulations! You completed the tutorial! Now go out there and try to catch every fish!!]], finishButton=true}, effect="fade", time=800, isModal=true})
   end
 end
 
@@ -292,7 +292,7 @@ function showCatchModal(event)
   pauseGame()
   composer.showOverlay("scenes.tutorialModal", {params = {text = 
   [[Congratulations! You just casted the bobber. Now, wait for a blue splash, vibration, and/or sound effect. Then tap the screen to reel in your fish!
-Hit next to try again!]]}, effect="fade", time=800, isModal=true})
+Hit next to try to catch a fish!]]}, effect="fade", time=800, isModal=true})
   bobber.bringBack()
   bobber.setCast()
   for i=1,3 do

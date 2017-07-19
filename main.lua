@@ -46,8 +46,8 @@ db:createTables()
 db:checkDb()
 
 -- Tutorial reset
-db:update("UPDATE StoreItems SET currentRodUpgrade = 0;")
-db:update("UPDATE Flags SET watchedTutorial = 0")
+-- db:update("UPDATE StoreItems SET currentRodUpgrade = 0;")
+-- db:update("UPDATE Flags SET watchedTutorial = 0;")
 
 db:print()
 
@@ -67,6 +67,6 @@ display.setDefault("background", 1, 1, 1)
 
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now
--- composer.gotoScene('scenes.game', {params = {location='river'}})
-composer.gotoScene('scenes.title', {params={}})
+composer.gotoScene('scenes.game', {params = {location='river'}})
+-- composer.gotoScene('scenes.title', {params={}})
 -- composer.gotoScene('scenes.store')

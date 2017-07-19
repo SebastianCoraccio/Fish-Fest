@@ -493,7 +493,7 @@ function scene:show( event )
     -- Make tutorial modal if needed
   if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
     composer.showOverlay("scenes.tutorialModal", {params = {text = 
-      [[This is the store. Here is where you can buy different types of bait to attract more fish. Also you can upgrade your fishing rod to make catching fish easier.
+      [[This is the store. Here is where you can buy different types of chum to attract more fish. Also you can upgrade your fishing rod to make catching fish easier.
 Hit next to buy your first rod upgrade.]]}, 
       effect="fade", time=800, isModal=true})
   end
