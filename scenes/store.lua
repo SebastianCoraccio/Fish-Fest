@@ -268,13 +268,16 @@ function scene:create(event)
     labelColor = {default={utils.hexToRGB("000000")}, over={utils.hexToRGB("FFFFFF")}},
     onEvent = handleButtonEventAdvertisement,
     emboss = false,
+    isEnabled = false,
     -- Properties for a rounded rectangle button
     shape = "roundedRect",
     width = 65,
     height = 65,
     cornerRadius = 25,
-    fillColor = {default={utils.hexToRGB("FFFFFF")}, over={utils.hexToRGB("000000")}},
-    strokeColor = {default={utils.hexToRGB("000000")}, over={utils.hexToRGB("FFFFFF")}},
+    -- fillColor = {default={utils.hexToRGB("FFFFFF")}, over={utils.hexToRGB("000000")}},
+    -- strokeColor = {default={utils.hexToRGB("000000")}, over={utils.hexToRGB("FFFFFF")}},
+    fillColor = {default={0.8, 0.8, 0.8}, over={0.8,0.8,0.8}},
+    strokeColor = {default={0.8,0.8,0.8}, over={0.8,0.8,0.8}},
     strokeWidth = 4
   })
   advertisementButton.x = display.contentWidth - 100

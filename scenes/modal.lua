@@ -124,13 +124,14 @@ function scene:create(event)
       fontSize = 40,
       onEvent = handleButtonEventDetails,
       emboss = false,
+      isEnabled = false,
       -- Properties for a rounded rectangle button
       shape = "roundedRect",
       width = 200,
       height = 75,
       cornerRadius = 12,
-      fillColor = { default={1,0,0,1}, over={1,0.1,0.7,0.4} },
-      strokeColor = { default={1,0.4,0,1}, over={0.8,0.8,1,1} },
+      fillColor = {default={0.8, 0.8, 0.8}, over={0.8,0.8,0.8}},
+      strokeColor = {default={0.8,0.8,0.8}, over={0.8,0.8,0.8}},
       strokeWidth = 4
     }
   )
@@ -155,8 +156,8 @@ function scene:create(event)
       width = 200,
       height = 75,
       cornerRadius = 12,
-      fillColor = { default={1,0,0,1}, over={1,0.1,0.7,0.4} },
-      strokeColor = { default={1,0.4,0,1}, over={0.8,0.8,1,1} },
+      fillColor = {default={1,0,0,1}, over={1,0.1,0.7,0.4}},
+      strokeColor = {default={1,0.4,0,1}, over={0.8,0.8,1,1}},
       strokeWidth = 4
     }
   )
