@@ -196,7 +196,7 @@ local function handleButtonEventRodBuy(event)
     changeRod()
 
     -- Check if that was for the tutorial
-    if (tutorial) then
+    if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
       tutorialComplete = true
       composer.showOverlay("scenes.tutorialModal", {params = {text = 
       [[Congratulations! You just bought your first fishing rod upgrade.
