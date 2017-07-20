@@ -2,7 +2,7 @@
 -- Holds all information about the different rods
 return {
   {name="Splintered Rod",       image="", cost=0,       description="A decrepit rod you found under a dock. It feels like it might disintegrate in your hands at any moment"},
-  {name="Bamboo Rod",           image="", cost=10000,   description="A relic of an earlier generation of angling. It may not beat out the new rods, but it still gets the job done."},
+  {name="Bamboo Rod",           image="", cost=10000,   description="A relic of an earlier generation of angling. It may not beat out newer rods, but it still gets the job done."},
   {name="Fiberglass Rod",       image="", cost=75000,   description="A modern tool to catch a wide range of fish in different locations."},
   {name="Still Playing?",       image="", cost=150000,  description="Honestly, we didn't expect anyone to play enough of the alpah to get this..."},
   {name="Rod 5",                image="", cost=250000,  description="5"},

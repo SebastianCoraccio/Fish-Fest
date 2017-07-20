@@ -82,7 +82,7 @@ local function changeBait()
   local baits = db:getRows("baitUsages")
   for i=1,#baits do
     if (baits[i].location == location) then
-      useButton:setLabel("Clear Bait")
+      useButton:setLabel("Clear Chum")
       break
     else
       useButton:setLabel("Use")
