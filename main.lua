@@ -48,6 +48,10 @@ db:checkDb()
 -- Tutorial reset
 -- db:update("UPDATE StoreItems SET currentRodUpgrade = 0;")
 -- db:update("UPDATE Flags SET watchedTutorial = 0;")
+-- Check for tutorial for rod
+if (db:getRows("Flags")[1].watchedTutorial == 0) then
+  db:update("UPDATE StoreItems SET currentRodUpgrade = 0;")
+end
 
 db:print()
 
@@ -55,8 +59,8 @@ db:print()
 timer.performWithDelay(1000, checkBaits, 0)
 
 -- Close the database
-local function onSystemEvent( event )
-  if ( event.type == "applicationExit" ) then
+local function onSystemEvent(event)
+  if (event.type == "applicationExit") then
     db.closeDb()
   end
 end
@@ -67,7 +71,7 @@ display.setDefault("background", utils.hexToRGB('#0072bc'));
 
 -- Check hitting of back button
 local function keyPress(event)
-  if ( event.keyName == "back" ) then
+  if (event.keyName == "back") then
     local sceneName = composer.getSceneName("current")
     -- slide the correct direction depending on current scene
     if(sceneName == "scenes.settings") then
@@ -86,7 +90,7 @@ local function keyPress(event)
   end
 end
 
-Runtime:addEventListener( "key", keyPress )
+Runtime:addEventListener("key", keyPress)
 
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now
