@@ -89,16 +89,27 @@ function scene:create(event)
   mainGroup = display.newGroup()
   sceneGroup:insert(mainGroup)
 
+  background = display.newImage(mainGroup, "images/backgrounds/title.png")
+  background.x = display.contentCenterX
+  background.y = display.contentCenterY
+
+  local color = 
+  {
+    highlight = { r=0, g=0, b=0 },
+    shadow = { r=0, g=0, b=0 }
+  }
+
   -- Title text
   local options = {
     text = "TNAC",
     x = display.contentCenterX,
     y = display.contentCenterY,
-	  fontSize = 50,
+	  fontSize = 75,
     align = "center"
   }
-  title = display.newText(options)
-  title:setFillColor(0)
+  title = display.newEmbossedText(options)
+  title:setFillColor(1)
+  title:setEmbossColor(color)
   mainGroup:insert(title)
 
   -- Game
@@ -109,8 +120,9 @@ function scene:create(event)
     fontSize = 50,
     align = "center"
   }
-  game = display.newText(options)
-  game:setFillColor(0)
+  game = display.newEmbossedText(options)
+  game:setEmbossColor(color)
+  game:setFillColor(1)
   mainGroup:insert(game)
 
   -- Store
@@ -121,18 +133,20 @@ function scene:create(event)
     fontSize = 50,
     align = "center"
   }
-  store = display.newText(options)
-  store:setFillColor(0)
+  store = display.newEmbossedText(options)
+  store:setEmbossColor(color)
+  store:setFillColor(1)
   mainGroup:insert(store)
 
-  settings = display.newText({
+  settings = display.newEmbossedText({
     text = "Settings",
     x = display.contentCenterX,
     y = 0,
     fontSize = 50,
     align = "center"
   })
-  settings:setFillColor(0)
+  settings:setFillColor(1)
+  settings:setEmbossColor(color)
   mainGroup:insert(settings)
 
   -- Check if tutorial needs to be shown
