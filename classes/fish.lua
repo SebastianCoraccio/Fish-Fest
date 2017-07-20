@@ -122,7 +122,7 @@ function _Fish.create(params)
   fish.anim.isSensor = true
   fish.los.isSensor = true
 
-  transition.to(fish.anim, {alpha = .6, time = 1000})
+  transition.to(fish.anim, {alpha = .4, time = 1000})
   
   -- Updates what the fix will do now based on its state
   function fish:update()
