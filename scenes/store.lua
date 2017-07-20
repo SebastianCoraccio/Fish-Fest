@@ -329,7 +329,7 @@ function scene:create(event)
   rodGroup:insert(rodDescription)
 
   -- Rod image
-  rodPicture = display.newImage("images/baits/chum_large.png", 350, -60)
+  rodPicture = display.newImage("images/items/rod.png", 350, 50)
   rodPicture.anchorX = 0
   rodPicture.anchorY = 0
   rodGroup:insert(rodPicture)
