@@ -38,7 +38,6 @@ function _Fish.create(params)
 
   -- Fish ID
   fish.fid = params.fid
-  print("Fish id " .. fish.fid)
   -- Import info about fish
   fish.biteTime = fishInfo[fish.fid].biteTime
   fish.sizeGroup = fishInfo[fish.fid].sizeGroup
@@ -52,8 +51,7 @@ function _Fish.create(params)
   elseif(fish.sizeGroup == 'large') then fishScale = 1.2
   elseif(fish.sizeGroup == 'tiger') then fishScale = 1.2
   else fishScale = 1 end
-  print(sizeGroup)
-  print(fishScale)
+  
   -- Max and Min define bounding area fish can move within
   fish.maxX, fish.maxY = params.maxX, params.maxY
   fish.minX, fish.minY = params.minX, params.minY
