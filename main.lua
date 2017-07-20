@@ -6,7 +6,7 @@
 
 -- Set up the composer
 local composer = require('composer')
-
+local utils = require('utils')
 -- Set up DB
 local newDB = require("database.db").create
 local db = newDB()
@@ -63,7 +63,30 @@ end
 Runtime:addEventListener("system", onSystemEvent)
 
 -- Set background color
-display.setDefault("background", 1, 1, 1)
+display.setDefault("background", utils.hexToRGB('#0072bc'));
+
+-- Check hitting of back button
+local function keyPress(event)
+  if ( event.keyName == "back" ) then
+    local sceneName = composer.getSceneName("current")
+    -- slide the correct direction depending on current scene
+    if(sceneName == "scenes.settings") then
+      composer.gotoScene('scenes.title', {effect="slideUp", time=800,params={}})
+    elseif(sceneName == "scenes.game") then
+      composer.gotoScene('scenes.title', {effect="slideRight", time=800,params={}})
+    elseif(sceneName == "scenes.store") then
+      composer.gotoScene('scenes.title', {effect="slideLeft", time=800,params={}})
+    else 
+      -- current scene is title so return false to close the app
+      return false
+    end
+    
+    -- return true to signal the app has intercepted the key press
+    return true
+  end
+end
+
+Runtime:addEventListener( "key", keyPress )
 
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now

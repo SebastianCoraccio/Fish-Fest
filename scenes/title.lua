@@ -87,8 +87,7 @@ function scene:create(event)
   local sceneGroup = self.view
 
   -- Set default background color
-  display.setDefault("background", utils.hexToRGB('#0072bc'));
-
+  
    -- New display group
   mainGroup = display.newGroup()
   sceneGroup:insert(mainGroup)
