@@ -226,7 +226,6 @@ function scene:show( event )
     -- Code here runs when the scene is still off screen (but is about to come on screen)
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
-    self:resumeGame()
     if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
       pauseGame()
       composer.showOverlay("scenes.tutorialModal", {params = {text = 
@@ -237,7 +236,7 @@ Hit next to learn how to fish.]]}, effect="fade", time=800, isModal=true})
     -- TODO: Finalize time
     self.fishUpdateTimer = timer.performWithDelay(7000, function()
       self:updateFish()
-    end, 0 )
+    end, 0)
   end
 end
 
@@ -248,7 +247,6 @@ function scene:hide(event)
 
   if ( phase == "will" ) then
     -- Code here runs when the scene is on screen (but is about to go off screen)
-    pauseGame()
   elseif ( phase == "did" ) then
     -- Code here runs immediately after the scene goes entirely off screen
   end
