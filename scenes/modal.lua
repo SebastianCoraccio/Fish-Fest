@@ -5,6 +5,7 @@
 local composer = require( "composer" )
 local fishInfo = require("data.fishInfo")
 local widget = require("widget")
+local utils = require("utils")
 
 -- Set up DB
 local newDB = require("database.db").create
@@ -156,9 +157,10 @@ function scene:create(event)
       width = 200,
       height = 75,
       cornerRadius = 12,
-      fillColor = {default={1,0,0,1}, over={1,0.1,0.7,0.4}},
-      strokeColor = {default={1,0.4,0,1}, over={0.8,0.8,1,1}},
-      strokeWidth = 4
+      labelColor = {default={utils.hexToRGB("#ef4100")}, over={utils.hexToRGB("#00aeef")}},
+      fillColor = {default={utils.hexToRGB("#00aeef")}, over={utils.hexToRGB("#ef4100")}},
+      strokeColor = {default={0}, over={0}},
+      strokeWidth = 3
     }
   )
   -- Center the button

@@ -181,25 +181,30 @@ function _Fish.create(params)
 
   -- Picks a random location in its bounding area
   function fish:changeLocation()
-    local newX = fish.anim.x + math.random(-100, 100)
-    local newY = fish.anim.y + math.random(-400, 400)
+    -- TODO: Remove this
+    if (fish.anim) then
+      local newX = fish.anim.x + math.random(-100, 100)
+      local newY = fish.anim.y + math.random(-400, 400)
 
-    -- Check new x and y are in the bounding area
-    if newX > fish.maxX then
-      newX = fish.maxX
-    elseif newX < fish.minX then
-      newX = fish.minX
-    end
+      -- Check new x and y are in the bounding area
+      if newX > fish.maxX then
+        newX = fish.maxX
+      elseif newX < fish.minX then
+        newX = fish.minX
+      end
 
-    if newY > fish.maxY then
-      newY = fish.maxY
-    elseif newY < fish.minY then
-      newY = fish.minY
+      if newY > fish.maxY then
+        newY = fish.maxY
+      elseif newY < fish.minY then
+        newY = fish.minY
+      end
+      
+      -- Rotate and move to new position
+      fish:rotateTo({x=newX, y=newY})
+      fish:moveTo({x=newX, y=newY})
+    else 
+      print("Error: Fix this")
     end
-    
-    -- Rotate and move to new position
-    fish:rotateTo({x=newX, y=newY})
-    fish:moveTo({x=newX, y=newY})
   end
 
   -- -- Fish darts away from the given x and y position
