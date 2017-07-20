@@ -229,6 +229,7 @@ end
 -- create()
 function scene:create(event)
   local sceneGroup = self.view
+
   -- New display group
   mainGroup = display.newGroup()
   sceneGroup:insert(mainGroup)
@@ -288,7 +289,7 @@ function scene:create(event)
       width = display.contentWidth - 100,
       height = 1000,
       scrollWidth = 0,
-      backgroundColor = {1, 1, 1},
+      backgroundColor = {0, 0.447, 0.737},
       horizontalScrollDisabled = true,
       listener = scrollListener
     }
