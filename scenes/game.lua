@@ -75,7 +75,7 @@ end
 
 -- Back button
 local function handleButtonEventBack(event)
-  if (event.phase == "ended") then
+  if (event.phase == "ended") and (db:getRows("Flags")[1].watchedTutorial == 1) then
     -- TODO: Change to location page when implemeneted
     composer.gotoScene('scenes.title', {effect="fromLeft", time=800, params={}})
   end
@@ -179,79 +179,6 @@ function pauseGame()
   bobber.setCast()
 end
 
--- show()
-function scene:show( event )
-  local sceneGroup = self.view
-  local phase = event.phase
-  local the_fish = nil
-  if ( phase == "will" ) then
-    -- Code here runs when the scene is still off screen (but is about to come on screen)
-  elseif ( phase == "did" ) then
-    -- Code here runs when the scene is entirely on screen
-    if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
-      pauseGame()
-      composer.showOverlay("scenes.tutorialModal", {params = {text = 
-      [[Here is where you do all the fishing. You can hit the back button to go back to the title and hit the chum button to view, use, and buy chums.
-Hit next to learn how to fish.]]}, effect="fade", time=800, isModal=true})
-    end
-    -- Timer to spawn fish throughout
-    -- TODO: Finalize time
-    self.fishUpdateTimer = timer.performWithDelay(7000, function()
-      self:updateFish()
-    end, 0 )
-  end
-end
-
--- hide()
-function scene:hide(event)
-  local sceneGroup = self.view
-  local phase = event.phase
-
-  if ( phase == "will" ) then
-    -- Code here runs when the scene is on screen (but is about to go off screen)
-  elseif ( phase == "did" ) then
-    -- Code here runs immediately after the scene goes entirely off screen
-  end
-end
-
--- destroy()
-function scene:destroy( event )
-  local sceneGroup = self.view
-  -- Code here runs prior to the removal of scene's view
-end
-
-function scene:updateFish()
-  if (modalIsShowing == false) then
-    for i = #fishTable, 1, -1 do
-      fishTable[i].update()
-    end
-
-    -- Check if there is an active bait that needs to increase MAX_FISH
-    local maxFishIncrease = 0
-    local baits = db:getRows("baitUsages")
-    for i=1,#baits do
-      if (baits[i].location == location) then
-        maxFishIncrease = baits[i].maxFish
-        break
-      end
-    end
-
-    -- Check if adding a fish is needed, and try to do so it yes
-    -- TODO: Create an attributes table for each of the locations
-    local MAX_FISH = 5 + maxFishIncrease
-    local SPAWN_CHANCE = 0.25;
-    if (#fishTable == 0) then
-        SPAWN_CHANCE = 1
-    end
-
-    if #fishTable < MAX_FISH then
-      if math.random() < SPAWN_CHANCE then
-        addFish()
-      end
-    end
-  end
-end
-
 -- Custom function for resuming the game (from pause state)
 function scene:resumeGame(tutorial, final)
   -- Code to resume game
@@ -290,11 +217,86 @@ Hit next to try and cast!]]}, effect="fade", time=800, isModal=true})
   end
 end
 
+-- show()
+function scene:show( event )
+  local sceneGroup = self.view
+  local phase = event.phase
+  local the_fish = nil
+  if ( phase == "will" ) then
+    -- Code here runs when the scene is still off screen (but is about to come on screen)
+  elseif ( phase == "did" ) then
+    -- Code here runs when the scene is entirely on screen
+    self:resumeGame()
+    if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
+      pauseGame()
+      composer.showOverlay("scenes.tutorialModal", {params = {text = 
+      [[Here is where you do all the fishing. You can hit the back button to go back to the title and hit the chum button to view, use, and buy chums.
+Hit next to learn how to fish.]]}, effect="fade", time=800, isModal=true})
+    end
+    -- Timer to spawn fish throughout
+    -- TODO: Finalize time
+    self.fishUpdateTimer = timer.performWithDelay(7000, function()
+      self:updateFish()
+    end, 0 )
+  end
+end
+
+-- hide()
+function scene:hide(event)
+  local sceneGroup = self.view
+  local phase = event.phase
+
+  if ( phase == "will" ) then
+    -- Code here runs when the scene is on screen (but is about to go off screen)
+    pauseGame()
+  elseif ( phase == "did" ) then
+    -- Code here runs immediately after the scene goes entirely off screen
+  end
+end
+
+-- destroy()
+function scene:destroy( event )
+  local sceneGroup = self.view
+  -- Code here runs prior to the removal of scene's view
+end
+
+function scene:updateFish()
+  if (modalIsShowing == false) and (db:getRows("Flags")[1].watchedTutorial == 1) then
+    for i = #fishTable, 1, -1 do
+      fishTable[i].update()
+    end
+
+    -- Check if there is an active bait that needs to increase MAX_FISH
+    local maxFishIncrease = 0
+    local baits = db:getRows("baitUsages")
+    for i=1,#baits do
+      if (baits[i].location == location) then
+        maxFishIncrease = baits[i].maxFish
+        break
+      end
+    end
+
+    -- Check if adding a fish is needed, and try to do so it yes
+    -- TODO: Create an attributes table for each of the locations
+    local MAX_FISH = 5 + maxFishIncrease
+    local SPAWN_CHANCE = 0.25;
+    if (#fishTable == 0) then
+        SPAWN_CHANCE = 1
+    end
+
+    if #fishTable < MAX_FISH then
+      if math.random() < SPAWN_CHANCE then
+        addFish()
+      end
+    end
+  end
+end
+
 -- Function to show how to catch modal
 function showCatchModal(event)
   pauseGame()
   composer.showOverlay("scenes.tutorialModal", {params = {text = 
-  [[Congratulations! You just casted the bobber. Now, wait for a blue splash, vibration, and/or sound effect. Then tap the screen to reel in your fish!
+  [[Congratulations! You just cast the bobber. Now, wait for a blue splash, vibration, and/or sound effect. Then tap the screen to reel in your fish!
 Hit next to try to catch a fish!]]}, effect="fade", time=800, isModal=true})
   bobber.bringBack()
   bobber.setCast()

@@ -108,14 +108,14 @@ function scene:create(event)
   soundEffectsText:setFillColor(0)
   mainGroup:insert(soundEffectsText)
 
-  -- Switch
+  -- Soundeffects Switch
   local isSwitchOn = true
   if (db:getRows("Flags")[1].soundEffects == 0) then
     isSwitchOn = false
   end
   soundEffectsSwitch = widget.newSwitch({
     left = display.contentWidth - 200,
-    top = soundEffectsText.y - 20,
+    top = soundEffectsText.y,
     style = "onOff",
     initialSwitchState = isSwitchOn,
     id = "soundEffects",
@@ -134,7 +134,7 @@ function scene:create(event)
   end
   vibrationSwitch = widget.newSwitch({
     left = display.contentWidth - 200,
-    top = vibrationText.y - 20,
+    top = vibrationText.y,
     style = "onOff",
     initialSwitchState = isSwitchOn,
     id = "vibration",

@@ -150,6 +150,9 @@ function scene:show(event)
   local phase = event.phase
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
+    if (db:getRows("Flags")[1].watchedTutorial == 1) then
+      tutorialStore = false
+    end
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
     -- Swipe event

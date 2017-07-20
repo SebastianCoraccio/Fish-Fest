@@ -120,7 +120,7 @@ function scene:create(event)
     -- Skip button
     finishButton = widget.newButton(
     {
-        label = "Skip",
+        label = "Finish",
         fontSize = 40,
         onEvent = handleButtonEventSkip,
         emboss = false,
