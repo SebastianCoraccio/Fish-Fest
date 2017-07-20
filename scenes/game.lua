@@ -224,6 +224,7 @@ function scene:show( event )
   local the_fish = nil
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
+    bobber:caught()
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
     if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
@@ -249,6 +250,7 @@ function scene:hide(event)
     -- Code here runs when the scene is on screen (but is about to go off screen)
   elseif ( phase == "did" ) then
     -- Code here runs immediately after the scene goes entirely off screen
+    bobber:noCast()
   end
 end
 

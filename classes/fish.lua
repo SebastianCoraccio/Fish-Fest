@@ -30,7 +30,6 @@ function _Fish.create(params)
   fish.mode = "SPAWNING"
   timer.performWithDelay(1000, function() fish.mode = "SEEKING" end)
   
-  
   fish.isBiting = false
   fish.moveTimer = nil
   fish.biteTimer = nil
