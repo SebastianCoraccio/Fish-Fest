@@ -182,7 +182,7 @@ function _Fish.create(params)
   -- Picks a random location in its bounding area
   function fish:changeLocation()
     -- TODO: Remove this
-    if (fish.anim) then
+    if (fish.anim.x) then
       local newX = fish.anim.x + math.random(-100, 100)
       local newY = fish.anim.y + math.random(-400, 400)
 

@@ -188,7 +188,7 @@ local function handleButtonEventRodBuy(event)
     insert = [[UPDATE StoreItems SET currentRodUpgrade=]] .. db:getRows("StoreItems")[1].currentRodUpgrade + 1 .. [[;]]
     db:update(insert)
     db:print()
-
+  
     -- Update total coin display
     coins.text = db:getRows("StoreItems")[1].coins
 
@@ -493,9 +493,11 @@ function scene:show( event )
   local phase = event.phase
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
+    -- Update coins
+    coins.text = db:getRows("StoreItems")[1].coins
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
-    -- Swipe event
+
     -- Make tutorial modal if needed
   if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
     composer.showOverlay("scenes.tutorialModal", {params = {text = 
