@@ -42,7 +42,6 @@ local mainGroup
 local uiGroup
 local baitButton
 local backButton
-
 -- tutorial
 local tutorial = false
 local preCast = false
@@ -73,7 +72,7 @@ end
 local function handleButtonEventBack(event)
   if (event.phase == "ended") and (db:getRows("Flags")[1].watchedTutorial == 1) then
     -- TODO: Change to location page when implemeneted
-    composer.gotoScene('scenes.title', {effect="fromLeft", time=800, params={}})
+    composer.gotoScene('scenes.title', {effect="fade", time=800, params={}})
   end
 end
 
@@ -84,7 +83,7 @@ end
 -- create()
 function scene:create(event)
   local sceneGroup = self.view
-
+  local locationName = event.params.location
   -- Define groups
   backgroundGroup = display.newGroup()
   sceneGroup:insert(backgroundGroup)
@@ -100,7 +99,7 @@ function scene:create(event)
   background.x = display.contentCenterX
   background.y = display.contentCenterY
 
-  water = display.newImage(backgroundGroup, "images/backgrounds/bg_water.png")
+  water = display.newImage(backgroundGroup, "images/backgrounds/bg_" .. locationName .. ".png")
   water.x = display.contentCenterX
   water.y = display.contentCenterY - 550
 

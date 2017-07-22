@@ -45,7 +45,7 @@ end
 -- Go to the game
 local function handleButtonEventGame(event)
   if (event.phase == "ended") and ((tutorial == false) or (db:getRows("Flags")[1].watchedTutorial == 1)) then
-    composer.gotoScene('scenes.game', {params = {location='river', tutorial=tutorialStore}, effect="slideLeft", time=800})
+    composer.gotoScene('scenes.locations', {params = {tutorial=tutorialStore}, effect="slideLeft", time=800})
   end
 end
 
