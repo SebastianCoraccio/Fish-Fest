@@ -6,6 +6,7 @@ return {
     {fid=23, spawnChance=0.5},
     {fid=33, spawnChance=1},
     {fid=32, spawnChance=2},
+    {fid=34, spawnChance=3},
     {fid=31, spawnChance=4},
     {fid=29, spawnChance=6},
     {fid=30, spawnChance=10},

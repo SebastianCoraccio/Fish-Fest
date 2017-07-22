@@ -34,4 +34,5 @@ return {
     {fid=31, name='Dragonfish',             value=1400, minSize=15,     maxSize=75,     sizeGroup='medium', biteTime=100,   description=''},
     {fid=32, name='Salmon Shark',           value=2000, minSize=1500,   maxSize=2400,   sizeGroup='shark',  biteTime=20,    description=''},
     {fid=33, name='Greenland Shark',        value=2400, minSize=50,     maxSize=500,    sizeGroup='large',  biteTime=20,    description=''},
+    {fid=33, name='Narwhal',                value=1900, minSize=50,     maxSize=500,    sizeGroup='large',  biteTime=20,    description=''},
 }
