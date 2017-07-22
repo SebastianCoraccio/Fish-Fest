@@ -78,7 +78,7 @@ function _DB.create()
   function Db:print()
     -- FishCaught
     print("FishCaught")
-    for row in db:nrows("SELECT * FROM FishCaught") do
+    for row in db:nrows("SELECT * FROM FishCaught ORDER BY fid") do
       local str = ""
       for k, v in pairs(row) do
         str = str .. ("  " .. k .. ": " .. v)

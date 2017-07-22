@@ -4,6 +4,8 @@
 -- Imports
 local composer = require('composer')
 local utils = require('utils')
+local widget = require("widget")
+
 -- This scene
 local scene = composer.newScene()
 
@@ -40,41 +42,24 @@ function scene:resumeGame(tutorial2)
   end
 end
 
--- Function to detect which way the user swiped
--- Loads corresponding 
-local function handleSwipeEvent(event)
-  if (event.phase == "moved") then
-    local dX = event.x - event.xStart
-    local dY = event.y - event.yStart
-    if (dX > 200) then
-      --swipe right
-      sceneToLoad = 'store'
-      slideDirection = 'Right'
-    elseif (dX < -200) then
-      --swipe left
-      sceneToLoad = 'game'
-      slideDirection = 'Left'
-    elseif (dY > 200) then
-      --swipe down
-      sceneToLoad = 'settings'
-      slideDirection = "Down"
-    elseif (dY < -200) then
-      --swipe up
-      sceneToLoad = 'down'
-      slideDirection = "Up"
-    end
+-- Go to the game
+local function handleButtonEventGame(event)
+  if (event.phase == "ended") and ((tutorial == false) or (db:getRows("Flags")[1].watchedTutorial == 1)) then
+    composer.gotoScene('scenes.game', {params = {location='river', tutorial=tutorialStore}, effect="slideLeft", time=800})
   end
+end
 
-  if (event.phase == "ended") then
-    -- Temporary if
-    if (sceneToLoad == "game") and ((tutorial == false) or (db:getRows("Flags")[1].watchedTutorial == 1)) then 
-      -- Decide if we want to use slide or from effect
-      composer.gotoScene('scenes.' .. sceneToLoad, {params = {location='river', tutorial=tutorialStore}, effect="slide" .. slideDirection, time=800})
-    elseif (sceneToLoad == "store") and (tutorialStore == false) then
-      composer.gotoScene('scenes.' .. sceneToLoad, {effect="slide" .. slideDirection, time=800, params={tutorial=tutorial}})
-    elseif (sceneToLoad == "settings") and (db:getRows("Flags")[1].watchedTutorial == 1) then
-      composer.gotoScene('scenes.' .. sceneToLoad, {effect="slide" .. slideDirection, time=800})
-    end
+-- Go to the store
+local function handleButtonEventStore(event)
+  if (event.phase == "ended") and (tutorialStore == false) then
+    composer.gotoScene('scenes.store', {params = {tutorial=tutorial}, effect="slideRight", time=800})
+  end
+end
+
+-- Go to the settings
+local function handleButtonEventSettings(event)
+  if (event.phase == "ended") and (db:getRows("Flags")[1].watchedTutorial == 1) then
+    composer.gotoScene('scenes.settings', {effect="slideDown", time=800})
   end
 end
 
@@ -116,40 +101,66 @@ function scene:create(event)
   mainGroup:insert(title)
 
   -- Game
-  options = {
-    text = "Game",
-    x = display.contentWidth - 100,
-    y = display.contentCenterY,
-    fontSize = 50,
-    align = "center"
-  }
-  game = display.newEmbossedText(options)
-  game:setEmbossColor(color)
-  game:setFillColor(1)
+  game = widget.newButton({
+    label = "Game",
+    fontSize = 40,
+    onEvent = handleButtonEventGame,
+    emboss = false,
+    -- Properties for a rounded rectangle button
+    shape = "roundedRect",
+    width = 150,
+    height = 75,
+    cornerRadius = 12,
+    labelColor = {default={utils.hexToRGB("#ef4100")}, over={utils.hexToRGB("#00aeef")}},
+    fillColor = {default={utils.hexToRGB("#00aeef")}, over={utils.hexToRGB("#ef4100")}},
+    strokeColor = {default={0}, over={0}},
+    strokeWidth = 3
+  })
+  -- Center the button
+  game.x = display.contentWidth - 100
+  game.y = display.contentCenterY
   mainGroup:insert(game)
 
   -- Store
-  options = {
-    text = "Store",
-    x = 100,
-    y = display.contentCenterY,
-    fontSize = 50,
-    align = "center"
-  }
-  store = display.newEmbossedText(options)
-  store:setEmbossColor(color)
-  store:setFillColor(1)
+  store = widget.newButton({
+    label = "Store",
+    fontSize = 40,
+    onEvent = handleButtonEventStore,
+    emboss = false,
+    -- Properties for a rounded rectangle button
+    shape = "roundedRect",
+    width = 150,
+    height = 75,
+    cornerRadius = 12,
+    labelColor = {default={utils.hexToRGB("#ef4100")}, over={utils.hexToRGB("#00aeef")}},
+    fillColor = {default={utils.hexToRGB("#00aeef")}, over={utils.hexToRGB("#ef4100")}},
+    strokeColor = {default={0}, over={0}},
+    strokeWidth = 3
+  })
+  -- Center the button
+  store.x = 100
+  store.y = display.contentCenterY
   mainGroup:insert(store)
 
-  settings = display.newEmbossedText({
-    text = "Settings",
-    x = display.contentCenterX,
-    y = 0,
-    fontSize = 50,
-    align = "center"
+  -- Store
+  settings = widget.newButton({
+    label = "Settings",
+    fontSize = 40,
+    onEvent = handleButtonEventSettings,
+    emboss = false,
+    -- Properties for a rounded rectangle button
+    shape = "roundedRect",
+    width = 150,
+    height = 75,
+    cornerRadius = 12,
+    labelColor = {default={utils.hexToRGB("#ef4100")}, over={utils.hexToRGB("#00aeef")}},
+    fillColor = {default={utils.hexToRGB("#00aeef")}, over={utils.hexToRGB("#ef4100")}},
+    strokeColor = {default={0}, over={0}},
+    strokeWidth = 3
   })
-  settings:setFillColor(1)
-  settings:setEmbossColor(color)
+  -- Center the button
+  settings.x = display.contentCenterX
+  settings.y = 0
   mainGroup:insert(settings)
 
   -- Check if tutorial needs to be shown
@@ -183,7 +194,6 @@ function scene:show(event)
 Hit next to try and swipe to the game.]]},
       effect="fade", time=800, isModal=true})
     end
-    Runtime:addEventListener("touch", handleSwipeEvent)
   end
 end
 
@@ -194,7 +204,6 @@ function scene:hide(event)
 
   if ( phase == "will" ) then
     -- Code here runs when the scene is on screen (but is about to go off screen)
-    Runtime:removeEventListener("touch", handleSwipeEvent)
   elseif ( phase == "did" ) then
     -- Code here runs immediately after the scene goes entirely off screen
   end

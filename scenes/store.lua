@@ -23,6 +23,7 @@ local title
 local coins
 local scrollView
 local advertisementButton
+local backButton
 
 -- Rod
 local rodBox
@@ -56,23 +57,6 @@ function scene:resumeGame(tutorial2)
   else 
     tutorialComplete = true
   end
-end
-
--- ScrollView listener
-local function scrollListener( event )
-  local phase = event.phase
-  local dX = 0
-  if (phase == "ended") then
-    dX = event.xStart - event.x
-  end
-
-  if (dX > 200) and ((tutorial == false) or (tutorialComplete == true)) then
-    if (db:getRows("Flags")[1].watchedTutorial == 0) then
-      composer.gotoScene('scenes.title', {effect="fromRight", time=800, params={tutorial="store"}})
-    else
-      composer.gotoScene('scenes.title', {effect="fromRight", time=800, params={}})
-    end
-  end  
 end
 
 -- Function to handle changing the displays for the rod
@@ -206,19 +190,13 @@ Hit next and try swiping back to the title screen.]]},
   end
 end
 
--- Function to detect which way the user swiped
--- Loads corresponding 
-local function handleSwipeEvent(event)
-  if (event.phase == "moved") then
-    local dX = event.x - event.xStart
-    if (dX < -200) then
-      -- swipe right
-      returnToTitle = true
+local function handleButtonEventBack(event)
+  if (event.phase == "ended") then
+    if (db:getRows("Flags")[1].watchedTutorial == 0) then
+      composer.gotoScene('scenes.title', {effect="fromRight", time=800, params={tutorial="store"}})
+    else
+      composer.gotoScene('scenes.title', {effect="fromRight", time=800, params={}})
     end
-  end
-
-  if (event.phase == "ended") and (returnToTitle == true) and ((tutorial == false) or (tutorialComplete == true)) then
-    composer.gotoScene('scenes.title', {effect="slideLeft", time=800, params={}})
   end
 end
 
@@ -252,7 +230,7 @@ function scene:create(event)
   -- Coins
   options = {
     text = db:getRows("StoreItems")[1].coins,
-    x = display.contentWidth - 220,
+    x = display.contentCenterX,
     y = 0,
 	  fontSize = 50,
     align = "right"
@@ -280,9 +258,31 @@ function scene:create(event)
     strokeColor = {default={0.8,0.8,0.8}, over={0.8,0.8,0.8}},
     strokeWidth = 4
   })
-  advertisementButton.x = display.contentWidth - 100
+  advertisementButton.x = display.contentCenterX + 100
   advertisementButton.y = 0
   mainGroup:insert(advertisementButton)
+
+  -- Back button
+  backButton = widget.newButton(
+  {
+    label = "Back",
+    fontSize = 40,
+    onEvent = handleButtonEventBack,
+    emboss = false,
+    -- Properties for a rounded rectangle button
+    shape = "roundedRect",
+    width = 150,
+    height = 75,
+    cornerRadius = 12,
+    labelColor = {default={utils.hexToRGB("#ef4100")}, over={utils.hexToRGB("#00aeef")}},
+    fillColor = {default={utils.hexToRGB("#00aeef")}, over={utils.hexToRGB("#ef4100")}},
+    strokeColor = {default={0}, over={0}},
+    strokeWidth = 3
+  })
+  -- Center the button
+  backButton.x = display.contentWidth - 100
+  backButton.y = 0
+  mainGroup:insert(backButton)
 
   -- Scroll view
   scrollView = widget.newScrollView(
@@ -505,7 +505,6 @@ function scene:show( event )
 Hit next to buy your first rod upgrade.]]}, 
       effect="fade", time=800, isModal=true})
   end
-    Runtime:addEventListener("touch", handleSwipeEvent)
   end
 end
 
@@ -516,7 +515,6 @@ function scene:hide(event)
 
   if ( phase == "will" ) then
     -- Code here runs when the scene is on screen (but is about to go off screen)
-    Runtime:removeEventListener("touch", handleSwipeEvent) -- Remove event listener
   elseif ( phase == "did" ) then
     -- Code here runs immediately after the scene goes entirely off screen
   end
