@@ -50,10 +50,6 @@ local preCatch = false
 local postCatch = false
 local spawnedInitialFish = false
 
--- Current rod upgrade
--- TODO: Decide how much we want to increase the timer per rod upgrade
-local rod = db:getRows("StoreItems")[1].currentRodUpgrade * 150
-
 -- Location
 local location
 
@@ -68,8 +64,7 @@ function addFish()
                      minX=0,
                      minY=-100,
                      fid=fishToAdd.fid,
-                     group=mainGroup,
-                     rod=rod})
+                     group=mainGroup})
   uiGroup:toFront()
   table.insert(fishTable, f)
 end

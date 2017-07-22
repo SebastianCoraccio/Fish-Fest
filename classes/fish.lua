@@ -317,7 +317,8 @@ function _Fish.create(params)
 
                               -- TODO: Add timestamp for determining fish to catch
                               -- in the case 2 or more bite at once
-                              local totalBiteTime = fish.biteTime + params.rod;
+                              local rodTime = db:getRows("StoreItems")[1].currentRodUpgrade * 75
+                              local totalBiteTime = fish.biteTime + rodTime - 75;
 
                               -- Add in extra time if in tutorial
                               if (db:getRows("Flags")[1].watchedTutorial == 0) then
