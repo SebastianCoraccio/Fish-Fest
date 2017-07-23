@@ -37,7 +37,6 @@ local modalGroup
 local baitInfo = require("data.baitInfo")
 
 -- Selected bait
--- TODO: Set up so we save the last bait used
 local selectedBait = 1
 
 -- Function to handle changing the top display to the selected bait
@@ -83,6 +82,8 @@ local function changeBait()
   for i=1,#baits do
     if (baits[i].location == location) then
       useButton:setLabel("Clear Chum")
+      useButton:setFillColor(utils.hexToRGB("007F00"))
+      useButton:setEnabled(true)
       break
     else
       useButton:setLabel("Use")
@@ -353,7 +354,7 @@ function scene:create(event)
       fillColor = {default={utils.hexToRGB("660000")}, over={utils.hexToRGB("a36666")}},
       strokeColor = {default={utils.hexToRGB("a36666")}, over={utils.hexToRGB("660000")}},
       strokeWidth = 4,
-      id = i,
+      id = i
     })
     baitButtons[i].x = -150 + ((xCounter) * 300)
     baitButtons[i].y = 175 + (yCounter * 100)
@@ -381,9 +382,23 @@ function scene:show( event )
   local phase = event.phase
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
+    local baits = db:getRows("baitUsages")
+    for i=1, #baits do
+      if (baits[i].location == location) then
+        local name = baits[i].baitType
+        for i=1, #baitButtons do
+          if (name == baitButtons[i]:getLabel()) then
+            selectedBait = i
+            break
+          end
+        end
+        break
+      end
+    end
+    resetButton(baitButtons[selectedBait])
+    changeBait()
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
-
   end
 end
 

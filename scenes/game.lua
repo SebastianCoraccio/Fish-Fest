@@ -76,7 +76,7 @@ local function handleButtonEventBack(event)
   if (event.phase == "ended") and (db:getRows("Flags")[1].watchedTutorial == 1) then
     -- TODO: Change to location page when implemeneted
     composer.removeScene('scenes.game')
-    composer.gotoScene('scenes.title', {effect="fade", time=800, params={}})
+    composer.gotoScene('scenes.locations', {params = {}, effect="slideRight", time=600})
   end
 end
 
