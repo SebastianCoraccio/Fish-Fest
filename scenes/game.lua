@@ -55,6 +55,9 @@ local location
 -- Table to hold the fish
 fishTable = {}
 
+-- Update timer
+local fishUpdateTimer
+
 -- Add a new fish
 function addFish()
   local fishToAdd = location.giveFish()
@@ -72,6 +75,7 @@ end
 local function handleButtonEventBack(event)
   if (event.phase == "ended") and (db:getRows("Flags")[1].watchedTutorial == 1) then
     -- TODO: Change to location page when implemeneted
+    composer.removeScene('scenes.game')
     composer.gotoScene('scenes.title', {effect="fade", time=800, params={}})
   end
 end
@@ -231,7 +235,7 @@ Hit next to learn how to fish.]]}, effect="fade", time=800, isModal=true})
     end
     -- Timer to spawn fish throughout
     -- TODO: Finalize time
-    self.fishUpdateTimer = timer.performWithDelay(7000, function()
+    fishUpdateTimer = timer.performWithDelay(7000, function()
       self:updateFish()
     end, 0)
   end
@@ -252,8 +256,27 @@ end
 
 -- destroy()
 function scene:destroy( event )
+
+
   local sceneGroup = self.view
   -- Code here runs prior to the removal of scene's view
+  
+   timer.cancel(fishUpdateTimer)
+  -- Destroy the fish image objects and remove fish from table
+  function removeFish(index)
+    if (fishTable[index]) then
+      fishTable[index]:destroy()
+      table.remove(fishTable, index)
+    else
+      print('This is an error. We should fix this')
+    end
+  end
+
+  for i = #fishTable, 1, -1 do
+    removeFish(i)
+  end
+
+
 end
 
 function scene:updateFish()

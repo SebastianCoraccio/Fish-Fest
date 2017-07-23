@@ -75,7 +75,6 @@ end
 -- Function to handle buy button
 local function handleButtonEventTravel(event)
   if (event.phase == "ended") then
-    composer.purgeScene('scenes.game')
     composer.gotoScene('scenes.game', {params = {location=locationInfo[selectedLocation].dbName, tutorial=tutorial}, effect="fade", time=400})
   end
 end

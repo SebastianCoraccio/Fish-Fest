@@ -239,11 +239,26 @@ function _Fish.create(params)
   -- end
 
   -- Destructor for the fish
-  -- Removes the display objects
   function fish:destroy()
+    -- Cancel all timers
+    if fish.moveTimer ~= nil then
+      timer.cancel(fish.moveTimer)
+    end
+
+    if fish.biteTimer ~= nil then  
+      timer.cancel(fish.biteTimer)
+    end
+
+    for i = #fish.tapTimers, 1, -1 do
+      if fish.tapTimers[i] ~= nil then
+        timer.cancel(fish.tapTimers[i])
+      end
+    end
+
+    -- Removes images
     display.remove(fish.anim)
     display.remove(fish.los)
-	end
+  end
 
   -- Fish finds a new location and fades out
   -- Calls destroy
