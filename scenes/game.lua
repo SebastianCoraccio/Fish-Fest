@@ -245,6 +245,8 @@ function scene:show( event )
 Hit next to learn how to fish.]]}, effect="fade", time=800, isModal=true})
     end
 
+    location = newLocation(event.params.location)
+
     -- TODO: CHECK IF THIS WOKRS AND MODIFY SO PEOPLE DONT HACK
     if (spawnedInitialFish == false) and (db:getRows("Flags")[1].watchedTutorial == 1) then
       for i=1,3 do
