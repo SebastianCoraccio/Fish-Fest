@@ -75,7 +75,7 @@ end
 local function handleButtonEventBack(event)
   if (event.phase == "ended") and (db:getRows("Flags")[1].watchedTutorial == 1) then
     -- TODO: Change to location page when implemeneted
-    composer.removeScene('scenes.game')
+    -- composer.removeScene('scenes.game')
     composer.gotoScene('scenes.locations', {params = {}, effect="slideRight", time=600})
   end
 end
@@ -224,6 +224,17 @@ function scene:show( event )
   local the_fish = nil
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
+
+    local locationName = event.params.location
+    -- Code here runs when the scene is first created but has not yet appeared on screen
+    background = display.newImage(backgroundGroup, "images/backgrounds/bg_sand.png")
+    background.x = display.contentCenterX
+    background.y = display.contentCenterY
+
+    water = display.newImage(backgroundGroup, "images/backgrounds/bg_" .. locationName .. ".png")
+    water.x = display.contentCenterX
+    water.y = display.contentCenterY - 550
+
     bobber:caught()
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
@@ -233,6 +244,15 @@ function scene:show( event )
       [[Here is where you do all the fishing. You can hit the back button to go back to the title and hit the chum button to view, use, and buy chums.
 Hit next to learn how to fish.]]}, effect="fade", time=800, isModal=true})
     end
+
+    -- TODO: CHECK IF THIS WOKRS AND MODIFY SO PEOPLE DONT HACK
+    if (spawnedInitialFish == false) and (db:getRows("Flags")[1].watchedTutorial == 1) then
+      for i=1,3 do
+        addFish()
+      end
+      spawnedInitialFish = true
+    end
+
     -- Timer to spawn fish throughout
     -- TODO: Finalize time
     fishUpdateTimer = timer.performWithDelay(7000, function()
@@ -251,32 +271,38 @@ function scene:hide(event)
   elseif ( phase == "did" ) then
     -- Code here runs immediately after the scene goes entirely off screen
     bobber:noCast()
+    timer.cancel(fishUpdateTimer)
+    -- Destroy the fish image objects and remove fish from table
+    function removeFish(index)
+      if (fishTable[index]) then
+        fishTable[index]:destroy()
+        table.remove(fishTable, index)
+      else
+        print('This is an error. We should fix this')
+      end
+    end
+
+    for i = #fishTable, 1, -1 do
+      removeFish(i)
+    end
+
+    spawnedInitialFish = false
+
+    bobber.bringBack()
   end
 end
 
 -- destroy()
 function scene:destroy( event )
 
-
   local sceneGroup = self.view
-  -- Code here runs prior to the removal of scene's view
+  local phase = event.phase
   
-   timer.cancel(fishUpdateTimer)
-  -- Destroy the fish image objects and remove fish from table
-  function removeFish(index)
-    if (fishTable[index]) then
-      fishTable[index]:destroy()
-      table.remove(fishTable, index)
-    else
-      print('This is an error. We should fix this')
-    end
+  if ( phase == "will" ) then
+    -- Code here runs prior to the removal of scene's view
+  elseif ( phase == "did" ) then
+    -- Code here runs after scene is removed
   end
-
-  for i = #fishTable, 1, -1 do
-    removeFish(i)
-  end
-
-
 end
 
 function scene:updateFish()
