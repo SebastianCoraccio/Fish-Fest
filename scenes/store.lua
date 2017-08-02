@@ -62,9 +62,11 @@ end
 -- Function to handle changing the displays for the rod
 local function changeRod()
   if (db:getRows("StoreItems")[1].currentRodUpgrade < #rodInfo) then 
+
+    local nextRodUpgrade = rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1]
     -- Check if buy button needs to be changed
-    rodBuyButton:setLabel("Buy for " .. rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].cost)
-    if (rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].cost > db:getRows("StoreItems")[1].coins) then
+    rodBuyButton:setLabel("Buy for " .. nextRodUpgrade.cost)
+    if (nextRodUpgrade.cost > db:getRows("StoreItems")[1].coins) then
       -- grey out buy button
       rodBuyButton:setFillColor(.8, .8, .8)
       rodBuyButton:setEnabled(false)
@@ -74,12 +76,18 @@ local function changeRod()
     end
 
     -- Upgrade title
-    rodTitleText.text = rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].name
+    rodTitleText.text = nextRodUpgrade.name
 
     -- Upgrade description text
-    rodDescription.text = rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].description
+    rodDescription.text = nextRodUpgrade.description
 
     -- Set rod image
+    -- Rod image
+    rodPicture:removeSelf()
+    rodPicture = display.newImage("images/items/" .. nextRodUpgrade.image, 350, 50)
+    rodPicture.anchorX = 0
+    rodPicture.anchorY = 0
+    rodGroup:insert(rodPicture)
   else
     -- No more rod upgrades
     rodBuyButton:setFillColor(.8, .8, .8)
@@ -94,6 +102,7 @@ local function changeBait()
   baitTitleText.text = baitInfo[selectedBait].name .. " x" .. db:getRows("StoreItems")[1][baitInfo[selectedBait].dbName]
 
   -- Set big picture image
+  bigPicture:removeSelf()
   bigPicture = display.newImage("images/baits/" .. string.lower(baitInfo[selectedBait].name) .."_large.png",  175, 1000)
   baitGroup:insert(bigPicture)
 
@@ -335,7 +344,8 @@ function scene:create(event)
   rodGroup:insert(rodDescription)
 
   -- Rod image
-  rodPicture = display.newImage("images/items/rod.png", 350, 50)
+  rodImageName = rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].image
+  rodPicture = display.newImage("images/items/" .. rodImageName, 350, 50)
   rodPicture.anchorX = 0
   rodPicture.anchorY = 0
   rodGroup:insert(rodPicture)
