@@ -19,6 +19,7 @@ local title
 local game
 local store
 local settings
+local encyclopedia 
 
 -- Keeps track of what scene to load based on the users swipe
 local sceneToLoad
@@ -60,6 +61,13 @@ end
 local function handleButtonEventSettings(event)
   if (event.phase == "ended") and (db:getRows("Flags")[1].watchedTutorial == 1) then
     composer.gotoScene('scenes.settings', {effect="slideDown", time=800})
+  end
+end
+
+-- Go to the encyclopedia
+local function handleButtonEventEncyclopedia(event)
+  if (event.phase == "ended") and (db:getRows("Flags")[1].watchedTutorial == 1) then
+    composer.gotoScene('scenes.encyclopedia', {effect="slideUp", time=800})
   end
 end
 
@@ -142,7 +150,7 @@ function scene:create(event)
   store.y = display.contentCenterY
   mainGroup:insert(store)
 
-  -- Store
+  -- Settings
   settings = widget.newButton({
     label = "Settings",
     fontSize = 40,
@@ -162,6 +170,26 @@ function scene:create(event)
   settings.x = display.contentCenterX
   settings.y = 0
   mainGroup:insert(settings)
+
+  encyclopedia = widget.newButton({
+    label = "Encyclopedia",
+    fontSize = 40,
+    onEvent = handleButtonEventEncyclopedia,
+    emboss = false,
+    -- Properties for a rounded rectangle button
+    shape = "roundedRect",
+    width = 275,
+    height = 100,
+    cornerRadius = 12,
+    labelColor = {default={utils.hexToRGB("#ef4100")}, over={utils.hexToRGB("#00aeef")}},
+    fillColor = {default={utils.hexToRGB("#00aeef")}, over={utils.hexToRGB("#ef4100")}},
+    strokeColor = {default={0}, over={0}},
+    strokeWidth = 3
+  })
+  -- Center the button
+  encyclopedia.x = display.contentCenterX
+  encyclopedia.y = display.contentHeight
+  mainGroup:insert(encyclopedia)
 
   -- Check if tutorial needs to be shown
   if (db:getRows("Flags")[1].watchedTutorial == 0) then
