@@ -217,7 +217,7 @@ local function handleButtonEventQuestionMark(event)
     if (event.target.id == 0) then
       str = [[Each rod upgrade you buy gives you more time to catch a fish after it bites the bobber]]
     else
-      str = [[Chums affect certain fish and give that fish a higher spawn chance. Only one bobber can be active per location]]
+      str = [[Chums affect certain fish and give that fish a higher spawn chance. Only one chum can be active per location]]
     end
     composer.showOverlay("scenes.storeHelpModal", {params = {text=str}, isModal=true, effect="fade", time=200})
   end
