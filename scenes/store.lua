@@ -24,6 +24,8 @@ local coins
 local scrollView
 local advertisementButton
 local backButton
+local rodQuestionMark
+local baitQuestionMark
 
 -- Rod
 local rodBox
@@ -209,6 +211,18 @@ local function handleButtonEventBack(event)
   end
 end
 
+local function handleButtonEventQuestionMark(event)
+  if (event.phase == "ended") then
+    local str
+    if (event.target.id == 0) then
+      str = [[Each rod upgrade you buy gives you more time to catch a fish after it bites the bobber]]
+    else
+      str = [[Chums affect certain fish and give that fish a higher spawn chance. Only one bobber can be active per location]]
+    end
+    composer.showOverlay("scenes.storeHelpModal", {params = {text=str}, isModal=true, effect="fade", time=200})
+  end
+end
+
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -272,8 +286,7 @@ function scene:create(event)
   mainGroup:insert(advertisementButton)
 
   -- Back button
-  backButton = widget.newButton(
-  {
+  backButton = widget.newButton({
     label = "Back",
     fontSize = 40,
     onEvent = handleButtonEventBack,
@@ -330,6 +343,29 @@ function scene:create(event)
   rodTitleText = display.newText(options)
   rodGroup:insert(rodTitleText)
 
+  -- Rod question mark
+  rodQuestionMark = widget.newButton({
+    label = '?',
+    fontSize = 40,
+    labelColor = {default={utils.hexToRGB("000000")}, over={utils.hexToRGB("FFFFFF")}},
+    onEvent = handleButtonEventQuestionMark,
+    emboss = false,
+    -- Properties for a rounded rectangle button
+    shape = "roundedRect",
+    width = 65,
+    height = 65,
+    cornerRadius = 25,
+    -- fillColor = {default={utils.hexToRGB("FFFFFF")}, over={utils.hexToRGB("000000")}},
+    -- strokeColor = {default={utils.hexToRGB("000000")}, over={utils.hexToRGB("FFFFFF")}},
+    fillColor = {default={0.8, 0.8, 0.8}, over={0.8,0.8,0.8}},
+    strokeColor = {default={0}, over={1}},
+    strokeWidth = 4,
+    id = 0
+  })
+  rodQuestionMark.x = rodGroup.width - 50
+  rodQuestionMark.y = 50
+  rodGroup:insert(rodQuestionMark)
+
   -- Rod description
   rodDescription = display.newText({
     text = rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].description,
@@ -372,7 +408,6 @@ function scene:create(event)
   rodBuyButton.y = 500
   rodGroup:insert(rodBuyButton)
 
-
   -- Bait group
   baitGroup = display.newGroup()
   scrollView:insert(baitGroup)
@@ -394,6 +429,29 @@ function scene:create(event)
 	}
   baitTitleText = display.newText(options)
 	baitGroup:insert(baitTitleText)
+
+  -- Rod question mark
+  baitQuestionMark = widget.newButton({
+    label = '?',
+    fontSize = 40,
+    labelColor = {default={utils.hexToRGB("000000")}, over={utils.hexToRGB("FFFFFF")}},
+    onEvent = handleButtonEventQuestionMark,
+    emboss = false,
+    -- Properties for a rounded rectangle button
+    shape = "roundedRect",
+    width = 65,
+    height = 65,
+    cornerRadius = 25,
+    -- fillColor = {default={utils.hexToRGB("FFFFFF")}, over={utils.hexToRGB("000000")}},
+    -- strokeColor = {default={utils.hexToRGB("000000")}, over={utils.hexToRGB("FFFFFF")}},
+    fillColor = {default={0.8, 0.8, 0.8}, over={0.8,0.8,0.8}},
+    strokeColor = {default={0}, over={1}},
+    strokeWidth = 4,
+    id = 1
+  })
+  baitQuestionMark.x = baitGroup.width - 50
+  baitQuestionMark.y = baitTitleText.y
+  baitGroup:insert(baitQuestionMark)
 
   -- Get info
   local descriptionString = baitInfo[selectedBait].description
