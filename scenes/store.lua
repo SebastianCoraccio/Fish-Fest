@@ -152,7 +152,7 @@ local function handleButtonEventBait(event)
   end
 end
 
--- Function to handle buy button
+-- Function to handle chum buy button
 local function handleButtonEventBuy(event)
   if (event.phase == "ended") then
     -- Subtract coins
@@ -169,6 +169,12 @@ local function handleButtonEventBuy(event)
 
     -- Update button text
     changeBait()
+  elseif (event.phase == "moved") then
+    local dy = math.abs((event.y - event.yStart))
+    if ( dy > 10 ) then
+      display.getCurrentStage():setFocus()
+      scrollView:takeFocus(event)
+    end
   end
 end
 
