@@ -25,9 +25,23 @@ local scrollView
 local backButton
 local plaques = {}
 
+local function scrollListener(event)
+  if (event.phase == "moved") then
+    display.getCurrentStage():setFocus()
+    scrollView:takeFocus(event)
+  end
+end
+
 local function handleButtonEventPlaque(event)
   if (event.phase == "ended") then
-    print(fishInfo[event.target.id].name)
+    composer.showOverlay('scenes.encyclopediaModal', {params={fid=event.target.id}, effect="fade", time=200, isModal=true})
+    -- print(fishInfo[event.target.id].name)
+  elseif (event.phase == "moved") then
+    local dy = math.abs((event.y - event.yStart))
+    if ( dy > 10 ) then
+      display.getCurrentStage():setFocus()
+      scrollView:takeFocus(event)
+    end
   end
 end
 
@@ -103,7 +117,7 @@ function scene:create(event)
       -- scrollWidth = 0,
       backgroundColor = {0, 0.447, 0.737},
       horizontalScrollDisabled = true,
-      listener = scrollListener
+      -- listener = scrollListener
     }
   )
   mainGroup:insert(scrollView)

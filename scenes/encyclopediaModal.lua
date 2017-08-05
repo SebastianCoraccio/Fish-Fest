@@ -5,6 +5,7 @@
 local composer = require("composer")
 local widget = require("widget")
 local utils = require("utils")
+local fishInfo = require("data.fishInfo")
 
 -- Set up DB
 local newDB = require("database.db").create
@@ -16,30 +17,20 @@ local scene = composer.newScene()
 -- Local pieces of modal
 local modalBox
 local text
-local nextButton
-local skipButton
-local finishButton
+local closeButton
+local picture
+local description
 
 -- Modal group
 local modalGroup
 
--- if true, tutorial engaged
-local tutorial = false
+-- Local things
+local fid
 
--- Function to handle next button
-local function handleButtonEventNext(event)
+-- Function to handle close button
+local function handleButtonEventClose(event)
   if (event.phase == "ended") then
-    tutorial = true
-    composer.hideOverlay(true, "fade", 400)
-  end
-end
-
--- Function to handle skip button
-local function handleButtonEventSkip(event)
-  if (event.phase == "ended") then
-    db:update("UPDATE Flags SET watchedTutorial = 1")
-    tutorial = false
-    composer.hideOverlay(true, "fade", 400)
+    composer.hideOverlay(true, "fade", 200)
   end
 end
 
@@ -55,29 +46,33 @@ function scene:create(event)
   sceneGroup:insert(modalGroup)
   -- Code here runs when the scene is first created but has not yet appeared on screen
   -- Background
-	modalBox = display.newRoundedRect(0, 0, display.contentWidth / 1.25, display.contentHeight / 1.3, 12)
-	modalBox:setFillColor( 255 )
-	modalBox:setStrokeColor(0)
-	modalBox.strokeWidth = 4
-	modalGroup:insert(modalBox)
+  modalBox = display.newRoundedRect(0, 0, display.contentWidth / 1.25, display.contentHeight / 1.3, 12)
+  modalBox:setFillColor( 255 )
+  modalBox:setStrokeColor(0)
+  modalBox.strokeWidth = 4
+  modalGroup:insert(modalBox)
+
+  -- Set fid
+  fid = event.params.fid
 
   -- Text information
-  local text = display.newText({
-    text = event.params.text,
-     y = -80,
-	   width = 500,
-	   fontSize = 50,
-	   align = "center"
+  text = display.newText({
+    text = fishInfo[fid].name,
+    x = 0,
+    y = -300,
+	  width = 500,
+	  fontSize = 50,
+	  align = "center"
   })
   text:setFillColor(0)
   modalGroup:insert(text)
 
-  -- Next button
-  local nextButton = widget.newButton(
+  -- Close button
+  closeButton = widget.newButton(
   {
-      label = "Next",
+      label = "Close",
       fontSize = 40,
-      onEvent = handleButtonEventNext,
+      onEvent = handleButtonEventClose,
       emboss = false,
       -- Properties for a rounded rectangle button
       shape = "roundedRect",
@@ -91,59 +86,25 @@ function scene:create(event)
     }
   )
   -- Center the button
-  nextButton.x = (modalBox.width / -2) + 150
-  nextButton.y = 270
-  modalGroup:insert(nextButton) -- Insert the button
+  closeButton.x = (modalBox.width / 2) - 150
+  closeButton.y = 270
+  modalGroup:insert(closeButton) -- Insert the button
 
-  -- Skip button
-  skipButton = widget.newButton(
-  {
-      label = "Skip",
-      fontSize = 40,
-      onEvent = handleButtonEventSkip,
-      emboss = false,
-      -- Properties for a rounded rectangle button
-      shape = "roundedRect",
-      width = 200,
-      height = 75,
-      cornerRadius = 12,
-      labelColor = {default={utils.hexToRGB("#ef4100")}, over={utils.hexToRGB("#00aeef")}},
-      fillColor = {default={utils.hexToRGB("#00aeef")}, over={utils.hexToRGB("#ef4100")}},
-      strokeColor = {default={0}, over={0}},
-      strokeWidth = 3
-    }
-  )
-  -- Center the button
-  skipButton.x = (modalBox.width / 2) - 150
-  skipButton.y = 270
-  modalGroup:insert(skipButton) -- Insert the button
+  -- Picture
+  picture  = display.newImage("images/fish/" .. fid .. "_large.png", 0, -100)
+  modalGroup:insert(picture)
 
-  if (event.params.finishButton) then
-    -- Skip button
-    finishButton = widget.newButton(
-    {
-        label = "Finish",
-        fontSize = 40,
-        onEvent = handleButtonEventSkip,
-        emboss = false,
-        -- Properties for a rounded rectangle button
-        shape = "roundedRect",
-        width = 500,
-        height = 75,
-        cornerRadius = 12,
-        fillColor = { default={1,0,0,1}, over={1,0.1,0.7,0.4} },
-        strokeColor = { default={1,0.4,0,1}, over={0.8,0.8,1,1} },
-        strokeWidth = 4
-      }
-    )
-    -- Center the button
-    finishButton.x = 0
-    finishButton.y = 270
-    modalGroup:insert(finishButton) -- Insert the button
-
-    modalGroup:remove(nextButton)
-    modalGroup:remove(skipButton)
-  end
+  -- Description
+  description = display.newText({
+    text = fishInfo[fid].description,
+    x = 0,
+    y = 100,
+    width = 500,
+    fontSize = 40,
+    align = "center"
+  })
+  description:setFillColor(0)
+  modalGroup:insert(description)
 
   -- Place the group
 	modalGroup.x = display.contentWidth / 2
@@ -170,7 +131,6 @@ function scene:hide(event)
 
   if ( phase == "will" ) then
     -- Code here runs when the scene is on screen (but is about to go off screen)
-    parent:resumeGame(tutorial)
   elseif ( phase == "did" ) then
     -- Code here runs immediately after the scene goes entirely off screen
   end
