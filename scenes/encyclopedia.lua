@@ -130,22 +130,34 @@ function scene:create(event)
   local xCounter = 0
   local yCounter = 0
   for i=1,#fishInfo do
-    plaques[i] = widget.newButton({
-      label = fishInfo[i].fid,
-      fontSize = 40,
-      labelColor = {default={utils.hexToRGB("FFFFFF")}, over={utils.hexToRGB("000000")}},
-      onEvent = handleButtonEventPlaque,
-      emboss = false,
-      -- Properties for a rounded rectangle button
-      shape = "roundedRect",
-      width = 200,
-      height = 125,
-      cornerRadius = 25,
-      fillColor = {default={utils.hexToRGB("660000")}, over={utils.hexToRGB("a36666")}},
-      strokeColor = {default={utils.hexToRGB("a36666")}, over={utils.hexToRGB("660000")}},
-      strokeWidth = 4,
-      id = i
-    })
+    -- plaques[i] = widget.newButton({
+    --   label = fishInfo[i].fid,
+    --   default = "images/fish/" .. fishInfo[i].fid .. "_large.png",
+    --   over = "images/fish/" .. fishInfo[i].fid .. "_large.png",
+    --   fontSize = 40,
+    --   labelColor = {default={utils.hexToRGB("FFFFFF")}, over={utils.hexToRGB("000000")}},
+    --   onEvent = handleButtonEventPlaque,
+    --   -- emboss = false,
+    --   -- Properties for a rounded rectangle button
+    --   -- shape = "roundedRect",
+    --   width = 200,
+    --   height = 125,
+    --   cornerRadius = 25,
+    --   fillColor = {default={utils.hexToRGB("660000")}, over={utils.hexToRGB("a36666")}},
+    --   strokeColor = {default={utils.hexToRGB("a36666")}, over={utils.hexToRGB("660000")}},
+    --   strokeWidth = 4,
+    --   id = i
+    -- })
+    plaques[i] = widget.newButton(
+    {
+        width = 240,
+        height = 120,
+        defaultFile = "images/fish/" .. fishInfo[i].fid .. "_large.png",
+        overFile = "images/fish/" .. fishInfo[i].fid .. "_large.png",
+        onEvent = handleButtonEventPlaque,
+        id = i
+    }
+)
     plaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
     plaques[i].y = 125 + (yCounter * 175)
 
