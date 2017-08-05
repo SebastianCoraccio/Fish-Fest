@@ -160,7 +160,8 @@ local function handleButtonEventBuy(event)
     db:update(insert)
 
     -- Add one to bait count
-    insert = [[UPDATE StoreItems SET ]] .. baitInfo[selectedBait].dbName .. [[=]] .. db:getRows("StoreItems")[1][baitInfo[selectedBait].dbName] + 1 .. [[;]]
+    insert = [[UPDATE StoreItems SET ]] .. baitInfo[selectedBait].dbName .. [[=]] .. 
+      db:getRows("StoreItems")[1][baitInfo[selectedBait].dbName] + 1 .. [[;]]
     db:update(insert)
     db:print()
 
@@ -171,7 +172,7 @@ local function handleButtonEventBuy(event)
     changeBait()
   elseif (event.phase == "moved") then
     local dy = math.abs((event.y - event.yStart))
-    if ( dy > 10 ) then
+    if (dy > 10) then
       display.getCurrentStage():setFocus()
       scrollView:takeFocus(event)
     end
@@ -182,7 +183,8 @@ end
 local function handleButtonEventRodBuy(event)
   if (event.phase == "ended") then
     -- Subtract coins
-    local insert = [[UPDATE StoreItems SET coins=]] .. db:getRows("StoreItems")[1].coins - rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].cost .. [[;]]
+    local insert = [[UPDATE StoreItems SET coins=]] .. 
+      db:getRows("StoreItems")[1].coins - rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].cost .. [[;]]
     db:update(insert)
 
     -- Add one to bait count
@@ -203,6 +205,12 @@ local function handleButtonEventRodBuy(event)
       [[Congratulations! You just bought your first fishing rod upgrade.
 Hit next and try swiping back to the title screen.]]}, 
       effect="fade", time=800, isModal=true})
+    end
+  elseif (event.phase == "moved") then
+    local dy = math.abs((event.y - event.yStart))
+    if (dy > 10) then
+      display.getCurrentStage():setFocus()
+      scrollView:takeFocus(event)
     end
   end
 end
@@ -245,26 +253,24 @@ function scene:create(event)
   tutorial = event.params.tutorial
 
   -- Title text
-  local options = {
+  title = display.newText({
     text = "Shop",
     x = 150,
     y = 0,
 	  fontSize = 50,
     align = "left"
-  }
-  title = display.newText(options)
+  })
   title:setFillColor(0)
   mainGroup:insert(title)
 
   -- Coins
-  options = {
+  coins = display.newText({
     text = db:getRows("StoreItems")[1].coins,
     x = display.contentCenterX,
     y = 0,
 	  fontSize = 50,
     align = "right"
-  }
-  coins = display.newText(options)
+  })
   coins:setFillColor(0)
   mainGroup:insert(coins)
 
@@ -287,7 +293,7 @@ function scene:create(event)
     strokeColor = {default={0.8,0.8,0.8}, over={0.8,0.8,0.8}},
     strokeWidth = 4
   })
-  advertisementButton.x = display.contentCenterX + 100
+  advertisementButton.x = coins.x + 115
   advertisementButton.y = 0
   mainGroup:insert(advertisementButton)
 
@@ -313,18 +319,16 @@ function scene:create(event)
   mainGroup:insert(backButton)
 
   -- Scroll view
-  scrollView = widget.newScrollView(
-    {
-      top = 100,
-      left = 50,
-      width = display.contentWidth - 100,
-      height = 1000,
-      scrollWidth = 0,
-      backgroundColor = {0, 0.447, 0.737},
-      horizontalScrollDisabled = true,
-      listener = scrollListener
-    }
-  )
+  scrollView = widget.newScrollView({
+    top = 100,
+    left = 50,
+    width = display.contentWidth - 100,
+    height = 1000,
+    scrollWidth = 0,
+    backgroundColor = {0, 0.447, 0.737},
+    horizontalScrollDisabled = true,
+    listener = scrollListener
+  })
   mainGroup:insert(scrollView)
 
   -- Rod group
@@ -339,14 +343,13 @@ function scene:create(event)
   rodGroup:insert(rodBox)
 
   -- Title text for rod
-  options = {
+  rodTitleText = display.newText({
     text = rodInfo[db:getRows("StoreItems")[1].currentRodUpgrade + 1].name,
     x = 180,
     y = 50,
 	  fontSize = 50,
     align = "left"
-  }
-  rodTitleText = display.newText(options)
+  })
   rodGroup:insert(rodTitleText)
 
   -- Rod question mark
@@ -426,14 +429,13 @@ function scene:create(event)
 	baitGroup:insert(baitBox)
 
   -- Options for bait text
-	options = {
+  baitTitleText = display.newText({
 	  text = baitInfo[selectedBait].name,
     x = 180,
     y = 800,
 	  fontSize = 50,
     align = "right"
-	}
-  baitTitleText = display.newText(options)
+	})
 	baitGroup:insert(baitTitleText)
 
   -- Rod question mark
@@ -575,7 +577,8 @@ function scene:show( event )
     -- Make tutorial modal if needed
   if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
     composer.showOverlay("scenes.tutorialModal", {params = {text = 
-      [[This is the store. Here is where you can buy different types of chum to attract more fish. Also you can upgrade your fishing rod to make catching fish easier.
+      [[This is the store. Here is where you can buy different types of chum to attract more fish.]] .. 
+      [[ Also you can upgrade your fishing rod to make catching fish easier.
 Hit next to buy your first rod upgrade.]]}, 
       effect="fade", time=800, isModal=true})
   end

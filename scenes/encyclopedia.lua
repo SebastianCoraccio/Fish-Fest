@@ -38,7 +38,7 @@ local function handleButtonEventPlaque(event)
     -- print(fishInfo[event.target.id].name)
   elseif (event.phase == "moved") then
     local dy = math.abs((event.y - event.yStart))
-    if ( dy > 10 ) then
+    if (dy > 10) then
       display.getCurrentStage():setFocus()
       scrollView:takeFocus(event)
     end
