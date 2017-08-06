@@ -29,6 +29,9 @@ local modalGroup
 
 -- Local things
 local fid
+local previousScene
+local location
+local tutorial
 
 -- Function to change the information about the fish
 local function changeInfo()
@@ -64,7 +67,14 @@ end
 -- Function to handle close button
 local function handleButtonEventClose(event)
   if (event.phase == "ended") then
-    composer.gotoScene("scenes.encyclopedia", {effect="slideRight", time=200})
+    if (previousScene == "game") then
+      composer.gotoScene("scenes." .. previousScene, {
+        params = {location=location, tutorial=tutorial},
+        effect="fade", 
+        time=400})
+    else
+      composer.gotoScene("scenes." .. previousScene, {effect="slideRight", time=200})
+    end
   end
 end
 
@@ -81,6 +91,15 @@ function scene:create(event)
   -- Code here runs when the scene is first created but has not yet appeared on screen
   -- Set fid
   fid = event.params.fid
+
+  -- Set where to go back to
+  previousScene = event.params.previousScene
+
+  -- Set location
+  location = event.params.location
+
+  -- Set tutorial
+  tutorial = db:getRows("Flags")[1].watchedTutorial
 
   -- Text information
   text = display.newText({
@@ -198,6 +217,9 @@ function scene:show(event)
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
     fid = event.params.fid
+    previousScene = event.params.previousScene
+    location = event.params.location
+    tutorial = db:getRows("Flags")[1].watchedTutorial
     changeInfo()
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen

@@ -62,8 +62,8 @@ end
 
 local function handleButtonEventPlaque(event)
   if (event.phase == "ended") then
-    composer.gotoScene('scenes.encyclopediaModal', {params={fid=event.target.id}, effect="slideLeft", time=200})
-    -- print(fishInfo[event.target.id].name)
+    composer.gotoScene('scenes.fishDetails', {params={fid=event.target.id, previousScene="encyclopedia"}, 
+                       effect="slideLeft", time=200})
   elseif (event.phase == "moved") then
     local dy = math.abs((event.y - event.yStart))
     if (dy > 10) then
@@ -101,17 +101,6 @@ function scene:create(event)
   })
   title:setFillColor(0)
   mainGroup:insert(title)
-
-  -- Coins
-  -- coins = display.newText({
-  --   text = db:getRows("StoreItems")[1].coins,
-  --   x = display.contentCenterX,
-  --   y = 0,
-	--   fontSize = 50,
-  --   align = "right"
-  -- })
-  -- coins:setFillColor(0)
-  -- mainGroup:insert(coins)
 
   -- Back button
   backButton = widget.newButton(

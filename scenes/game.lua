@@ -51,6 +51,7 @@ local spawnedInitialFish = false
 
 -- Location
 local location
+local locationName
 
 -- Table to hold the fish
 fishTable = {}
@@ -87,7 +88,7 @@ end
 -- create()
 function scene:create(event)
   local sceneGroup = self.view
-  local locationName = event.params.location
+  locationName = event.params.location
   -- Define groups
   backgroundGroup = display.newGroup()
   sceneGroup:insert(backgroundGroup)
@@ -218,15 +219,14 @@ Hit next to try and cast!]]}, effect="fade", time=800, isModal=true})
 end
 
 -- show()
-function scene:show( event )
+function scene:show(event)
   local sceneGroup = self.view
   local phase = event.phase
   local the_fish = nil
   if ( phase == "will" ) then
-    -- Code here runs when the scene is still off screen (but is about to come on screen)
-
-    local locationName = event.params.location
     -- Code here runs when the scene is first created but has not yet appeared on screen
+    locationName = event.params.location
+
     background = display.newImage(backgroundGroup, "images/backgrounds/bg_sand.png")
     background.x = display.contentCenterX
     background.y = display.contentCenterY
@@ -394,7 +394,9 @@ function scene:reelIn()
               effect = "fade",
               time = 400,
               params = {
-                  fid = fid
+                  fid = fid,
+                  location=locationName,
+                  tutorial=tutorial
               }
           }
           composer.showOverlay("scenes.modal", options)

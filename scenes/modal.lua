@@ -15,6 +15,7 @@ local db = newDB()
 local scene = composer.newScene()
 
 -- Local pieces of modal
+local modalGroup
 local modalBox
 local msgText
 local button1
@@ -23,13 +24,16 @@ local valueText
 local fishImage
 local weightText
 
-local modalGroup
+local fid
+local location
+local tutorial
 
 -- Function to handle details button
 -- TODO: Open encylopedia with that fish
 local function handleButtonEventDetails(event)
   if (event.phase == "ended") then
-    print("Open encylopedia of that fish")
+    composer.gotoScene("scenes.fishDetails", {params={fid=fid, previousScene="game", location=location, tutorial=tutorial},
+       effect="fade", time=400})
   end
 end
 
@@ -58,7 +62,9 @@ function scene:create(event)
 	modalBox.strokeWidth = 4
 	modalGroup:insert(modalBox)
 
-  local fid = event.params.fid
+  fid = event.params.fid
+  location = event.params.location
+  tutorial = event.params.tutorial
 
   -- Get fish name from fid
   local fishName = ""
@@ -125,15 +131,15 @@ function scene:create(event)
       fontSize = 40,
       onEvent = handleButtonEventDetails,
       emboss = false,
-      isEnabled = false,
       -- Properties for a rounded rectangle button
       shape = "roundedRect",
       width = 200,
       height = 75,
       cornerRadius = 12,
-      fillColor = {default={0.8, 0.8, 0.8}, over={0.8,0.8,0.8}},
-      strokeColor = {default={0.8,0.8,0.8}, over={0.8,0.8,0.8}},
-      strokeWidth = 4
+      labelColor = {default={utils.hexToRGB("#ef4100")}, over={utils.hexToRGB("#00aeef")}},
+      fillColor = {default={utils.hexToRGB("#00aeef")}, over={utils.hexToRGB("#ef4100")}},
+      strokeColor = {default={0}, over={0}},
+      strokeWidth = 3
     }
   )
   -- Center the button
