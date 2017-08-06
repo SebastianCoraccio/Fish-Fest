@@ -6,6 +6,10 @@ local composer = require('composer')
 local widget = require("widget")
 local utils = require("utils")
 local fishInfo = require("data.fishInfo")
+local riverInfo = require("data.river")
+local atlanticInfo = require("data.atlantic")
+local reefInfo = require("data.reef")
+local icecapInfo = require("data.ice_cap")
 
 -- Set up DB
 local newDB = require("database.db").create
@@ -16,7 +20,27 @@ local scene = composer.newScene()
 
 -- Local groups
 local mainGroup
-local plaqueGroup
+
+-- River
+local riverGroup
+local riverText
+local riverFish
+local riverPlaques = {}
+-- Ocean
+local atlanticGroup
+local atlanticText
+local atlanticFish
+local atlanticPlaques = {}
+-- Reef
+local reefGroup
+local reefText
+local reefFish
+local reefPlaques = {}
+-- Ice Cap
+local icecapGroup
+local icecapText
+local icecapFish
+local icecapPlaques = {}
 
 -- Things
 local title
@@ -24,6 +48,10 @@ local coins
 local scrollView
 local backButton
 local plaques = {}
+
+local function compare(one, two)
+  return one.fid < two.fid
+end
 
 local function scrollListener(event)
   if (event.phase == "moved") then
@@ -108,58 +136,47 @@ function scene:create(event)
   mainGroup:insert(backButton)
 
   -- Scroll view
-  scrollView = widget.newScrollView(
-    {
-      top = 100,
-      left = 00,
-      -- width = display.contentWidth,
-      -- height = display.contentHeight,
-      -- scrollWidth = 0,
-      backgroundColor = {0, 0.447, 0.737},
-      horizontalScrollDisabled = true,
-      -- listener = scrollListener
-    }
-  )
+  scrollView = widget.newScrollView({
+    top = 100,
+    left = 00,
+    -- width = display.contentWidth,
+    -- height = display.contentHeight,
+    -- scrollWidth = 0,
+    backgroundColor = {0, 0.447, 0.737},
+    horizontalScrollDisabled = true,
+    -- listener = scrollListener
+  })
   mainGroup:insert(scrollView)
 
-  -- Rod group
-  plaqueGroup = display.newGroup()
-  scrollView:insert(plaqueGroup)
+  -- River
+  riverGroup = display.newGroup()
+  scrollView:insert(riverGroup)
 
-  -- Insert all the plaques
+  riverText = display.newText({
+    text = "River Fish",
+    x = 150,
+    y = 25,
+	  fontSize = 50,
+    align = "left"
+  })
+  riverText:setFillColor(0)
+  riverGroup:insert(riverText)
+
   local xCounter = 0
   local yCounter = 0
-  for i=1,#fishInfo do
-    -- plaques[i] = widget.newButton({
-    --   label = fishInfo[i].fid,
-    --   default = "images/fish/" .. fishInfo[i].fid .. "_large.png",
-    --   over = "images/fish/" .. fishInfo[i].fid .. "_large.png",
-    --   fontSize = 40,
-    --   labelColor = {default={utils.hexToRGB("FFFFFF")}, over={utils.hexToRGB("000000")}},
-    --   onEvent = handleButtonEventPlaque,
-    --   -- emboss = false,
-    --   -- Properties for a rounded rectangle button
-    --   -- shape = "roundedRect",
-    --   width = 200,
-    --   height = 125,
-    --   cornerRadius = 25,
-    --   fillColor = {default={utils.hexToRGB("660000")}, over={utils.hexToRGB("a36666")}},
-    --   strokeColor = {default={utils.hexToRGB("a36666")}, over={utils.hexToRGB("660000")}},
-    --   strokeWidth = 4,
-    --   id = i
-    -- })
-    plaques[i] = widget.newButton(
-    {
-        width = 240,
-        height = 120,
-        defaultFile = "images/fish/" .. fishInfo[i].fid .. "_large.png",
-        overFile = "images/fish/" .. fishInfo[i].fid .. "_large.png",
-        onEvent = handleButtonEventPlaque,
-        id = i
-    }
-)
-    plaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
-    plaques[i].y = 125 + (yCounter * 175)
+  local sortedFish = riverInfo.fish
+  table.sort(sortedFish, compare)
+  for i=1, #sortedFish  do
+    riverPlaques[i] = widget.newButton({
+      width = 240,
+      height = 120,
+      defaultFile = "images/fish/" .. riverInfo.fish[i].fid .. "_large.png",
+      overFile = "images/fish/" .. riverInfo.fish[i].fid .. "_large.png",
+      onEvent = handleButtonEventPlaque,
+      id = riverInfo.fish[i].fid
+    })
+    riverPlaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
+    riverPlaques[i].y = 125 + (yCounter * 175)
 
     -- Increase the counters
     xCounter = xCounter + 1
@@ -170,7 +187,133 @@ function scene:create(event)
       yCounter = yCounter + 1
     end
 
-    plaqueGroup:insert(plaques[i])
+    riverGroup:insert(riverPlaques[i])
+  end
+
+  -- Atlantic
+  atlanticGroup = display.newGroup()
+  scrollView:insert(atlanticGroup)
+
+  atlanticText = display.newText({
+    text = "Atlantic Fish",
+    x = 150,
+    y = 75 + riverGroup.height,
+	  fontSize = 50,
+    align = "left"
+  })
+  atlanticText:setFillColor(0)
+  riverGroup:insert(atlanticText)
+
+  xCounter = 0
+  yCounter = 0
+  sortedFish = atlanticInfo.fish
+  table.sort(sortedFish, compare)
+  for i=1, #sortedFish  do
+    atlanticPlaques[i] = widget.newButton({
+      width = 240,
+      height = 120,
+      defaultFile = "images/fish/" .. atlanticInfo.fish[i].fid .. "_large.png",
+      overFile = "images/fish/" .. atlanticInfo.fish[i].fid .. "_large.png",
+      onEvent = handleButtonEventPlaque,
+      id = atlanticInfo.fish[i].fid
+    })
+    atlanticPlaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
+    atlanticPlaques[i].y = (125 + (yCounter * 175)) + riverGroup.height
+
+    -- Increase the counters
+    xCounter = xCounter + 1
+
+    -- Reset counters if necessary
+    if (xCounter > 2) then 
+      xCounter = 0
+      yCounter = yCounter + 1
+    end
+
+    atlanticGroup:insert(atlanticPlaques[i])
+  end
+
+  -- Reef
+  reefGroup = display.newGroup()
+  scrollView:insert(reefGroup)
+
+  reefText = display.newText({
+    text = "Reef Fish",
+    x = 150,
+    y = 150 + atlanticGroup.height + riverGroup.height,
+	  fontSize = 50,
+    align = "left"
+  })
+  reefText:setFillColor(0)
+  riverGroup:insert(reefText)
+
+  xCounter = 0
+  yCounter = 0
+  sortedFish = reefInfo.fish
+  table.sort(sortedFish, compare)
+  for i=1, #sortedFish  do
+    reefPlaques[i] = widget.newButton({
+      width = 240,
+      height = 120,
+      defaultFile = "images/fish/" .. reefInfo.fish[i].fid .. "_large.png",
+      overFile = "images/fish/" .. reefInfo.fish[i].fid .. "_large.png",
+      onEvent = handleButtonEventPlaque,
+      id = reefInfo.fish[i].fid
+    })
+    reefPlaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
+    reefPlaques[i].y = 100 + (yCounter * 175) + riverGroup.height
+
+    -- Increase the counters
+    xCounter = xCounter + 1
+
+    -- Reset counters if necessary
+    if (xCounter > 2) then 
+      xCounter = 0
+      yCounter = yCounter + 1
+    end
+
+    reefGroup:insert(reefPlaques[i])
+  end
+
+  -- Ice cap
+  icecapGroup = display.newGroup()
+  scrollView:insert(icecapGroup)
+
+  icecapText = display.newText({
+    text = "Ice Cap Fish",
+    x = 150,
+    y = -500 + riverGroup.height + atlanticGroup.height + reefGroup.height,
+	  fontSize = 50,
+    align = "left"
+  })
+  icecapText:setFillColor(0)
+  icecapGroup:insert(icecapText)
+
+  xCounter = 0
+  yCounter = 0
+  sortedFish = icecapInfo.fish
+  table.sort(sortedFish, compare)
+  for i=1, #sortedFish  do
+    icecapPlaques[i] = widget.newButton({
+      width = 240,
+      height = 120,
+      defaultFile = "images/fish/" .. icecapInfo.fish[i].fid .. "_large.png",
+      overFile = "images/fish/" .. icecapInfo.fish[i].fid .. "_large.png",
+      onEvent = handleButtonEventPlaque,
+      id = icecapInfo.fish[i].fid
+    })
+    icecapPlaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
+    icecapPlaques[i].y = -350 + (yCounter * 175) + atlanticGroup.height + reefGroup.height + riverGroup.height
+
+    -- Increase the counters
+    xCounter = xCounter + 1
+
+    -- Reset counters if necessary
+    if (xCounter > 2) then 
+      xCounter = 0
+      yCounter = yCounter + 1
+    end
+
+    icecapGroup:insert(icecapPlaques[i])
   end
 end
 

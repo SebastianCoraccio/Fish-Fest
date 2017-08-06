@@ -169,7 +169,7 @@ function scene:create(event)
   -- Largest caught
   largestCaught = display.newText({
     text = "Largest: " .. largestCaughtText,
-    x = -200,
+    x = -230,
     y = 100,
     fontSize = 40,
   })
