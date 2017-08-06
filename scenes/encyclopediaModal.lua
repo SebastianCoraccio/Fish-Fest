@@ -20,6 +20,9 @@ local text
 local closeButton
 local picture
 local description
+local numberCaught
+local largestCaught
+local value
 
 -- Modal group
 local modalGroup
@@ -27,10 +30,41 @@ local modalGroup
 -- Local things
 local fid
 
+-- Function to change the information about the fish
+local function changeInfo()
+  text.text = fishInfo[fid].name
+
+  local info
+  for i=1, #db:getRows("FishCaught") do
+    if (db:getRows("FishCaught")[i].fid == fid) then
+      info = db:getRows("FishCaught")[i]
+      break
+    end
+  end
+  
+  picture:removeSelf()
+  
+  if (info == nil) then
+    numberCaught.text = "Caught: ?"
+    largestCaught.text = "Largest: ?"
+    value.text = "Value: ?"
+    description.text = "?"
+    picture = display.newImage("images/fish/unknown_large.png", 0, -300)
+  else
+    numberCaught.text = "Caught: " .. info.numberCaught
+    largestCaught.text = "Largest: " .. info.largestCaught
+    value.text = "Value: " .. fishInfo[fid].value
+    description.text = fishInfo[fid].description
+    picture = display.newImage("images/fish/" .. fid .. "_large.png", 0, -300)
+  end
+
+  modalGroup:insert(picture)
+end
+
 -- Function to handle close button
 local function handleButtonEventClose(event)
   if (event.phase == "ended") then
-    composer.hideOverlay(true, "fade", 200)
+    composer.gotoScene("scenes.encyclopedia", {effect="slideRight", time=200})
   end
 end
 
@@ -45,24 +79,17 @@ function scene:create(event)
   modalGroup = display.newGroup()
   sceneGroup:insert(modalGroup)
   -- Code here runs when the scene is first created but has not yet appeared on screen
-  -- Background
-  modalBox = display.newRoundedRect(0, 0, display.contentWidth / 1.25, display.contentHeight / 1.3, 12)
-  modalBox:setFillColor( 255 )
-  modalBox:setStrokeColor(0)
-  modalBox.strokeWidth = 4
-  modalGroup:insert(modalBox)
-
   -- Set fid
   fid = event.params.fid
 
   -- Text information
   text = display.newText({
     text = fishInfo[fid].name,
-    x = 0,
-    y = -300,
+    x = -100,
+    y = display.contentHeight / 2 * -1,
 	  width = 500,
 	  fontSize = 50,
-	  align = "center"
+	  align = "left"
   })
   text:setFillColor(0)
   modalGroup:insert(text)
@@ -86,25 +113,78 @@ function scene:create(event)
     }
   )
   -- Center the button
-  closeButton.x = (modalBox.width / 2) - 150
-  closeButton.y = 270
+  closeButton.x = display.contentWidth / 2 - 150
+  closeButton.y = display.contentHeight / 2 * -1
   modalGroup:insert(closeButton) -- Insert the button
 
-  -- Picture
-  picture  = display.newImage("images/fish/" .. fid .. "_large.png", 0, -100)
-  modalGroup:insert(picture)
+  local info
+  for i=1, #db:getRows("FishCaught") do
+    if (db:getRows("FishCaught")[i].fid == fid) then
+      info = db:getRows("FishCaught")[i]
+      break
+    end
+  end
 
+  local numberCaughtText = "?"
+  local largestCaughtText = "?"
+  local valueText = "?"
+  local descriptionText = "?"
+  if (info) then
+    numberCaughtText = info.numberCaught
+    largestCaught = info.largestCaught
+    value = fishInfo[fid].value
+    descriptionText = fishInfo[fid].description
+
+    -- Picture
+    picture = display.newImage("images/fish/" .. fid .. "_large.png", 0, -300)
+    modalGroup:insert(picture)
+  else 
+    -- Picture
+    picture = display.newImage("images/fish/unknown_large.png", 0, -300)
+    modalGroup:insert(picture)
+  end
+  
   -- Description
   description = display.newText({
-    text = fishInfo[fid].description,
+    text = descriptionText,
     x = 0,
-    y = 100,
-    width = 500,
+    y = -100,
+    width = display.contentWidth - 100,
     fontSize = 40,
     align = "center"
   })
   description:setFillColor(0)
   modalGroup:insert(description)
+
+  -- Number caught
+  numberCaught = display.newText({
+    text = "Caught: " .. numberCaughtText,
+    x = -230,
+    y = 0,
+    fontSize = 40,
+  })
+  numberCaught:setFillColor(0)
+  modalGroup:insert(numberCaught)
+
+  -- Largest caught
+  largestCaught = display.newText({
+    text = "Largest: " .. largestCaughtText,
+    x = -200,
+    y = 100,
+    fontSize = 40,
+  })
+  largestCaught:setFillColor(0)
+  modalGroup:insert(largestCaught)
+
+  -- Value
+  value = display.newText({
+    text = valueText,
+    x = -230,
+    y = 200,
+    fontSize = 40,
+  })
+  value:setFillColor(0)
+  modalGroup:insert(value)
 
   -- Place the group
 	modalGroup.x = display.contentWidth / 2
@@ -112,11 +192,13 @@ function scene:create(event)
 end
 
 -- show()
-function scene:show( event )
+function scene:show(event)
   local sceneGroup = self.view
   local phase = event.phase
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
+    fid = event.params.fid
+    changeInfo()
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
 

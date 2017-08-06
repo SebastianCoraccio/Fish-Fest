@@ -34,7 +34,7 @@ end
 
 local function handleButtonEventPlaque(event)
   if (event.phase == "ended") then
-    composer.showOverlay('scenes.encyclopediaModal', {params={fid=event.target.id}, effect="fade", time=200, isModal=true})
+    composer.gotoScene('scenes.encyclopediaModal', {params={fid=event.target.id}, effect="slideLeft", time=200})
     -- print(fishInfo[event.target.id].name)
   elseif (event.phase == "moved") then
     local dy = math.abs((event.y - event.yStart))
