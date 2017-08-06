@@ -58,7 +58,6 @@ end
 -- Function to handle use button
 local function handleButtonEventLocation(event)
   if (event.phase == "ended") then
-    print(event.target.id)
     selectedLocation = event.target.id
     changeLocation()
     resetButton(event.target)
