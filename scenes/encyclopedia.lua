@@ -156,28 +156,30 @@ function scene:create(event)
   local yCounter = 0
   local sortedFish = riverInfo.fish
   table.sort(sortedFish, compare)
-  for i=1, #sortedFish  do
-    riverPlaques[i] = widget.newButton({
-      width = 240,
-      height = 120,
-      defaultFile = "images/fish/" .. riverInfo.fish[i].fid .. "_large.png",
-      overFile = "images/fish/" .. riverInfo.fish[i].fid .. "_large.png",
-      onEvent = handleButtonEventPlaque,
-      id = riverInfo.fish[i].fid
-    })
-    riverPlaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
-    riverPlaques[i].y = 125 + (yCounter * 175)
+  for i=1, #sortedFish do
+    if (riverInfo.fish[i].fid ~= 23) then
+      riverPlaques[i] = widget.newButton({
+        width = 240,
+        height = 120,
+        defaultFile = "images/fish/" .. riverInfo.fish[i].fid .. "_large.png",
+        overFile = "images/fish/" .. riverInfo.fish[i].fid .. "_large.png",
+        onEvent = handleButtonEventPlaque,
+        id = riverInfo.fish[i].fid
+      })
+      riverPlaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
+      riverPlaques[i].y = 125 + (yCounter * 175)
 
-    -- Increase the counters
-    xCounter = xCounter + 1
+      -- Increase the counters
+      xCounter = xCounter + 1
 
-    -- Reset counters if necessary
-    if (xCounter > 2) then 
-      xCounter = 0
-      yCounter = yCounter + 1
+      -- Reset counters if necessary
+      if (xCounter > 2) then 
+        xCounter = 0
+        yCounter = yCounter + 1
+      end
+
+      riverGroup:insert(riverPlaques[i])
     end
-
-    riverGroup:insert(riverPlaques[i])
   end
 
   -- Atlantic
@@ -188,7 +190,7 @@ function scene:create(event)
     text = "Atlantic Fish",
     x = 40,
     y = 75 + riverGroup.height,
-	  fontSize = 50,
+    fontSize = 50,
     align = "left"
   })
   atlanticText.anchorX = 0
@@ -199,28 +201,30 @@ function scene:create(event)
   yCounter = 0
   sortedFish = atlanticInfo.fish
   table.sort(sortedFish, compare)
-  for i=1, #sortedFish  do
-    atlanticPlaques[i] = widget.newButton({
-      width = 240,
-      height = 120,
-      defaultFile = "images/fish/" .. atlanticInfo.fish[i].fid .. "_large.png",
-      overFile = "images/fish/" .. atlanticInfo.fish[i].fid .. "_large.png",
-      onEvent = handleButtonEventPlaque,
-      id = atlanticInfo.fish[i].fid
-    })
-    atlanticPlaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
-    atlanticPlaques[i].y = (125 + (yCounter * 175)) + riverGroup.height
+  for i=1, #sortedFish do
+    if (atlanticInfo.fish[i].fid ~= 23) then
+      atlanticPlaques[i] = widget.newButton({
+        width = 240,
+        height = 120,
+        defaultFile = "images/fish/" .. atlanticInfo.fish[i].fid .. "_large.png",
+        overFile = "images/fish/" .. atlanticInfo.fish[i].fid .. "_large.png",
+        onEvent = handleButtonEventPlaque,
+        id = atlanticInfo.fish[i].fid
+      })
+      atlanticPlaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
+      atlanticPlaques[i].y = (125 + (yCounter * 175)) + riverGroup.height
 
-    -- Increase the counters
-    xCounter = xCounter + 1
+      -- Increase the counters
+      xCounter = xCounter + 1
 
-    -- Reset counters if necessary
-    if (xCounter > 2) then 
-      xCounter = 0
-      yCounter = yCounter + 1
+      -- Reset counters if necessary
+      if (xCounter > 2) then 
+        xCounter = 0
+        yCounter = yCounter + 1
+      end
+
+      atlanticGroup:insert(atlanticPlaques[i])
     end
-
-    atlanticGroup:insert(atlanticPlaques[i])
   end
 
   -- Reef
@@ -242,28 +246,30 @@ function scene:create(event)
   yCounter = 0
   sortedFish = reefInfo.fish
   table.sort(sortedFish, compare)
-  for i=1, #sortedFish  do
-    reefPlaques[i] = widget.newButton({
-      width = 240,
-      height = 120,
-      defaultFile = "images/fish/" .. reefInfo.fish[i].fid .. "_large.png",
-      overFile = "images/fish/" .. reefInfo.fish[i].fid .. "_large.png",
-      onEvent = handleButtonEventPlaque,
-      id = reefInfo.fish[i].fid
-    })
-    reefPlaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
-    reefPlaques[i].y = 100 + (yCounter * 175) + riverGroup.height
+  for i=1, #sortedFish do
+    if (reefInfo.fish[i].fid ~= 23) then
+      reefPlaques[i] = widget.newButton({
+        width = 240,
+        height = 120,
+        defaultFile = "images/fish/" .. reefInfo.fish[i].fid .. "_large.png",
+        overFile = "images/fish/" .. reefInfo.fish[i].fid .. "_large.png",
+        onEvent = handleButtonEventPlaque,
+        id = reefInfo.fish[i].fid
+      })
+      reefPlaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
+      reefPlaques[i].y = 100 + (yCounter * 175) + riverGroup.height
 
-    -- Increase the counters
-    xCounter = xCounter + 1
+      -- Increase the counters
+      xCounter = xCounter + 1
 
-    -- Reset counters if necessary
-    if (xCounter > 2) then 
-      xCounter = 0
-      yCounter = yCounter + 1
+      -- Reset counters if necessary
+      if (xCounter > 2) then 
+        xCounter = 0
+        yCounter = yCounter + 1
+      end
+
+      reefGroup:insert(reefPlaques[i])
     end
-
-    reefGroup:insert(reefPlaques[i])
   end
 
   -- Ice cap
@@ -285,28 +291,30 @@ function scene:create(event)
   yCounter = 0
   sortedFish = icecapInfo.fish
   table.sort(sortedFish, compare)
-  for i=1, #sortedFish  do
-    icecapPlaques[i] = widget.newButton({
-      width = 240,
-      height = 120,
-      defaultFile = "images/fish/" .. icecapInfo.fish[i].fid .. "_large.png",
-      overFile = "images/fish/" .. icecapInfo.fish[i].fid .. "_large.png",
-      onEvent = handleButtonEventPlaque,
-      id = icecapInfo.fish[i].fid
-    })
-    icecapPlaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
-    icecapPlaques[i].y = -350 + (yCounter * 175) + atlanticGroup.height + reefGroup.height + riverGroup.height
+  for i=1, #sortedFish do
+    if (icecapInfo.fish[i].fid ~= 23) then
+      icecapPlaques[i] = widget.newButton({
+        width = 240,
+        height = 120,
+        defaultFile = "images/fish/" .. icecapInfo.fish[i].fid .. "_large.png",
+        overFile = "images/fish/" .. icecapInfo.fish[i].fid .. "_large.png",
+        onEvent = handleButtonEventPlaque,
+        id = icecapInfo.fish[i].fid
+      })
+      icecapPlaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
+      icecapPlaques[i].y = -350 + (yCounter * 175) + atlanticGroup.height + reefGroup.height + riverGroup.height
 
-    -- Increase the counters
-    xCounter = xCounter + 1
+      -- Increase the counters
+      xCounter = xCounter + 1
 
-    -- Reset counters if necessary
-    if (xCounter > 2) then 
-      xCounter = 0
-      yCounter = yCounter + 1
+      -- Reset counters if necessary
+      if (xCounter > 2) then 
+        xCounter = 0
+        yCounter = yCounter + 1
+      end
+
+      icecapGroup:insert(icecapPlaques[i])
     end
-
-    icecapGroup:insert(icecapPlaques[i])
   end
 end
 

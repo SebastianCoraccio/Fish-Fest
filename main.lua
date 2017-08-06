@@ -94,8 +94,8 @@ Runtime:addEventListener("key", keyPress)
 
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now
-composer.gotoScene('scenes.game', {params = {location='river'}})
+-- composer.gotoScene('scenes.game', {params = {location='river'}})
 -- composer.gotoScene('scenes.title', {params={}})
 -- composer.gotoScene('scenes.settings')
--- composer.gotoScene('scenes.encyclopedia')
+composer.gotoScene('scenes.encyclopedia')
 -- composer.gotoScene('scenes.store', {params={}})
