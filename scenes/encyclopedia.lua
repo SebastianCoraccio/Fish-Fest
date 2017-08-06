@@ -143,11 +143,12 @@ function scene:create(event)
 
   riverText = display.newText({
     text = "River Fish",
-    x = 150,
+    x = 40,
     y = 25,
 	  fontSize = 50,
     align = "left"
   })
+  riverText.anchorX = 0
   riverText:setFillColor(0)
   riverGroup:insert(riverText)
 
@@ -185,11 +186,12 @@ function scene:create(event)
 
   atlanticText = display.newText({
     text = "Atlantic Fish",
-    x = 150,
+    x = 40,
     y = 75 + riverGroup.height,
 	  fontSize = 50,
     align = "left"
   })
+  atlanticText.anchorX = 0
   atlanticText:setFillColor(0)
   riverGroup:insert(atlanticText)
 
@@ -227,11 +229,12 @@ function scene:create(event)
 
   reefText = display.newText({
     text = "Reef Fish",
-    x = 150,
+    x = 40,
     y = 150 + atlanticGroup.height + riverGroup.height,
 	  fontSize = 50,
     align = "left"
   })
+  reefText.anchorX = 0
   reefText:setFillColor(0)
   riverGroup:insert(reefText)
 
@@ -269,11 +272,12 @@ function scene:create(event)
 
   icecapText = display.newText({
     text = "Ice Cap Fish",
-    x = 150,
+    x = 40,
     y = -500 + riverGroup.height + atlanticGroup.height + reefGroup.height,
 	  fontSize = 50,
     align = "left"
   })
+  icecapText.anchorX = 0
   icecapText:setFillColor(0)
   icecapGroup:insert(icecapText)
 

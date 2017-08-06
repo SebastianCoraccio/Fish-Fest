@@ -178,30 +178,33 @@ function scene:create(event)
   -- Number caught
   numberCaught = display.newText({
     text = "Caught: " .. numberCaughtText,
-    x = -230,
+    x = -330,
     y = 0,
     fontSize = 40,
   })
+  numberCaught.anchorX = 0
   numberCaught:setFillColor(0)
   modalGroup:insert(numberCaught)
 
   -- Largest caught
   largestCaught = display.newText({
     text = "Largest: " .. largestCaughtText,
-    x = -230,
+    x = -330,
     y = 100,
     fontSize = 40,
   })
+  largestCaught.anchorX = 0
   largestCaught:setFillColor(0)
   modalGroup:insert(largestCaught)
 
   -- Value
   value = display.newText({
     text = valueText,
-    x = -230,
+    x = -330,
     y = 200,
     fontSize = 40,
   })
+  value.anchorX = 0
   value:setFillColor(0)
   modalGroup:insert(value)
 

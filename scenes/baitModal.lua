@@ -26,6 +26,8 @@ local useButton
 local buyButton
 local baitButtons = {}
 local totalCoins
+local timeLeft
+local baitTimerId
 
 -- Current location
 local location
@@ -38,6 +40,16 @@ local baitInfo = require("data.baitInfo")
 
 -- Selected bait
 local selectedBait = 1
+
+-- Function to update time remaining
+local function updateTimeRemaining(bait)
+  -- Set time remaining
+  local t = os.date('*t')
+  -- Bait Start time
+  local startTime = os.time(t)
+  local time = math.round(((bait.endTime - startTime) / 60)*10)*0.1
+  timeLeft.text = "Time remaining for " .. bait.baitType ..": " .. time .. " min";
+end
 
 -- Function to handle changing the top display to the selected bait
 local function changeBait()
@@ -79,14 +91,33 @@ local function changeBait()
 
   -- Check if the use button needs to be changed
   local baits = db:getRows("baitUsages")
+  if (#baits == 0) then
+    timeLeft.text = ""
+    if (baitTimerId) then
+      timer.cancel(baitTimerId)
+    end
+  end
   for i=1,#baits do
     if (baits[i].location == location) then
       useButton:setLabel("Clear Chum")
       useButton:setFillColor(utils.hexToRGB("007F00"))
       useButton:setEnabled(true)
+
+      -- Set time remaining
+      local t = os.date('*t')
+      -- Bait Start time
+      local startTime = os.time(t)
+      local time = math.round(((baits[i].endTime - startTime) / 60)*10)*0.1
+      timeLeft.text = "Time remaining for " .. baits[i].baitType ..": " .. time .. " min";
+
+      baitTimerId = timer.performWithDelay(10000, function()
+        updateTimeRemaining(baits[i])
+      end, 0)
+      
       break
     else
       useButton:setLabel("Use")
+      timeLeft.text = ""
     end
   end
 end
@@ -212,14 +243,26 @@ function scene:create(event)
   -- Options for title text
 	local options = {
 	   text = baitInfo[selectedBait].name,
-     x = -130,
+     x = -260,
      y = -450,
 	   fontSize = 50,
      align = "right"
 	}
 	title = display.newText(options)
+  title.anchorX = 0
 	title:setFillColor(0)
 	modalGroup:insert(title)
+
+  timeLeft = display.newText({
+    text = "",
+    x = -260,
+    y = -380,
+	  fontSize = 35,
+    align = "right"
+  })
+  timeLeft.anchorX = 0
+  timeLeft:setFillColor(0)
+  modalGroup:insert(timeLeft)
 
   -- Create the close button
   closeButton = widget.newButton({
