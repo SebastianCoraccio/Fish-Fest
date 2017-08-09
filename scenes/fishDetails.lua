@@ -55,7 +55,7 @@ local function changeInfo()
     picture = display.newImage("images/fish/unknown_large.png", 0, -300)
   else
     numberCaught.text = "Caught: " .. info.numberCaught
-    largestCaught.text = "Largest: " .. info.largestCaught
+    largestCaught.text = "Largest: " .. info.largestCaught .. " lbs"
     value.text = "Value: " .. fishInfo[fid].value
     description.text = fishInfo[fid].description
     picture = display.newImage("images/fish/" .. fid .. "_large.png", 0, -300)
@@ -188,7 +188,7 @@ function scene:create(event)
 
   -- Largest caught
   largestCaught = display.newText({
-    text = "Largest: " .. largestCaughtText,
+    text = "Largest: " .. largestCaughtText .. " lbs",
     x = -330,
     y = 100,
     fontSize = 40,

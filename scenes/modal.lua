@@ -115,7 +115,7 @@ function scene:create(event)
   local weight = math.round(((one + two + three) / 3.0) * 100) * 0.01
 
   local weightText = display.newText({
-    text = "Weight: " .. weight,
+    text = "Weight: " .. weight .. " lbs",
     x = (modalBox.width / 2) - 165,
     y = 160,
     fontSize = 40,
