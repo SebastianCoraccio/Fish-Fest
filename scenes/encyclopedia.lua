@@ -20,6 +20,7 @@ local scene = composer.newScene()
 
 -- Local groups
 local mainGroup
+local fids = {}
 
 -- River
 local riverGroup
@@ -138,9 +139,11 @@ function scene:create(event)
   mainGroup:insert(scrollView)
 
   -- River
+  -- New display group
   riverGroup = display.newGroup()
   scrollView:insert(riverGroup)
 
+  -- The text for the top of the section
   riverText = display.newText({
     text = "River Fish",
     x = 40,
@@ -152,17 +155,32 @@ function scene:create(event)
   riverText:setFillColor(0)
   riverGroup:insert(riverText)
 
+  -- Get all the fids that the user has caught
+  local caught = db:getRows("FishCaught")
+  for i=1, #caught do
+    fids[i] = caught[i].fid
+  end
+
+  -- Look at all the fish caught in the river sorted by fid
   local xCounter = 0
   local yCounter = 0
   local sortedFish = riverInfo.fish
   table.sort(sortedFish, compare)
   for i=1, #sortedFish do
+    -- Skip over the trash item
     if (riverInfo.fish[i].fid ~= 23) then
+      -- If fid is in this table, load image, otherwise load shadow
+      local image = riverInfo.fish[i].fid
+      if (table.indexOf(fids, image) == nil) then
+        image = "unknown"
+      end
+
+      -- Add a new button 
       riverPlaques[i] = widget.newButton({
         width = 240,
         height = 120,
-        defaultFile = "images/fish/" .. riverInfo.fish[i].fid .. "_large.png",
-        overFile = "images/fish/" .. riverInfo.fish[i].fid .. "_large.png",
+        defaultFile = "images/fish/" .. image .. "_large.png",
+        overFile = "images/fish/" .. image .. "_large.png",
         onEvent = handleButtonEventPlaque,
         id = riverInfo.fish[i].fid
       })
@@ -178,6 +196,7 @@ function scene:create(event)
         yCounter = yCounter + 1
       end
 
+      -- Insert the button
       riverGroup:insert(riverPlaques[i])
     end
   end
@@ -203,11 +222,17 @@ function scene:create(event)
   table.sort(sortedFish, compare)
   for i=1, #sortedFish do
     if (atlanticInfo.fish[i].fid ~= 23) then
+      -- If fid is in this table, load image, otherwise load shadow
+      local image = atlanticInfo.fish[i].fid
+      if (table.indexOf(fids, image) == nil) then
+        image = "unknown"
+      end
+
       atlanticPlaques[i] = widget.newButton({
         width = 240,
         height = 120,
-        defaultFile = "images/fish/" .. atlanticInfo.fish[i].fid .. "_large.png",
-        overFile = "images/fish/" .. atlanticInfo.fish[i].fid .. "_large.png",
+        defaultFile = "images/fish/" .. image .. "_large.png",
+        overFile = "images/fish/" .. image .. "_large.png",
         onEvent = handleButtonEventPlaque,
         id = atlanticInfo.fish[i].fid
       })
@@ -248,11 +273,17 @@ function scene:create(event)
   table.sort(sortedFish, compare)
   for i=1, #sortedFish do
     if (reefInfo.fish[i].fid ~= 23) then
+      -- If fid is in this table, load image, otherwise load shadow
+      local image = reefInfo.fish[i].fid
+      if (table.indexOf(fids, image) == nil) then
+        image = "unknown"
+      end
+
       reefPlaques[i] = widget.newButton({
         width = 240,
         height = 120,
-        defaultFile = "images/fish/" .. reefInfo.fish[i].fid .. "_large.png",
-        overFile = "images/fish/" .. reefInfo.fish[i].fid .. "_large.png",
+        defaultFile = "images/fish/" .. image .. "_large.png",
+        overFile = "images/fish/" .. image .. "_large.png",
         onEvent = handleButtonEventPlaque,
         id = reefInfo.fish[i].fid
       })
@@ -293,11 +324,17 @@ function scene:create(event)
   table.sort(sortedFish, compare)
   for i=1, #sortedFish do
     if (icecapInfo.fish[i].fid ~= 23) then
+      -- If fid is in this table, load image, otherwise load shadow
+      local image = icecapInfo.fish[i].fid
+      if (table.indexOf(fids, image) == nil) then
+        image = "unknown"
+      end
+
       icecapPlaques[i] = widget.newButton({
         width = 240,
         height = 120,
-        defaultFile = "images/fish/" .. icecapInfo.fish[i].fid .. "_large.png",
-        overFile = "images/fish/" .. icecapInfo.fish[i].fid .. "_large.png",
+        defaultFile = "images/fish/" .. image .. "_large.png",
+        overFile = "images/fish/" .. image .. "_large.png",
         onEvent = handleButtonEventPlaque,
         id = icecapInfo.fish[i].fid
       })
@@ -324,6 +361,10 @@ function scene:show( event )
   local phase = event.phase
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
+    local caught = db:getRows("FishCaught")
+    for i=1, #caught do
+      fids[i] = caught[i].fid
+    end
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
 
