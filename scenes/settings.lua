@@ -16,6 +16,8 @@ local db = newDB()
 -- Local things
 local mainGroup
 local title
+local musicText
+local musicSwitch
 local vibrationText
 local vibrationSwitch
 local soundEffectsText
@@ -87,12 +89,25 @@ function scene:create(event)
   backButton.y = 0
   mainGroup:insert(backButton)
 
+  -- Music Text
+  musicText = display.newText({
+    text = "Music: ",
+    x = 50,
+    y = 200,
+    fontSize = 50,
+    align = "center"
+  })
+  musicText.anchorX = 0
+  musicText.anchorY = 0
+  musicText:setFillColor(0)
+  mainGroup:insert(musicText)
+
   -- Vibration
   -- Text
   vibrationText = display.newText({
     text = "Vibration: ",
     x = 50,
-    y = 200,
+    y = 400,
     fontSize = 50,
     align = "center"
   })
@@ -106,7 +121,7 @@ function scene:create(event)
   soundEffectsText = display.newText({
     text = "Sound effects: ",
     x = 50,
-    y = 400,
+    y = 600,
     fontSize = 50,
     align = "center"
   })
@@ -114,6 +129,24 @@ function scene:create(event)
   soundEffectsText.anchorY = 0
   soundEffectsText:setFillColor(0)
   mainGroup:insert(soundEffectsText)
+
+  -- Music Switch
+  isSwitchOn = true
+  if (db:getRows("Flags")[1].music == 0) then
+    isSwitchOn = false
+  end
+  musicSwitch = widget.newSwitch({
+    left = display.contentWidth - 200,
+    top = musicText.y,
+    style = "onOff",
+    initialSwitchState = isSwitchOn,
+    id = "music",
+    onPress = onSwitchPress
+  })
+  musicSwitch.anchorX = 0
+  musicSwitch.anchorY = 0
+  musicSwitch:scale(2,2)
+  mainGroup:insert(musicSwitch)
 
   -- Soundeffects Switch
   local isSwitchOn = true

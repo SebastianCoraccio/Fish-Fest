@@ -11,6 +11,8 @@ local utils = require('utils')
 local newDB = require("database.db").create
 local db = newDB()
 
+local backgroundMusicChannel
+
 -- Function that gets called each second to check if any active baits need to be removed
 local function checkBaits()
   local baits = db:getRows("BaitUsages")
@@ -92,10 +94,14 @@ end
 
 Runtime:addEventListener("key", keyPress)
 
+local backgroundMusic = audio.loadStream("audio/backgroundMusic.wav")
+if (db:getRows("Flags")[1].music == 1) then
+  backgroundMusicChannel = audio.play(backgroundMusic, {channel=1, loops=-1})
+end
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now
 -- composer.gotoScene('scenes.game', {params = {location='river'}})
--- composer.gotoScene('scenes.title', {params={}})
+composer.gotoScene('scenes.title', {params={}})
 -- composer.gotoScene('scenes.settings')
-composer.gotoScene('scenes.encyclopedia')
+-- composer.gotoScene('scenes.encyclopedia')
 -- composer.gotoScene('scenes.store', {params={}})
