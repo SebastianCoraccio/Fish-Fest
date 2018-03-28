@@ -148,7 +148,7 @@ function scene:create(event)
   modalGroup:insert(button1) -- Insert the button
 
   -- Insert image
-  local fishImage = display.newImage("images/fish/" .. fid .. "_large.png", modalBox.contentCenterX, 500)
+  local fishImage = display.newImage("assets/fish/" .. fid .. "_large.png", modalBox.contentCenterX, 500)
   modalGroup:insert(fishImage)
 
   -- Create the close button

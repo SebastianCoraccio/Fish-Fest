@@ -78,7 +78,7 @@ function _Fish.create(params)
     numFrames = 8
   }
 
-  local sheetFishAnim = graphics.newImageSheet("images/fish/silhouette/medium.png", sheetOptions)
+  local sheetFishAnim = graphics.newImageSheet("assets/fish/silhouette/medium.png", sheetOptions)
 
   local sequenceAnim = {
     {

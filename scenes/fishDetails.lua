@@ -52,13 +52,13 @@ local function changeInfo()
     largestCaught.text = "Largest: ?"
     value.text = "Value: ?"
     description.text = "?"
-    picture = display.newImage("images/fish/unknown_large.png", 0, -300)
+    picture = display.newImage("assets/fish/unknown_large.png", 0, -300)
   else
     numberCaught.text = "Caught: " .. info.numberCaught
     largestCaught.text = "Largest: " .. info.largestCaught .. " lbs"
     value.text = "Value: " .. fishInfo[fid].value
     description.text = fishInfo[fid].description
-    picture = display.newImage("images/fish/" .. fid .. "_large.png", 0, -300)
+    picture = display.newImage("assets/fish/" .. fid .. "_large.png", 0, -300)
   end
 
   modalGroup:insert(picture)
@@ -155,11 +155,11 @@ function scene:create(event)
     descriptionText = fishInfo[fid].description
 
     -- Picture
-    picture = display.newImage("images/fish/" .. fid .. "_large.png", 0, -300)
+    picture = display.newImage("assets/fish/" .. fid .. "_large.png", 0, -300)
     modalGroup:insert(picture)
   else 
     -- Picture
-    picture = display.newImage("images/fish/unknown_large.png", 0, -300)
+    picture = display.newImage("assets/fish/unknown_large.png", 0, -300)
     modalGroup:insert(picture)
   end
   

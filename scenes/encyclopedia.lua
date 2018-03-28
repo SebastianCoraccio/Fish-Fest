@@ -24,9 +24,8 @@ local fids = {}
 
 -- Background
 local bgGroup1
-local background1 = nil
-local background2 = nil
-local screenWideEffect = nil
+local bgGroup1 = nil
+local bgGroup2 = nil
 
 -- River
 local riverGroup
@@ -101,9 +100,9 @@ local function redrawPictures(sortedFish, locationInfo, plaques, group, y1, y2)
     if (locationInfo.fish[i].fid ~= 23) then
       -- If fid is in this table, load image, otherwise load shadow
       local image = locationInfo.fish[i].fid
-      if (table.indexOf(fids, image) == nil) then
-        image = "unknown"
-      end
+      -- if (table.indexOf(fids, image) == nil) then
+      --   image = "unknown"
+      -- end
 
       if (plaques[i]) then
         plaques[i]:removeSelf()
@@ -113,10 +112,10 @@ local function redrawPictures(sortedFish, locationInfo, plaques, group, y1, y2)
       plaques[i] =
         widget.newButton(
         {
-          width = 240,
-          height = 120,
-          defaultFile = "images/fish/" .. image .. "_large.png",
-          overFile = "images/fish/" .. image .. "_large.png",
+          width = 360,
+          height = 180,
+          defaultFile = "assets/fish/" .. image .. "_large.png",
+          overFile = "assets/fish/" .. image .. "_large.png",
           onEvent = handleButtonEventPlaque,
           id = locationInfo.fish[i].fid
         }
@@ -157,30 +156,47 @@ function scene:create(event)
 
   sceneGroup:toFront()
   -- Code here runs when the scene is first created but has not yet appeared on screen
-  background1 = display.newImage(bgGroup1, "images/backgrounds/enc_background.png")
-  background1.anchorX = 0
-  background1.anchorY = 0
+  bgGroup1 = display.newImage(bgGroup1, "assets/backgrounds/enc_background.png")
+  bgGroup1.anchorX = 0
+  bgGroup1.anchorY = 0
 
-  background1.x = display.contentWidth / 2 
-  background1.y = display.contentHeight / 2
+  -- bgGroup1.x = display.contentWidth / 2 
+  bgGroup1.y = display.contentHeight / 2
   
   -- Code here runs when the scene is first created but has not yet appeared on screen
-  background2 = display.newImage(bgGroup2, "images/backgrounds/enc_background.png")
-  background2.anchorX = 0
-  background2.anchorY = 0
+  bgGroup2 = display.newImage(bgGroup2, "assets/backgrounds/enc_background.png")
+  bgGroup2.anchorX = 0
+  bgGroup2.anchorY = 0
   
-  background2.x = - display.contentWidth / 2
-  background2.y = - display.contentHeight / 2
+  -- bgGroup2.x = - display.contentWidth / 2
+  bgGroup2.y = - display.contentHeight / 2
+  
+
+  local systemFonts = native.getFontNames()
+ 
+  -- Set the string to query for (part of the font name to locate)
+  local searchString = "pt"
+   
+  -- Display each font in the Terminal/console
+  for i, fontName in ipairs( systemFonts ) do
+   
+      local j, k = string.find( string.lower(fontName), string.lower(searchString) )
+   
+      if ( j ~= nil ) then
+          print( "Font Name = " .. tostring( fontName ) )
+      end
+  end
 
   -- Title text
   title =
     display.newText(
     {
       text = "Encyclopedia",
-      x = 170,
-      y = 0,
-      fontSize = 50,
-      align = "left"
+      x = 540,
+      y = 90,
+      fontSize = 128,
+      align = "left",
+      font = "LilitaOne-Regular.ttf"
     }
   )
   title:setFillColor(0)
@@ -190,34 +206,26 @@ function scene:create(event)
   backButton =
     widget.newButton(
     {
-      label = "Back",
-      fontSize = 40,
+      x = 90,
+      y = 90,
+      width = 100,
+      height = 100,
+      defaultFile = "assets/buttons/back-button.png",
+      overFile = "assets/buttons/back-button-pressed.png",
       onEvent = handleButtonEventBack,
-      emboss = false,
-      -- Properties for a rounded rectangle button
-      shape = "roundedRect",
-      width = 150,
-      height = 75,
-      cornerRadius = 12,
-      labelColor = {default = {utils.hexToRGB("#ef4100")}, over = {utils.hexToRGB("#00aeef")}},
-      fillColor = {default = {utils.hexToRGB("#00aeef")}, over = {utils.hexToRGB("#ef4100")}},
-      strokeColor = {default = {0}, over = {0}},
-      strokeWidth = 3
     }
   )
-  -- Center the button
-  backButton.x = display.contentWidth - 100
-  backButton.y = 0
+
   mainGroup:insert(backButton)
 
   -- Scroll view
   scrollView =
     widget.newScrollView(
     {
-      top = 100,
-      left = 00,
-      -- width = display.contentWidth,
-      -- height = display.contentHeight,
+      top = 300,
+      left = 50,
+      width = display.contentWidth,
+      height = display.contentHeight,
       -- scrollWidth = 0,
       hideBackground = true,
       horizontalScrollDisabled = true
@@ -238,8 +246,9 @@ function scene:create(event)
       text = "River Fish",
       x = 40,
       y = 25,
-      fontSize = 50,
-      align = "left"
+      fontSize = 72,
+      align = "left",
+      font = "LilitaOne-Regular.ttf"
     }
   )
   riverText.anchorX = 0
@@ -368,32 +377,32 @@ function scene:destroy(event)
 end
 
 local function moveBG(event)
-  xOffset = 3
-  yOffset = 2
+  -- xOffset = 3
+  yOffset = 3
 
-  if (background1.y + yOffset ) > display.contentHeight then
-    background1.y = - display.contentHeight + yOffset
+  if (bgGroup1.y + yOffset ) > display.contentHeight then
+    bgGroup1.y = - display.contentHeight + yOffset
   else
-    background1.y = background1.y + yOffset
+    bgGroup1.y = bgGroup1.y + yOffset
   end
   
-  if (background2.y + yOffset ) > display.contentHeight then
-    background2.y = - display.contentHeight + yOffset
+  if (bgGroup2.y + yOffset ) > display.contentHeight then
+    bgGroup2.y = - display.contentHeight + yOffset
   else
-    background2.y = background2.y + yOffset
+    bgGroup2.y = bgGroup2.y + yOffset
   end
 
 
-  if (background1.x + xOffset) > display.contentWidth then
-    background1.x = - display.contentWidth + xOffset
-  else 
-    background1.x = background1.x + xOffset
-  end
-  if (background2.x + xOffset ) > display.contentWidth then
-    background2.x = - display.contentWidth + xOffset
-  else
-    background2.x = background2.x + xOffset
-  end
+  -- if (bgGroup1.x + xOffset) > display.contentWidth then
+  --   bgGroup1.x = - display.contentWidth + xOffset
+  -- else 
+  --   bgGroup1.x = bgGroup1.x + xOffset
+  -- end
+  -- if (bgGroup2.x + xOffset ) > display.contentWidth then
+  --   bgGroup2.x = - display.contentWidth + xOffset
+  -- else
+  --   bgGroup2.x = bgGroup2.x + xOffset
+  -- end
 end
 
 -- -----------------------------------------------------------------------------------

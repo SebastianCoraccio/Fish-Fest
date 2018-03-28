@@ -14,7 +14,7 @@ function _Splash.create(params)
     numFrames = 6
   }
 
-  local sheet_splash = graphics.newImageSheet("images/effects/splash.png", sheetOptions)
+  local sheet_splash = graphics.newImageSheet("assets/effects/splash.png", sheetOptions)
 
   local sequence_splash = {
     {

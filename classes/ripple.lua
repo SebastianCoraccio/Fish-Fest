@@ -14,7 +14,7 @@ function _Ripple.create(params)
     numFrames = 6
   }
 
-  local sheetRipple = graphics.newImageSheet("images/effects/ripple.png", sheetOptions)
+  local sheetRipple = graphics.newImageSheet("assets/effects/ripple.png", sheetOptions)
 
   local sequenceRipple = {
     {

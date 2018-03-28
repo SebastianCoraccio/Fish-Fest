@@ -9,11 +9,11 @@ application =
 	{
 		width = 1080,
 		height = 1920, 
-		scale = "letterBox",
+		-- scale = "letterBox",
 		fps = 60,
 		
 		--[[
-		imageSuffix =
+		assetsuffix =
 		{
 			    ["@2x"] = 2,
 			    ["@4x"] = 4,

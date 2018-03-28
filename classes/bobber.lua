@@ -41,7 +41,7 @@ function _Bobber.create(x, y, group)
     bobber.back:toFront()
 
     -- Set the image
-    bobber.anim = display.newImage(group, "images/bobber.png", x, y)
+    bobber.anim = display.newImage(group, "assets/bobber.png", x, y)
     bobber.anim.myName = "bobber"
 
     -- Power meter

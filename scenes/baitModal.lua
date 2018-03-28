@@ -57,7 +57,7 @@ local function changeBait()
   title.text = baitInfo[selectedBait].name .. " x" .. db:getRows("StoreItems")[1][baitInfo[selectedBait].dbName]
 
   -- Set big picture image
-  bigPicture = display.newImage("images/baits/" .. string.lower(baitInfo[selectedBait].name) .."_large.png", -150, -200)
+  bigPicture = display.newImage("assets/baits/" .. string.lower(baitInfo[selectedBait].name) .."_large.png", -150, -200)
   modalGroup:insert(bigPicture)
 
   -- Set description text
@@ -293,7 +293,7 @@ function scene:create(event)
 
   -- Set up selected bait area
   -- big picture
-  bigPicture = display.newImage("images/baits/" .. string.lower(baitInfo[selectedBait].name) .."_large.png", -150, -200)
+  bigPicture = display.newImage("assets/baits/" .. string.lower(baitInfo[selectedBait].name) .."_large.png", -150, -200)
 	modalGroup:insert(bigPicture)
 
   -- description

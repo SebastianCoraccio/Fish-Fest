@@ -26,7 +26,7 @@ physics.setGravity(0, 0)
 -- This scene
 local scene = composer.newScene()
 
--- Images
+-- assets
 local background = nil
 local water = nil
 
@@ -100,11 +100,11 @@ function scene:create(event)
   sceneGroup:insert(mainGroup)
 
   -- Code here runs when the scene is first created but has not yet appeared on screen
-  background = display.newImage(backgroundGroup, "images/backgrounds/bg_sand.png")
+  background = display.newImage(backgroundGroup, "assets/backgrounds/bg_sand.png")
   background.x = display.contentCenterX
   background.y = display.contentCenterY
 
-  water = display.newImage(backgroundGroup, "images/backgrounds/bg_" .. locationName .. ".png")
+  water = display.newImage(backgroundGroup, "assets/backgrounds/bg_" .. locationName .. ".png")
   water.x = display.contentCenterX
   water.y = display.contentCenterY - 550
 
@@ -227,11 +227,11 @@ function scene:show(event)
     -- Code here runs when the scene is first created but has not yet appeared on screen
     locationName = event.params.location
 
-    background = display.newImage(backgroundGroup, "images/backgrounds/bg_sand.png")
+    background = display.newImage(backgroundGroup, "assets/backgrounds/bg_sand.png")
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
-    water = display.newImage(backgroundGroup, "images/backgrounds/bg_" .. locationName .. ".png")
+    water = display.newImage(backgroundGroup, "assets/backgrounds/bg_" .. locationName .. ".png")
     water.x = display.contentCenterX
     water.y = display.contentCenterY - 550
 

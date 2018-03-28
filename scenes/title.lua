@@ -85,7 +85,7 @@ function scene:create(event)
   mainGroup = display.newGroup()
   sceneGroup:insert(mainGroup)
 
-  background = display.newImage(mainGroup, "images/backgrounds/title.png")
+  background = display.newImage(mainGroup, "assets/backgrounds/title.png")
   background.x = display.contentCenterX
   background.y = display.contentCenterY
 
@@ -97,9 +97,9 @@ function scene:create(event)
 
   -- Title text
   local options = {
-    text = "TNAC",
+    text = "Fishing\nFest",
     x = display.contentCenterX,
-    y = display.contentCenterY,
+    y = 600,
 	  fontSize = 75,
     align = "center"
   }
@@ -110,7 +110,7 @@ function scene:create(event)
 
   -- Game
   game = widget.newButton({
-    label = "Game",
+    label = "Travel",
     fontSize = 40,
     onEvent = handleButtonEventGame,
     emboss = false,
@@ -125,7 +125,7 @@ function scene:create(event)
     strokeWidth = 3
   })
   -- Center the button
-  game.x = display.contentWidth - 100
+  game.x = display.contentCenterX + 200
   game.y = display.contentCenterY
   mainGroup:insert(game)
 
@@ -146,7 +146,7 @@ function scene:create(event)
     strokeWidth = 3
   })
   -- Center the button
-  store.x = 100
+  store.x = display.contentCenterX - 200
   store.y = display.contentCenterY
   mainGroup:insert(store)
 
@@ -168,7 +168,7 @@ function scene:create(event)
   })
   -- Center the button
   settings.x = display.contentCenterX
-  settings.y = 0
+  settings.y = display.contentCenterY - 150
   mainGroup:insert(settings)
 
   encyclopedia = widget.newButton({
@@ -188,7 +188,7 @@ function scene:create(event)
   })
   -- Center the button
   encyclopedia.x = display.contentCenterX
-  encyclopedia.y = display.contentHeight
+  encyclopedia.y = display.contentCenterY + 150
   mainGroup:insert(encyclopedia)
 
   -- Check if tutorial needs to be shown
