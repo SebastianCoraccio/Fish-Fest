@@ -33,7 +33,6 @@ local slideDirection
 
 local tutorial
 
--- Function to handle changing the top display to the selected bait
 local function changeLocation()
   -- Change title
   locationTitleText.text = locationInfo[selectedlocation]

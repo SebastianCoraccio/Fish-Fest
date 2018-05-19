@@ -13,8 +13,6 @@ function _DB.create()
   -- IF SCHEMA CHANGES MAKE SURE TO CHANGE THESE VARIABLES
   -- ALSO CHANGE TYPE TO CHANGE IT TO IN FUNCTION CHANGEDB
   local fishCaughtCols = {"fid", "largestCaught", "numberCaught"}
-  local baitUsagesCols = {"location", "baitType", "startTime", "endTime"}
-  local storeItemsCols = {"currentRodUpgrade", "chumCount", "goldFlakeCount", "gazelleMeatCount", "cherryCount", "coins"}
 
   -- Function to create the tables if they don't already exist
   -- IF SCHEMA CHANGES MAKE SURE TO CHANGE VARIABLES ABOVE
@@ -27,25 +25,6 @@ function _DB.create()
         largestCaught FLOAT NOT NULL,
         numberCaught INT NOT NULL,
         PRIMARY KEY (fid)
-      );
-
-      CREATE TABLE IF NOT EXISTS BaitUsages
-      (
-        location VARCHAR(64) NOT NULL,
-        baitType VARCHAR(64) NOT NULL,
-        startTime VARCHAR(64) NOT NULL,
-        endTime VARCHAR(64) NOT NULL,
-        PRIMARY KEY (location)
-      );
-
-      CREATE TABLE IF NOT EXISTS StoreItems
-      (
-        currentRodUpgrade INT NOT NULL,
-        chumCount INT NOT NULL,
-        goldFlakeCount INT NOT NULL,
-        gazelleMeatCount INT NOT NULL,
-        cherryCount INT NOT NULL,
-        coins INT NOT NULL
       );
 
       CREATE TABLE IF NOT EXISTS Flags
@@ -87,24 +66,6 @@ function _DB.create()
       print(str)
     end
 
-    -- BaitUsages
-    print("BaitUsages")
-    for row in db:nrows("SELECT * FROM BaitUsages") do
-      local str = ""
-      for k, v in pairs(row) do
-        str = str .. ("  " .. k .. ": " .. v)
-      end
-      print(str)
-    end
-
-    -- StoreItems
-    print("StoreItems")
-    for row in db:nrows("SELECT * FROM StoreItems") do
-      for k, v in pairs(row) do
-        print("  " .. k .. ": " .. v)
-      end
-    end
-    
     -- Flags
     print("Flags")
     for row in db:nrows("SELECT * FROM Flags") do
@@ -145,25 +106,15 @@ function _DB.create()
       Db:update(insert)
     end
 
-    -- Get current coin total
-    local currentCoins = Db:getRows("StoreItems")[1].coins
-
-    -- Add coins to users total
-    local insert = [[UPDATE StoreItems SET coins=]] .. currentCoins + fishInfo[fid].value .. [[;]]
-    Db:update(insert)
-
     Db:print()
   end
 
-  -- Delete everything and reset store items
+  -- Delete everything
   -- Should only be used in testing
   function Db:delete()
     db:exec[[
       DELETE FROM FishCaught;
-      DELETE FROM BaitUsages;
-      DELETE FROM StoreItems;
       DELETE FROM Flags;
-      INSERT INTO StoreItems VALUES (0, 0, 0, 0, 0, 0);
       INSERT INTO Flags VALUES (0, 1, 1, 1);
     ]]
   end
@@ -172,8 +123,6 @@ function _DB.create()
   function Db:restart()
     db:exec[[
       DROP TABLE FishCaught;
-      DROP TABLE BaitUsages;
-      DROP TABLE StoreItems;
       DROP TABLE Flags;
     ]]
     Db:createTables()
@@ -192,36 +141,6 @@ function _DB.create()
         print("Add to FishCaught: " .. fishCaughtCols[i])
         db:exec([[ALTER TABLE FishCaught ADD COLUMN ]] ..  fishCaughtCols[i] .. [[ INT DEFAULT 0;]])
       end
-    end
-
-    -- Check if BaitUsages table has changed
-    for row in db:nrows("SELECT * FROM BaitUsages") do
-      for k, v in pairs(row) do
-        table.remove(baitUsagesCols, table.indexOf(baitUsagesCols, k))
-      end
-    end
-    if (#baitUsagesCols > 0) and (#Db:getRows("BaitUsages") > 0) then
-      for i = 1, #baitUsagesCols do
-        print("Add to BaitUsages: " .. baitUsagesCols[i])
-        db:exec([[ALTER TABLE BaitUsages ADD COLUMN ]] ..  baitUsagesCols[i] .. [[ INT DEFAULT 0;]])
-      end
-    end
-
-    -- Check if StoreItems table has changed
-    for row in db:nrows("SELECT * FROM StoreItems") do
-      for k, v in pairs(row) do
-        table.remove(storeItemsCols, table.indexOf(storeItemsCols, k))
-      end
-    end
-    if (#storeItemsCols > 0) and (#Db:getRows("StoreItems") > 0) then
-      for i = 1, #storeItemsCols do
-        print("Add to StoreItems: " .. storeItemsCols[i])
-        db:exec([[ALTER TABLE StoreItems ADD COLUMN ]] ..  storeItemsCols[i] .. [[ INT DEFAULT 0;]])
-      end
-    end
-    -- Prime StoreItems Table
-    if (#Db:getRows("StoreItems") == 0) then
-      db:exec[[INSERT INTO StoreItems VALUES (0, 0, 0, 0, 0, 0);]]
     end
 
     -- Prime Flags table

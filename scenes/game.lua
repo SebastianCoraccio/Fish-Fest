@@ -7,7 +7,6 @@ local newFish = require("classes.fish").create
 local newBobber = require("classes.bobber").create
 local physics = require("physics")
 local newLocation = require("classes.location").create
-local newBaitButton = require("classes.baitButton").create
 local widget = require("widget")
 local utils = require("utils")
 
@@ -40,8 +39,6 @@ local modalIsShowing = false
 local backgroundGroup
 local mainGroup
 local uiGroup
-local baitButton
-local backButton
 -- tutorial
 local tutorial = false
 local preCast = false
@@ -111,9 +108,6 @@ function scene:create(event)
   -- Create the bobber
   bobber = newBobber(display.contentCenterX, display.contentCenterY + 500, uiGroup)
 
-  -- Create bait button
-  baitButton = newBaitButton(display.contentCenterX + display.contentWidth / 3, display.contentHeight, uiGroup, event.params.location)
-
   -- Get location
   location = newLocation(event.params.location)
 
@@ -171,7 +165,6 @@ function scene:create(event)
   Runtime:addEventListener("touch", bobber.catch)
   bobber.anim:addEventListener("catchEvent", scene.reelIn)
   bobber.anim:addEventListener("tutorialEvent", showCatchModal)
-  baitButton.anim:addEventListener("pauseEvent", pauseGame)
 end
 
 -- Pause the fish spawning and fish movement
@@ -182,40 +175,8 @@ end
 
 -- Custom function for resuming the game (from pause state)
 function scene:resumeGame(tutorial, final)
-  -- Code to resume game
-  -- If tutorial
-  if (tutorial) then
-    if (preCast == false) then
-      timer.performWithDelay(500, function()
-        pauseGame()
-        composer.showOverlay("scenes.tutorialModal", {params = {text = 
-        [[To cast, press and drag the bobber towards the direction you wish to cast. The more red the power meter, the further the bobber will go.
-Hit next to try and cast!]]}, effect="fade", time=800, isModal=true})
-        preCast = true
-      end)
-    elseif (preCatch == false) then
---     elseif (postCatch == false) then
---       composer.showOverlay("scenes.tutorialModal", {params = {text = 
---       [[Here is where you do all the fishing. You can hit the back button to go back to the title and hit the bait button to view, use, and buy baits.
--- Hit next to learn how to fish.]]}, effect="fade", time=800, isModal=true})
---       postCatch = true
-    end
-  else
-    if (spawnedInitialFish == false) and (db:getRows("Flags")[1].watchedTutorial == 1) then
-      for i=1,3 do
-        addFish()
-      end
-      spawnedInitialFish = true
-    end
-  end
-  -- If leaving bait modal
   modalIsShowing = false
   bobber.setCast()
-  if (final) and (db:getRows("Flags")[1].watchedTutorial == 0) then
-    pauseGame()
-    composer.showOverlay("scenes.tutorialModal", {params = {text = 
-    [[Congratulations! You completed the tutorial! Now go out there and try to catch every fish!!]], finishButton=true}, effect="fade", time=800, isModal=true})
-  end
 end
 
 -- show()
@@ -311,16 +272,6 @@ function scene:updateFish()
   if (modalIsShowing == false) and (db:getRows("Flags")[1].watchedTutorial == 1) then
     for i = #fishTable, 1, -1 do
       fishTable[i].update()
-    end
-
-    -- Check if there is an active bait that needs to increase MAX_FISH
-    local maxFishIncrease = 0
-    local baits = db:getRows("baitUsages")
-    for i=1,#baits do
-      if (baits[i].location == location) then
-        maxFishIncrease = baits[i].maxFish
-        break
-      end
     end
 
     -- Check if adding a fish is needed, and try to do so it yes

@@ -12,24 +12,6 @@ local newDB = require("database.db").create
 local db = newDB()
 
 local backgroundMusicChannel
-
--- Function that gets called each second to check if any active baits need to be removed
-local function checkBaits()
-  local baits = db:getRows("BaitUsages")
-  -- Check if it still active
-  -- get table of current date and time
-  local t = os.date('*t')
-  -- Get current time
-  local currentTime = os.time(t)
-
-  -- Check current time against time in db
-  for i=1, #baits do
-    -- Bait is expired
-    if (baits[i].endTime <= tostring(currentTime)) then
-      db:update("DELETE FROM BaitUsages WHERE location='" .. baits[i].location .. "';")
-    end
-  end
-end
  
 -- Hide status bar
 display.setStatusBar(display.HiddenStatusBar)
@@ -56,9 +38,6 @@ if (db:getRows("Flags")[1].watchedTutorial == 0) then
 end
 
 db:print()
-
--- Check if there is a bait in a loop every second
-timer.performWithDelay(1000, checkBaits, 0)
 
 -- Close the database
 local function onSystemEvent(event)

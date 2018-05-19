@@ -129,27 +129,6 @@ function scene:create(event)
   game.y = display.contentCenterY
   mainGroup:insert(game)
 
-  -- Store
-  store = widget.newButton({
-    label = "Store",
-    fontSize = 40,
-    onEvent = handleButtonEventStore,
-    emboss = false,
-    -- Properties for a rounded rectangle button
-    shape = "roundedRect",
-    width = 150,
-    height = 75,
-    cornerRadius = 12,
-    labelColor = {default={utils.hexToRGB("#ef4100")}, over={utils.hexToRGB("#00aeef")}},
-    fillColor = {default={utils.hexToRGB("#00aeef")}, over={utils.hexToRGB("#ef4100")}},
-    strokeColor = {default={0}, over={0}},
-    strokeWidth = 3
-  })
-  -- Center the button
-  store.x = display.contentCenterX - 200
-  store.y = display.contentCenterY
-  mainGroup:insert(store)
-
   -- Settings
   settings = widget.newButton({
     label = "Settings",
