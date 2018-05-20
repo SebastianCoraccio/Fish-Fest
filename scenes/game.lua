@@ -276,7 +276,7 @@ function scene:updateFish()
 
     -- Check if adding a fish is needed, and try to do so it yes
     -- TODO: Create an attributes table for each of the locations
-    local MAX_FISH = 5 + maxFishIncrease
+    local MAX_FISH = 5
     local SPAWN_CHANCE = 0.25;
     if (#fishTable == 0) then
         SPAWN_CHANCE = 1

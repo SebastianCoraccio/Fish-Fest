@@ -69,8 +69,9 @@ end
 Runtime:addEventListener("key", keyPress)
 
 local backgroundMusic = audio.loadStream("audio/backgroundMusic.wav")
-if (db:getRows("Flags")[1].music == 1) then
-  backgroundMusicChannel = audio.play(backgroundMusic, {channel=1, loops=-1})
+backgroundMusicChannel = audio.play(backgroundMusic, {channel=1, loops=-1})
+if (db:getRows("Flags")[1].music == 0) then
+  audio.pause({channel=1})
 end
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now

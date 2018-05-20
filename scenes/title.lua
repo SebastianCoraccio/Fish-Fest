@@ -58,6 +58,14 @@ end
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
 
+function toggleMusic()
+  if (db:getRows("Flags")[1].music == 0) then
+    audio.resume({channel = 1})
+  else
+    audio.pause({channel = 1})
+  end
+end
+
 -- create()
 function scene:create(event)
   local sceneGroup = self.view
@@ -114,7 +122,6 @@ function scene:create(event)
   game.y = display.contentCenterY
   mainGroup:insert(game)
 
-
   encyclopedia =
     widget.newButton(
     {
@@ -140,10 +147,21 @@ function scene:create(event)
 
   local widget = require("widget")
 
-  -- Handle press events for the buttons
-  -- Handle press events for the checkbox
+  -- Handle press events for the setting buttons
   local function onSwitchPress(event)
     local switch = event.target
+    if (switch.id == "music") then
+      toggleMusic()
+    elseif (switch.id == "vibrate") then
+      if (db:getRows("Flags")[1].vibrate == 0) then
+        system.vibrate()
+      end
+    elseif (switch.id == "sound") then
+      if (db:getRows("Flags")[1].sound == 0) then
+        local fishBite = audio.loadSound("audio/fish_bite.wav")
+        audio.play(fishBite)
+      end
+    end
 
     if (switch.isOn) then
       db:update("UPDATE Flags SET " .. switch.id .. " = 0;")
@@ -168,7 +186,6 @@ function scene:create(event)
     sheetContentHeight = 256
   }
   local settingButtonsSheet = graphics.newImageSheet("assets/buttons/settingsSheet.png", options)
-
 
   local vibrate =
     widget.newSwitch(
@@ -202,7 +219,7 @@ function scene:create(event)
       frameOff = 2
     }
   )
-  
+
   local sound =
     widget.newSwitch(
     {
@@ -213,7 +230,7 @@ function scene:create(event)
       width = 100,
       height = 100,
       initialSwitchState = db:getRows("Flags")[1].sound == 0 and true or false,
-      onPress = onSwitchPress,      
+      onPress = onSwitchPress,
       sheet = settingButtonsSheet,
       frameOn = 3,
       frameOff = 4
@@ -223,6 +240,8 @@ function scene:create(event)
   mainGroup:insert(vibrate)
   mainGroup:insert(music)
   mainGroup:insert(sound)
+  backgroundMusic = audio.loadStream("audio/backgroundMusic.wav")
+
   -- Check if tutorial needs to be shown
   if (db:getRows("Flags")[1].watchedTutorial == 0) then
     composer.showOverlay(
