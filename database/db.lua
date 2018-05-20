@@ -30,8 +30,8 @@ function _DB.create()
       CREATE TABLE IF NOT EXISTS Flags
       (
         watchedTutorial INT NOT NULL,
-        vibration INT NOT NULL,
-        soundEffects INT NOT NULL,
+        vibrate INT NOT NULL,
+        sound INT NOT NULL,
         music INT NOT NULL
       );
     ]]

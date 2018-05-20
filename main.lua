@@ -55,13 +55,8 @@ local function keyPress(event)
   if (event.keyName == "back") then
     local sceneName = composer.getSceneName("current")
     -- slide the correct direction depending on current scene
-    if(sceneName == "scenes.settings") then
-      composer.gotoScene('scenes.title', {effect="slideUp", time=800,params={}})
-    elseif(sceneName == "scenes.game") then
+    if(sceneName == "scenes.game") then
       composer.gotoScene('scenes.title', {effect="slideRight", time=800,params={}})
-    elseif(sceneName == "scenes.store") then
-      composer.gotoScene('scenes.title', {effect="slideLeft", time=800,params={}})
-    else 
       -- current scene is title so return false to close the app
       return false
     end
@@ -81,7 +76,5 @@ end
 -- TODO: Eventually this should go to the main menu, going to game for now
 -- composer.gotoScene('scenes.game', {params = {location='river'}})
 composer.gotoScene('scenes.title', {params={}})
--- composer.gotoScene('scenes.settings')
 -- composer.gotoScene('scenes.encyclopedia')
 -- composer.gotoScene('scenes.locations', {params={}})
--- composer.gotoScene('scenes.store', {params={}})
