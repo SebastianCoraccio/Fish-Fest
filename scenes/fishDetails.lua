@@ -50,13 +50,13 @@ local function changeInfo()
   if (info == nil) then
     numberCaught.text = "Caught: ?"
     largestCaught.text = "Largest: ?"
-    value.text = "Value: ?"
+    value.text = "Exp. Points: ?"
     description.text = "?"
     picture = display.newImage("assets/fish/unknown_large.png", 0, -300)
   else
     numberCaught.text = "Caught: " .. info.numberCaught
     largestCaught.text = "Largest: " .. info.largestCaught .. " lbs"
-    value.text = "Value: " .. fishInfo[fid].value
+    value.text = "Exp. Points: " .. fishInfo[fid].value
     description.text = fishInfo[fid].description
     picture = display.newImage("assets/fish/" .. fid .. "_large.png", 0, -300)
   end

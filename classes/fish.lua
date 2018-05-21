@@ -208,11 +208,11 @@ function _Fish.create(params)
   end
 
   function fish:bite(params)
-    if (db:getRows("Flags")[1].vibration == 1) then
+    if (db:getRows("Flags")[1].vibrate == 1) then
       system.vibrate()
     end
 
-    if (db:getRows("Flags")[1].soundEffects == 1) then
+    if (db:getRows("Flags")[1].sound == 1) then
       audio.play(fishBite)
     end
 
@@ -227,7 +227,7 @@ function _Fish.create(params)
     -- TODO: Add timestamp for determining fish to catch
     -- in the case 2 or more bite at once
     local rodTime = db:getRows("StoreItems")[1].currentRodUpgrade * 75
-    local totalBiteTime = fish.biteTime + rodTime - 75
+    local totalBiteTime = fish.biteTime + rodTime - 75 + 1000
 
     -- Add in extra time if in tutorial
     if (db:getRows("Flags")[1].watchedTutorial == 0) then
