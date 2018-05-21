@@ -4,6 +4,7 @@
 -- Imports
 local composer = require("composer")
 local fishInfo = require("data.fishInfo")
+local levelInfo = require("data.levelInfo")
 local widget = require("widget")
 local utils = require("utils")
 
@@ -63,8 +64,8 @@ function scene:create(event)
   -- Code here runs when the scene is first created but has not yet appeared on screen
   -- Background
   modalBox = display.newRoundedRect(0, 0, display.contentWidth / 1.25, display.contentHeight / 1.5, 12)
-  modalBox:setFillColor(utils.hexToRGB('#dbc397'))
-  modalBox:setStrokeColor(utils.hexToRGB('#a5916b'))
+  modalBox:setFillColor(utils.hexToRGB("#dbc397"))
+  modalBox:setStrokeColor(utils.hexToRGB("#000000"))
   modalBox.strokeWidth = 4
   modalGroup:insert(modalBox)
 
@@ -82,6 +83,13 @@ function scene:create(event)
       break
     end
   end
+
+  local expBeep = audio.loadSound("audio/expBeep.wav")
+
+
+  local currentExp = db:getRows("Stats")[1].exp
+  local nextLevel = levelInfo[db:getRows("Stats")[1].level].cost
+  local sliderPercentage = currentExp / nextLevel * 100
 
   -- Options for primary text
   -- Check if first letter is vowell
@@ -158,7 +166,6 @@ function scene:create(event)
   plaque.y = -30
   modalGroup:insert(plaque)
 
-
   -- Insert image
   local fishImage = display.newImage("assets/fish/" .. fid .. "_large.png", modalBox.contentCenterX, 100)
   fishImage.y = -40
@@ -210,13 +217,24 @@ function scene:create(event)
       x = 10,
       y = 450,
       width = modalBox.width,
-      listener = sliderListener
+      listener = sliderListener,
+      value = sliderPercentage
     }
   )
-    modalGroup:insert(slider)
+  modalGroup:insert(slider)
+
+  local function updateSlider(value)
+    for i = 0,value,10 do
+      timer.performWithDelay(5 * i, function()
+        audio.play(expBeep)
+        currentExp = currentExp + 10
+        slider:setValue(currentExp / nextLevel * 100)
+      end)
+    end
+  end
 
   local options = {
-    text = "Level 10",
+    text = "Level " .. db:getRows("Stats")[1].level,
     y = 350,
     x = 0,
     width = 700,
@@ -229,9 +247,22 @@ function scene:create(event)
   modalGroup:insert(level)
 
   local options = {
-    text = "Next Level In:\n999999",
+    text = "Current Exp:\n" .. currentExp + value,
     y = 565,
     x = 0,
+    width = 700,
+    fontSize = 48,
+    font = "LilitaOne-Regular.ttf",
+    align = "left"
+  }
+  currentExpText = display.newText(options)
+  currentExpText:setFillColor(0)
+  modalGroup:insert(currentExpText)
+
+  local options = {
+    text = "Next Level In:\n" .. nextLevel - currentExp - value,
+    y = 565,
+    x = 420,
     width = 700,
     fontSize = 48,
     font = "LilitaOne-Regular.ttf",
@@ -241,8 +272,9 @@ function scene:create(event)
   next:setFillColor(0)
   modalGroup:insert(next)
 
+  updateSlider(value)
   -- Update the DB
-  db:caughtFish(fid, weight)
+  db:caughtFish(fid, weight, value)
 
   -- Place the group
   modalGroup.x = display.contentWidth / 2

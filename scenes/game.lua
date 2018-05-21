@@ -205,7 +205,7 @@ function scene:show(event)
 
     bobber:caught()
   elseif (phase == "did") then
-    
+
     -- Code here runs when the scene is entirely on screen
     if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
       pauseGame()

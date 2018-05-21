@@ -242,21 +242,6 @@ function scene:create(event)
   mainGroup:insert(sound)
   backgroundMusic = audio.loadStream("audio/backgroundMusic.wav")
 
-  -- Check if tutorial needs to be shown
-  if (db:getRows("Flags")[1].watchedTutorial == 0) then
-    composer.showOverlay(
-      "scenes.tutorialModal",
-      {
-        params = {
-          text = [[Welcome to TNAC! This is the title screen. To move from menu to menu, swipe in said direction. 
-Hit next to try going to the store.]]
-        },
-        effect = "fade",
-        time = 800,
-        isModal = true
-      }
-    )
-  end
 end
 
 -- show()
@@ -265,30 +250,9 @@ function scene:show(event)
   local phase = event.phase
   if (phase == "will") then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
-    if (db:getRows("Flags")[1].watchedTutorial == 1) then
-      tutorialStore = false
-    end
+    
   elseif (phase == "did") then
     -- Code here runs when the scene is entirely on screen
-    -- Swipe event
-    -- Check if tutorial and returning from store
-
-    -- Set tutorial from
-    tutorialFrom = event.params.tutorial
-    if (tutorialFrom == "store") then
-      composer.showOverlay(
-        "scenes.tutorialModal",
-        {
-          params = {
-            text = [[Lets move onto gameplay.
-Hit next to try and swipe to the game.]]
-          },
-          effect = "fade",
-          time = 800,
-          isModal = true
-        }
-      )
-    end
   end
 end
 

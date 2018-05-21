@@ -29,21 +29,24 @@ function _DB.create()
 
       CREATE TABLE IF NOT EXISTS Flags
       (
-        watchedTutorial INT NOT NULL,
         vibrate INT NOT NULL,
         sound INT NOT NULL,
         music INT NOT NULL
       );
+
+      CREATE TABLE IF NOT EXISTS Stats
+      (
+        level INT NOT NULL,
+        exp INT NOT NULL
+      );
     ]]
   end
 
-  -- Insert into Db
   function Db:update(insertString)
     print(insertString)
     db:exec(insertString)
   end
 
-  -- Return all the rows of a certain table
   function Db:getRows(tableName)
     local ret = {}
     local counter = 1
@@ -54,9 +57,7 @@ function _DB.create()
     return ret
   end
 
-  -- Print the Db
   function Db:print()
-    -- FishCaught
     print("FishCaught")
     for row in db:nrows("SELECT * FROM FishCaught ORDER BY fid") do
       local str = ""
@@ -66,9 +67,15 @@ function _DB.create()
       print(str)
     end
 
-    -- Flags
     print("Flags")
     for row in db:nrows("SELECT * FROM Flags") do
+      for k, v in pairs(row) do
+        print(" " .. k .. ": " .. v)
+      end
+    end
+
+    print("Stats")
+    for row in db:nrows("SELECT * FROM Stats") do
       for k, v in pairs(row) do
         print(" " .. k .. ": " .. v)
       end
@@ -76,24 +83,18 @@ function _DB.create()
   end
 
   -- Update DB when a fish is caught
-  function Db:caughtFish(fid, weight)
+  function Db:caughtFish(fid, weight, value)
     -- Check if that fish has already been caught before
     local fishCaught = Db:getRows("FishCaught")
     local fishInfo = require("data.fishInfo")
-
-    -- Set weights
-    -- local one = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
-    -- local two = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
-    -- local three = math.random(fishInfo[fid].minSize, fishInfo[fid].maxSize)
-    -- local weight = math.round(((one + two + three) / 3.0) * 100) * 0.01
-
     local updated = false
-    for i=1, #fishCaught do
+    for i = 1, #fishCaught do
       -- Update row
       if (fishCaught[i].fid == fid) then
-        local insert = [[UPDATE FishCaught SET numberCaught=]] .. fishCaught[i].numberCaught + 1 .. 
-          [[, largestCaught=]] .. math.max(fishCaught[i].largestCaught, weight) .. [[ WHERE fid=]] .. 
-          fid .. [[;]]
+        local insert =
+          [[UPDATE FishCaught SET numberCaught=]] ..
+          fishCaught[i].numberCaught + 1 ..
+            [[, largestCaught=]] .. math.max(fishCaught[i].largestCaught, weight) .. [[ WHERE fid=]] .. fid .. [[;]]
         Db:update(insert)
         updated = true
         break
@@ -106,24 +107,29 @@ function _DB.create()
       Db:update(insert)
     end
 
+    local newExp = Db:getRows("Stats")[1].exp + value
+    Db:update([[UPDATE Stats SET exp=]] .. newExp .. [[;]])
+
     Db:print()
   end
 
   -- Delete everything
   -- Should only be used in testing
   function Db:delete()
-    db:exec[[
+    db:exec [[
       DELETE FROM FishCaught;
       DELETE FROM Flags;
-      INSERT INTO Flags VALUES (0, 1, 1, 1);
+      INSERT INTO Flags VALUES (1, 1, 1);
+      INSERT INTO Stats VALUES (1, 0);
     ]]
   end
 
   -- Delete everything in DB and redo it
   function Db:restart()
-    db:exec[[
+    db:exec [[
       DROP TABLE FishCaught;
       DROP TABLE Flags;
+      DROP TABLE Stats;
     ]]
     Db:createTables()
     -- Db:delete()
@@ -139,13 +145,16 @@ function _DB.create()
     if (#fishCaughtCols > 0) and (#Db:getRows("FishCaught") > 0) then
       for i = 1, #fishCaughtCols do
         print("Add to FishCaught: " .. fishCaughtCols[i])
-        db:exec([[ALTER TABLE FishCaught ADD COLUMN ]] ..  fishCaughtCols[i] .. [[ INT DEFAULT 0;]])
+        db:exec([[ALTER TABLE FishCaught ADD COLUMN ]] .. fishCaughtCols[i] .. [[ INT DEFAULT 0;]])
       end
     end
 
-    -- Prime Flags table
     if (#Db:getRows("Flags") == 0) then
-      db:exec[[INSERT INTO Flags VALUES (0, 1, 1, 1);]]
+      db:exec [[INSERT INTO Flags VALUES (1, 1, 1);]]
+    end
+
+    if (#Db:getRows("Stats") == 0) then
+      db:exec [[INSERT INTO Stats VALUES (1, 0);]]
     end
   end
 

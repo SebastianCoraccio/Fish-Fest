@@ -226,13 +226,8 @@ function _Fish.create(params)
 
     -- TODO: Add timestamp for determining fish to catch
     -- in the case 2 or more bite at once
-    local rodTime = db:getRows("StoreItems")[1].currentRodUpgrade * 75
-    local totalBiteTime = fish.biteTime + rodTime - 75 + 1000
-
-    -- Add in extra time if in tutorial
-    if (db:getRows("Flags")[1].watchedTutorial == 0) then
-      totalBiteTime = totalBiteTime + 1000
-    end
+    local rodTime = db:getRows("Stats")[1].level
+    local totalBiteTime = fish.biteTime + rodTime * 75
 
     -- Check if the bite times is negative.
     -- If it is then the player has no chance to catch this fish

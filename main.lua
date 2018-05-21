@@ -29,14 +29,6 @@ math.randomseed(os.time())
 db:createTables()
 db:checkDb()
 
--- Tutorial reset
--- db:update("UPDATE StoreItems SET currentRodUpgrade = 0;")
--- db:update("UPDATE Flags SET watchedTutorial = 0;")
--- Check for tutorial for rod
-if (db:getRows("Flags")[1].watchedTutorial == 0) then
-  db:update("UPDATE StoreItems SET currentRodUpgrade = 0;")
-end
-
 db:print()
 
 -- Close the database
