@@ -75,6 +75,7 @@ end
 
 -- Back button
 local function handleButtonEventBack(event)
+  bobber.bringBack()
   if (event.phase == "ended") then
     composer.gotoScene("scenes.locations", {params = {}, effect = "slideRight", time = 600})
   end
@@ -203,7 +204,6 @@ function scene:hide(event)
 
   if (phase == "will") then
     -- Code here runs when the scene is on screen (but is about to go off screen)
-    bobber.bringBack()
   elseif (phase == "did") then
     -- Code here runs immediately after the scene goes entirely off screen
     bobber:noCast()
@@ -218,13 +218,12 @@ function scene:hide(event)
       end
     end
 
-    for i = #fishTable, 1, -1 do
-      removeFish(i)
+    if (spawnedInitialFish == false) then
+      for i = #fishTable, 1, -1 do
+        removeFish(i)
+      end
+      spawnedInitialFish = false
     end
-
-    spawnedInitialFish = false
-
-    
   end
 end
 
@@ -261,7 +260,6 @@ function scene:updateFish()
     end
   end
 end
-
 
 -- Checks if any fish were caught when the bobber was reeling in
 function scene:reelIn()
@@ -306,7 +304,7 @@ function scene:reelIn()
               time = 400,
               params = {
                 fid = fid,
-                location = locationName,
+                location = locationName
               }
             }
             composer.showOverlay("scenes.modal", options)
