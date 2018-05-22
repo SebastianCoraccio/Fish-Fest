@@ -222,14 +222,20 @@ function scene:create(event)
 
   local function updateSlider(value)
     for i = 0, value, 10 do
-      timer.performWithDelay(
-        5 * i,
-        function()
-          audio.play(expBeep)
-          currentExp = currentExp + 10
-          slider:setValue(currentExp / nextLevel * 100)
-        end
-      )
+      if (currentExp + i >= nextLevel) then
+        print("level up!")
+        return
+      else
+        print('in the else')
+        timer.performWithDelay(
+          5 * i,
+          function()
+            audio.play(expBeep)
+            currentExp = currentExp + 10
+            slider:setValue(currentExp / nextLevel * 100)
+          end
+        )
+      end
     end
   end
 
@@ -271,6 +277,8 @@ function scene:create(event)
   next = display.newText(options)
   next:setFillColor(0)
   modalGroup:insert(next)
+
+  -- Update the slider after waiting a moment for the modal to open
   timer.performWithDelay(
     150,
     function()

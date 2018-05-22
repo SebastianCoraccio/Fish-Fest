@@ -166,6 +166,7 @@ function scene:show(event)
   local sceneGroup = self.view
   local phase = event.phase
   local the_fish = nil
+
   if (phase == "will") then
     -- Code here runs when the scene is first created but has not yet appeared on screen
     locationName = event.params.location
@@ -194,6 +195,18 @@ function scene:show(event)
       end,
       0
     )
+    pauseGame()
+    local options = {
+      isModal = true,
+      effect = "fade",
+      time = 400,
+      params = {
+        fid = 2,
+        location = "river"
+      }
+    }
+    composer.showOverlay("scenes.modal", options)
+  
   end
 end
 
