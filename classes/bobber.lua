@@ -10,9 +10,6 @@ local utils = require('utils')
 local newDB = require("database.db").create
 local db = newDB()
 
--- Tutorial
-local tutorialShown = false
-
 -- Bobber object
 local _Bobber = {}
 
@@ -83,15 +80,6 @@ function _Bobber.create(x, y, group)
     -- Function to stop the swiping
     function bobber:noCast()
         bobber.canBeCast = false
-    end
-
-    -- Function only used by tutorial
-    function bobber:bringBack()
-        bobber.anim.isActive = false -- bobber isn't active
-        bobber.anim.isCatchable = false -- bobber isn't catchable
-        bobber.anim:setLinearVelocity(0, 0) -- stop the bobber
-        transition.to(bobber.anim, {time=800, x=display.contentCenterX, y=display.contentCenterY + 500, 
-        transition=easing.outQuad, xScale=1, yScale=1, onComplete=bobber.caught()}) -- BRING HIM HOME
     end
 
     -- Function to to the catching
@@ -175,11 +163,6 @@ function _Bobber.create(x, y, group)
                         bobber.anim.isActive = true
                         bobber.anim.isCatchable = true
                         bobber.anim:setLinearVelocity(0, 0)
-                        if (db:getRows("Flags")[1].watchedTutorial == 0) and (tutorialShown == false) then
-                            local tutorialEvent = {name="tutorialEvent", target="scene"}
-                            bobber.anim:dispatchEvent(tutorialEvent) -- Catch event
-                            tutorialShown = true
-                        end
                     end})
                 end
                 transition.to(bobber.anim, {time=speed, xScale=1.6, yScale=1.6, onComplete=scaleDown})

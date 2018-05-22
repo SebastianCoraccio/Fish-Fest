@@ -31,7 +31,6 @@ local modalGroup
 local fid
 local previousScene
 local location
-local tutorial
 
 -- Function to change the information about the fish
 local function changeInfo()
@@ -69,7 +68,7 @@ local function handleButtonEventClose(event)
   if (event.phase == "ended") then
     if (previousScene == "game") then
       composer.gotoScene("scenes." .. previousScene, {
-        params = {location=location, tutorial=tutorial},
+        params = {location=location},
         effect="fade", 
         time=400})
     else
@@ -97,9 +96,6 @@ function scene:create(event)
 
   -- Set location
   location = event.params.location
-
-  -- Set tutorial
-  tutorial = db:getRows("Flags")[1].watchedTutorial
 
   -- Text information
   text = display.newText({
@@ -222,7 +218,6 @@ function scene:show(event)
     fid = event.params.fid
     previousScene = event.params.previousScene
     location = event.params.location
-    tutorial = db:getRows("Flags")[1].watchedTutorial
     changeInfo()
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen

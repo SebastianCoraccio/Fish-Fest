@@ -27,7 +27,6 @@ local weightText
 
 local fid
 local location
-local tutorial
 
 -- Function to handle details button
 -- TODO: Open encylopedia with that fish
@@ -36,7 +35,7 @@ local function handleButtonEventDetails(event)
     composer.gotoScene(
       "scenes.fishDetails",
       {
-        params = {fid = fid, previousScene = "game", location = location, tutorial = tutorial},
+        params = {fid = fid, previousScene = "game", location = location},
         effect = "fade",
         time = 400
       }
@@ -71,7 +70,6 @@ function scene:create(event)
 
   fid = event.params.fid
   location = event.params.location
-  tutorial = event.params.tutorial
 
   -- Get fish name from fid
   local fishName = ""
@@ -85,7 +83,6 @@ function scene:create(event)
   end
 
   local expBeep = audio.loadSound("audio/expBeep.wav")
-
 
   local currentExp = db:getRows("Stats")[1].exp
   local nextLevel = levelInfo[db:getRows("Stats")[1].level].cost
@@ -224,12 +221,15 @@ function scene:create(event)
   modalGroup:insert(slider)
 
   local function updateSlider(value)
-    for i = 0,value,10 do
-      timer.performWithDelay(5 * i, function()
-        audio.play(expBeep)
-        currentExp = currentExp + 10
-        slider:setValue(currentExp / nextLevel * 100)
-      end)
+    for i = 0, value, 10 do
+      timer.performWithDelay(
+        5 * i,
+        function()
+          audio.play(expBeep)
+          currentExp = currentExp + 10
+          slider:setValue(currentExp / nextLevel * 100)
+        end
+      )
     end
   end
 
@@ -271,8 +271,12 @@ function scene:create(event)
   next = display.newText(options)
   next:setFillColor(0)
   modalGroup:insert(next)
-
-  updateSlider(value)
+  timer.performWithDelay(
+    150,
+    function()
+      updateSlider(value)
+    end
+  )
   -- Update the DB
   db:caughtFish(fid, weight, value)
 

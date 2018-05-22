@@ -39,8 +39,7 @@ local modalIsShowing = false
 local backgroundGroup
 local mainGroup
 local uiGroup
--- tutorial
-local tutorial = false
+
 local preCast = false
 local preCatch = false
 local postCatch = false
@@ -76,9 +75,7 @@ end
 
 -- Back button
 local function handleButtonEventBack(event)
-  if (event.phase == "ended") and (db:getRows("Flags")[1].watchedTutorial == 1) then
-    -- TODO: Change to location page when implemeneted
-    -- composer.removeScene('scenes.game')
+  if (event.phase == "ended") then
     composer.gotoScene("scenes.locations", {params = {}, effect = "slideRight", time = 600})
   end
 end
@@ -141,37 +138,14 @@ function scene:create(event)
   uiGroup:insert(backButton) -- Insert the button
 
   -- Create the fish
-  if (db:getRows("Flags")[1].watchedTutorial == 1) then
-    for i = 1, 3 do
-      addFish()
-    end
-    spawnedInitialFish = true
+  for i = 1, 3 do
+    addFish()
   end
-
-  -- TEST
-  -- local fishCount = {0,0,0,0,0,0,0,0,0,0,0,0}
-  -- for i=1,1000000 do
-  --     local f = location.giveFish()
-  --     if f.fid == 99 then
-  --       fishCount[#fishCount] = fishCount[#fishCount] + 1
-  --     else
-  --       fishCount[f.fid + 1] = fishCount[f.fid + 1] + 1
-  --     end
-  -- end
-  -- print("\n")
-  -- for i=1,#fishCount - 1 do
-  --     print(tostring(fishCount[i]/10000) .. "%\t : " .. fishInfo[i].name)
-  -- end
-  -- print(tostring(fishCount[#fishCount]/10000) .. "%\t : " .. fishInfo[#fishInfo].name)
-  -- END
-
-  -- Check if tutorial is going on
-  tutorial = event.params.tutorial
+  spawnedInitialFish = true
 
   -- Add catch event and related listeners
   Runtime:addEventListener("touch", bobber.catch)
   bobber.anim:addEventListener("catchEvent", scene.reelIn)
-  bobber.anim:addEventListener("tutorialEvent", showCatchModal)
 end
 
 -- Pause the fish spawning and fish movement
@@ -181,7 +155,7 @@ function pauseGame()
 end
 
 -- Custom function for resuming the game (from pause state)
-function scene:resumeGame(tutorial, final)
+function scene:resumeGame(final)
   modalIsShowing = false
   bobber.setCast()
 end
@@ -205,39 +179,15 @@ function scene:show(event)
 
     bobber:caught()
   elseif (phase == "did") then
-
     -- Code here runs when the scene is entirely on screen
-    if (tutorial) and (db:getRows("Flags")[1].watchedTutorial == 0) then
-      pauseGame()
-      composer.showOverlay(
-        "scenes.tutorialModal",
-        {
-          params = {
-            text = [[Here is where you do all the fishing. You can hit the back button to go back to the title and hit the chum button to view, use, and buy chums.
-Hit next to learn how to fish.]]
-          },
-          effect = "fade",
-          time = 800,
-          isModal = true
-        }
-      )
-    end
 
     location = newLocation(event.params.location)
-
-    -- TODO: CHECK IF THIS WOKRS AND MODIFY SO PEOPLE DONT HACK
-    if (spawnedInitialFish == false) and (db:getRows("Flags")[1].watchedTutorial == 1) then
-      for i = 1, 3 do
-        addFish()
-      end
-      spawnedInitialFish = true
-    end
 
     -- Timer to spawn fish throughout
     -- TODO: Finalize time
     fishUpdateTimer =
       timer.performWithDelay(
-      7000,
+      6500,
       function()
         self:updateFish()
       end,
@@ -253,6 +203,7 @@ function scene:hide(event)
 
   if (phase == "will") then
     -- Code here runs when the scene is on screen (but is about to go off screen)
+    bobber.bringBack()
   elseif (phase == "did") then
     -- Code here runs immediately after the scene goes entirely off screen
     bobber:noCast()
@@ -273,7 +224,7 @@ function scene:hide(event)
 
     spawnedInitialFish = false
 
-    bobber.bringBack()
+    
   end
 end
 
@@ -290,7 +241,7 @@ function scene:destroy(event)
 end
 
 function scene:updateFish()
-  if (modalIsShowing == false) and (db:getRows("Flags")[1].watchedTutorial == 1) then
+  if (modalIsShowing == false) then
     for i = #fishTable, 1, -1 do
       fishTable[i].update()
     end
@@ -311,28 +262,6 @@ function scene:updateFish()
   end
 end
 
--- Function to show how to catch modal
-function showCatchModal(event)
-  pauseGame()
-  composer.showOverlay(
-    "scenes.tutorialModal",
-    {
-      params = {
-        text = [[Congratulations! You just cast the bobber. Now, wait for a blue splash, vibration, and/or sound effect. Then tap the screen to reel in your fish!
-Hit next to try to catch a fish!]]
-      },
-      effect = "fade",
-      time = 800,
-      isModal = true
-    }
-  )
-  bobber.bringBack()
-  bobber.setCast()
-  for i = 1, 3 do
-    addFish()
-  end
-  spawnedInitialFish = true
-end
 
 -- Checks if any fish were caught when the bobber was reeling in
 function scene:reelIn()
@@ -378,7 +307,6 @@ function scene:reelIn()
               params = {
                 fid = fid,
                 location = locationName,
-                tutorial = tutorial
               }
             }
             composer.showOverlay("scenes.modal", options)

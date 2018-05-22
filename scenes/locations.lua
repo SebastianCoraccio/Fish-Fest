@@ -31,8 +31,6 @@ local description
 local sceneToLoad
 local slideDirection
 
-local tutorial
-
 local function changeLocation()
   -- Change title
   locationTitleText.text = locationInfo[selectedlocation]
@@ -78,7 +76,7 @@ local function handleButtonEventTravel(event)
   if (event.phase == "ended") then
     composer.gotoScene(
       "scenes.game",
-      {params = {location = locationInfo[selectedLocation].dbName, tutorial = tutorial}, effect = "fade", time = 400}
+      {params = {location = locationInfo[selectedLocation].dbName}, effect = "fade", time = 400}
     )
   end
 end
@@ -89,8 +87,6 @@ end
 
 -- create()
 function scene:create(event)
-  tutorial = event.params.tutorial
-
   local sceneGroup = self.view
   -- New display group
   mainGroup = display.newGroup()

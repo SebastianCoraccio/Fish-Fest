@@ -22,34 +22,16 @@ local encyclopedia
 local sceneToLoad
 local slideDirection
 
--- if this is true, tutorial mode engaged
-local tutorial = false
-local tutorialStore = false
-local tutorialFrom = ""
-
--- Custom function for resuming the game (from pause state)
-function scene:resumeGame(tutorial2)
-  if (tutorial2) then
-    if (tutorialFrom == "store") then
-      tutorialStore = true
-      tutorial = false
-    else
-      -- Code to resume game
-      tutorial = true
-    end
-  end
-end
-
 -- Go to the game
 local function handleButtonEventGame(event)
-  if (event.phase == "ended") and ((tutorial == false) or (db:getRows("Flags")[1].watchedTutorial == 1)) then
-    composer.gotoScene("scenes.locations", {params = {tutorial = tutorialStore}, effect = "slideLeft", time = 800})
+  if (event.phase == "ended") then
+    composer.gotoScene("scenes.locations", {params = {}, effect = "slideLeft", time = 800})
   end
 end
 
 -- Go to the encyclopedia
 local function handleButtonEventEncyclopedia(event)
-  if (event.phase == "ended") and (db:getRows("Flags")[1].watchedTutorial == 1) then
+  if (event.phase == "ended") then
     composer.gotoScene("scenes.encyclopedia", {effect = "slideUp", time = 800})
   end
 end
