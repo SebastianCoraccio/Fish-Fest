@@ -25,6 +25,11 @@ local valueText
 local fishImage
 local weightText
 
+local expSlider
+local currentLevelText
+local currentExpText
+local nextExpText
+
 local fid
 local location
 
@@ -71,6 +76,7 @@ function scene:create(event)
   fid = event.params.fid
   location = event.params.location
 
+  
   -- Get fish name from fid
   local fishName = ""
   local value = 0
@@ -81,12 +87,10 @@ function scene:create(event)
       break
     end
   end
-
-  local expBeep = audio.loadSound("audio/expBeep.wav")
-
-  local currentExp = db:getRows("Stats")[1].exp
+  
+  local currentExp = db:getRows("Stats")[1].exp + value
   local nextLevel = levelInfo[db:getRows("Stats")[1].level].cost
-  local sliderPercentage = currentExp / nextLevel * 100
+  local expBeep = audio.loadSound("audio/expBeep.wav")
 
   -- Options for primary text
   -- Check if first letter is vowell
@@ -184,103 +188,141 @@ function scene:create(event)
 
   modalGroup:insert(backButton)
 
-  local options = {
-    frames = {
-      {x = 0, y = 0, width = 100, height = 140},
-      {x = 100, y = 0, width = 100, height = 140},
-      {x = 200, y = 0, width = 100, height = 140},
-      {x = 300, y = 0, width = 100, height = 140},
-      {x = 400, y = 0, width = 20, height = 140}
-    },
-    sheetContentWidth = 420,
-    sheetContentHeight = 140
-  }
-  local sliderSheet = graphics.newImageSheet("assets/buttons/expSlider.png", options)
+  function levelUp(remainingValue)
+    local level = db:getRows("Stats")[1].level + 1
+    db:updateLevel(level, remainingValue)
 
-  -- Create the widget
-  local slider =
-    widget.newSlider(
-    {
-      sheet = sliderSheet,
-      leftFrame = 1,
-      middleFrame = 2,
-      rightFrame = 3,
-      fillFrame = 4,
-      frameWidth = 100,
-      frameHeight = 120,
-      handleFrame = 5,
-      handleWidth = 20,
-      handleHeight = 120,
-      x = 10,
-      y = 450,
-      width = modalBox.width,
-      listener = sliderListener,
-      value = sliderPercentage
-    }
-  )
-  modalGroup:insert(slider)
+    nextLevel = levelInfo[db:getRows("Stats")[1].level].cost
+    currentExp = remainingValue
+    -- remove and readd level information to reset the display
+    removeLevelInformation()
+    createLevelInformation()
+    
+    updateSlider(remainingValue)
+  end
 
-  local function updateSlider(value)
+  function updateSlider(value)
+    currentExp = currentExp - value
     for i = 0, value, 10 do
       if (currentExp + i >= nextLevel) then
         print("level up!")
-        return
-      else
-        print('in the else')
         timer.performWithDelay(
           5 * i,
           function()
-            audio.play(expBeep)
+            value = value - i
+            levelUp(value)
+          end
+        )
+        return
+      else
+        timer.performWithDelay(
+          5 * i,
+          function()
+            if (db:getRows("Flags")[1].sound == 1) then
+              audio.play(expBeep)
+            end
             currentExp = currentExp + 10
-            slider:setValue(currentExp / nextLevel * 100)
+            expSlider:setValue(currentExp / nextLevel * 100)
           end
         )
       end
     end
   end
 
-  local options = {
-    text = "Level " .. db:getRows("Stats")[1].level,
-    y = 350,
-    x = 0,
-    width = 700,
-    fontSize = 64,
-    font = "LilitaOne-Regular.ttf",
-    align = "left"
-  }
-  level = display.newText(options)
-  level:setFillColor(0)
-  modalGroup:insert(level)
+  function removeLevelInformation()
+    expSlider:removeSelf()
+    currentLevel:removeSelf()
+    currentExpText:removeSelf()
+    nextExpText:removeSelf()
+  end
 
-  local options = {
-    text = "Current Exp:\n" .. currentExp + value,
-    y = 565,
-    x = 0,
-    width = 700,
-    fontSize = 48,
-    font = "LilitaOne-Regular.ttf",
-    align = "left"
-  }
-  currentExpText = display.newText(options)
-  currentExpText:setFillColor(0)
-  modalGroup:insert(currentExpText)
+  function createLevelInformation()
+    local nextLevel = levelInfo[db:getRows("Stats")[1].level].cost
+    local sliderPercentage = (currentExp - value) / nextLevel * 100
 
-  local options = {
-    text = "Next Level In:\n" .. nextLevel - currentExp - value,
-    y = 565,
-    x = 420,
-    width = 700,
-    fontSize = 48,
-    font = "LilitaOne-Regular.ttf",
-    align = "left"
-  }
-  next = display.newText(options)
-  next:setFillColor(0)
-  modalGroup:insert(next)
+    local options = {
+      frames = {
+        {x = 0, y = 0, width = 100, height = 140},
+        {x = 100, y = 0, width = 100, height = 140},
+        {x = 200, y = 0, width = 100, height = 140},
+        {x = 300, y = 0, width = 100, height = 140},
+        {x = 400, y = 0, width = 20, height = 140}
+      },
+      sheetContentWidth = 420,
+      sheetContentHeight = 140
+    }
+    local sliderSheet = graphics.newImageSheet("assets/buttons/expSlider.png", options)
+
+    -- Create the widget
+    expSlider =
+      widget.newSlider(
+      {
+        sheet = sliderSheet,
+        leftFrame = 1,
+        middleFrame = 2,
+        rightFrame = 3,
+        fillFrame = 4,
+        frameWidth = 100,
+        frameHeight = 120,
+        handleFrame = 5,
+        handleWidth = 20,
+        handleHeight = 120,
+        x = 0,
+        y = 450,
+        width = modalBox.width,
+        listener = sliderListener,
+        value = sliderPercentage
+      }
+    )
+    modalGroup:insert(expSlider)
+
+    local options = {
+      text = "Level " .. db:getRows("Stats")[1].level,
+      y = 350,
+      x = 0,
+      width = 700,
+      fontSize = 64,
+      font = "LilitaOne-Regular.ttf",
+      align = "left"
+    }
+    currentLevel = display.newText(options)
+    currentLevel:setFillColor(0)
+    modalGroup:insert(currentLevel)
+
+    local options = {
+      text = "Current Exp:\n" .. currentExp,
+      y = 565,
+      x = 0,
+      width = 700,
+      fontSize = 48,
+      font = "LilitaOne-Regular.ttf",
+      align = "left"
+    }
+    currentExpText = display.newText(options)
+    currentExpText:setFillColor(0)
+    modalGroup:insert(currentExpText)
+
+    local expToNext = (nextLevel - currentExp) > 0 and (nextLevel - currentExp) or 0
+    local options = {
+      text = "Next Level In:\n" .. expToNext,
+      y = 565,
+      x = 420,
+      width = 700,
+      fontSize = 48,
+      font = "LilitaOne-Regular.ttf",
+      align = "left"
+    }
+    nextExpText = display.newText(options)
+    nextExpText:setFillColor(0)
+    modalGroup:insert(nextExpText)
+
+  end
+
+  createLevelInformation()
 
   -- Update the slider after waiting a moment for the modal to open
   timer.performWithDelay(
-    150,
+    700,
     function()
       updateSlider(value)
     end
@@ -291,6 +333,10 @@ function scene:create(event)
   -- Place the group
   modalGroup.x = display.contentWidth / 2
   modalGroup.y = display.contentHeight / 2
+
+  
+
+  
 end
 
 -- show()

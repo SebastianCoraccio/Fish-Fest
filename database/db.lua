@@ -113,13 +113,18 @@ function _DB.create()
     Db:print()
   end
 
+  function Db:updateLevel(level, overflowExp)
+    local statement = [[UPDATE Stats SET level=]] .. level .. [[,exp=]] .. overflowExp .. [[;]]
+    Db:update(statement)
+  end
+
   -- Delete everything
   -- Should only be used in testing
   function Db:delete()
     db:exec [[
       DELETE FROM FishCaught;
       DELETE FROM Flags;
-      INSERT INTO Flags VALUES (1, 1, 1);
+      INSERT INTO Flags VALUES (0, 0, 0);
       INSERT INTO Stats VALUES (1, 0);
     ]]
   end
@@ -150,7 +155,7 @@ function _DB.create()
     end
 
     if (#Db:getRows("Flags") == 0) then
-      db:exec [[INSERT INTO Flags VALUES (1, 1, 1);]]
+      db:exec [[INSERT INTO Flags VALUES (0, 0, 0);]]
     end
 
     if (#Db:getRows("Stats") == 0) then

@@ -201,7 +201,7 @@ function scene:show(event)
       effect = "fade",
       time = 400,
       params = {
-        fid = 2,
+        fid = 7,
         location = "river"
       }
     }
