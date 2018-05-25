@@ -67,7 +67,7 @@ if (db:getRows("Flags")[1].music == 0) then
 end
 -- Go to the game
 -- TODO: Eventually this should go to the main menu, going to game for now
-composer.gotoScene('scenes.game', {params = {location='river'}})
--- composer.gotoScene('scenes.title', {params={}})
+-- composer.gotoScene('scenes.game', {params = {location='river'}})
+composer.gotoScene('scenes.title', {params={}})
 -- composer.gotoScene('scenes.encyclopedia')
 -- composer.gotoScene('scenes.locations', {params={}})

@@ -131,7 +131,7 @@ function _Bobber.create(x, y, group)
       {
         time = 800,
         x = display.contentCenterX,
-        y = display.contentCenterY + 500,
+        y = display.contentHeight - 100,
         transition = easing.outQuad,
         xScale = 1,
         yScale = 1,

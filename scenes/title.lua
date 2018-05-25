@@ -69,14 +69,15 @@ function scene:create(event)
 
   -- Title text
   local options = {
-    text = "Fishing\nFest",
+    text = "Fish\nFest",
     x = display.contentCenterX,
-    y = 600,
-    fontSize = 75,
-    align = "center"
+    y = 350,
+    fontSize = 300,
+    align = "center",
+    font = "LilitaOne-Regular.ttf",
   }
   title = display.newEmbossedText(options)
-  title:setFillColor(1)
+  title:setFillColor(0)
   title:setEmbossColor(color)
   mainGroup:insert(title)
 
@@ -90,18 +91,18 @@ function scene:create(event)
       emboss = false,
       -- Properties for a rounded rectangle button
       shape = "roundedRect",
-      width = 150,
-      height = 75,
+      width = 300,
+      height = 300,
       cornerRadius = 12,
-      labelColor = {default = {utils.hexToRGB("#ef4100")}, over = {utils.hexToRGB("#00aeef")}},
-      fillColor = {default = {utils.hexToRGB("#00aeef")}, over = {utils.hexToRGB("#ef4100")}},
+      labelColor = {default = {utils.hexToRGB("#ffffff")}, over = {utils.hexToRGB("#00aeef")}},
+      fillColor = {default = {utils.hexToRGB("#b54c4c")}, over = {utils.hexToRGB("#ef4100")}},
       strokeColor = {default = {0}, over = {0}},
       strokeWidth = 3
     }
   )
   -- Center the button
-  game.x = display.contentCenterX + 200
-  game.y = display.contentCenterY
+  game.x = display.contentCenterX
+  game.y = display.contentCenterY + 50
   mainGroup:insert(game)
 
   encyclopedia =
@@ -113,18 +114,18 @@ function scene:create(event)
       emboss = false,
       -- Properties for a rounded rectangle button
       shape = "roundedRect",
-      width = 275,
-      height = 100,
+      width = 300,
+      height = 300,
       cornerRadius = 12,
-      labelColor = {default = {utils.hexToRGB("#ef4100")}, over = {utils.hexToRGB("#00aeef")}},
-      fillColor = {default = {utils.hexToRGB("#00aeef")}, over = {utils.hexToRGB("#ef4100")}},
+      labelColor = {default = {utils.hexToRGB("#ffffff")}, over = {utils.hexToRGB("#00aeef")}},
+      fillColor = {default = {utils.hexToRGB("#5ec79c")}, over = {utils.hexToRGB("#ef4100")}},
       strokeColor = {default = {0}, over = {0}},
       strokeWidth = 3
     }
   )
   -- Center the button
   encyclopedia.x = display.contentCenterX
-  encyclopedia.y = display.contentCenterY + 150
+  encyclopedia.y = display.contentCenterY + 450
   mainGroup:insert(encyclopedia)
 
   local widget = require("widget")
@@ -168,49 +169,16 @@ function scene:create(event)
     sheetContentHeight = 256
   }
   local settingButtonsSheet = graphics.newImageSheet("assets/buttons/settingsSheet.png", options)
-
-  local vibrate =
-    widget.newSwitch(
-    {
-      left = 306,
-      top = display.contentHeight - 150,
-      style = "checkbox",
-      id = "vibrate",
-      width = 100,
-      height = 100,
-      initialSwitchState = db:getRows("Flags")[1].vibrate == 0 and true or false,
-      onPress = onSwitchPress,
-      sheet = settingButtonsSheet,
-      frameOn = 5,
-      frameOff = 6
-    }
-  )
-  local music =
-    widget.newSwitch(
-    {
-      left = 178,
-      top = display.contentHeight - 150,
-      style = "checkbox",
-      id = "music",
-      width = 100,
-      height = 100,
-      initialSwitchState = db:getRows("Flags")[1].music == 0 and true or false,
-      onPress = onSwitchPress,
-      sheet = settingButtonsSheet,
-      frameOn = 1,
-      frameOff = 2
-    }
-  )
-
+  
   local sound =
     widget.newSwitch(
     {
-      left = 50,
-      top = display.contentHeight - 150,
+      left = 25,
+      top = display.contentHeight - 170,
       style = "checkbox",
       id = "sound",
-      width = 100,
-      height = 100,
+      width = 150,
+      height = 150,
       initialSwitchState = db:getRows("Flags")[1].sound == 0 and true or false,
       onPress = onSwitchPress,
       sheet = settingButtonsSheet,
@@ -218,6 +186,39 @@ function scene:create(event)
       frameOff = 4
     }
   )
+  local music =
+    widget.newSwitch(
+    {
+      left = 195,
+      top = display.contentHeight - 170,
+      style = "checkbox",
+      id = "music",
+      width = 150,
+      height = 150,
+      initialSwitchState = db:getRows("Flags")[1].music == 0 and true or false,
+      onPress = onSwitchPress,
+      sheet = settingButtonsSheet,
+      frameOn = 1,
+      frameOff = 2
+    }
+  )
+  local vibrate =
+    widget.newSwitch(
+    {
+      left = 365,
+      top = display.contentHeight - 170,
+      style = "checkbox",
+      id = "vibrate",
+      width = 150,
+      height = 150,
+      initialSwitchState = db:getRows("Flags")[1].vibrate == 0 and true or false,
+      onPress = onSwitchPress,
+      sheet = settingButtonsSheet,
+      frameOn = 5,
+      frameOff = 6
+    }
+  )
+
 
   mainGroup:insert(vibrate)
   mainGroup:insert(music)

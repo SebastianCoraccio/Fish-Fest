@@ -99,17 +99,36 @@ function scene:create(event)
   mainGroup = display.newGroup()
   sceneGroup:insert(mainGroup)
 
-  -- Code here runs when the scene is first created but has not yet appeared on screen
-  background = display.newImage(backgroundGroup, "assets/backgrounds/bg_sand.png")
-  background.x = display.contentCenterX
-  background.y = display.contentCenterY
-
   water = display.newImage(backgroundGroup, "assets/backgrounds/bg_" .. locationName .. ".png")
   water.x = display.contentCenterX
   water.y = display.contentCenterY - 550
 
+  local sheetOptions = {
+    width = 1080,
+    height = 1920,
+    numFrames = 8
+  }
+
+  local sheetFishAnim = graphics.newImageSheet("assets/backgrounds/water_anim.png", sheetOptions)
+
+  local sequenceAnim = {
+    {
+      name = "stationary",
+      start = 1,
+      count = 8,
+      time = 1600,
+      loopDirection = "forward"
+    }
+  }
+
+  texture = display.newSprite(mainGroup, sheetFishAnim, sequenceAnim)
+  texture.anchorX = 0 
+  texture.anchorY = 0 
+  texture:setSequence("stationary")
+  texture:play()
+
   -- Create the bobber
-  bobber = newBobber(display.contentCenterX, display.contentCenterY + 500, uiGroup)
+  bobber = newBobber(display.contentCenterX, display.contentHeight - 100 , uiGroup)
 
   -- Get location
   location = newLocation(event.params.location)
@@ -135,7 +154,7 @@ function scene:create(event)
   )
   -- Center the button
   backButton.x = display.contentCenterX - display.contentWidth / 3
-  backButton.y = display.contentHeight
+  backButton.y = display.contentHeight - 100
   uiGroup:insert(backButton) -- Insert the button
 
   -- Create the fish
@@ -171,13 +190,9 @@ function scene:show(event)
     -- Code here runs when the scene is first created but has not yet appeared on screen
     locationName = event.params.location
 
-    background = display.newImage(backgroundGroup, "assets/backgrounds/bg_sand.png")
-    background.x = display.contentCenterX
-    background.y = display.contentCenterY
-
     water = display.newImage(backgroundGroup, "assets/backgrounds/bg_" .. locationName .. ".png")
-    water.x = display.contentCenterX
-    water.y = display.contentCenterY - 550
+    water.anchorX = 0
+    water.anchorY = 0
 
     bobber:caught()
   elseif (phase == "did") then
@@ -195,18 +210,7 @@ function scene:show(event)
       end,
       0
     )
-    pauseGame()
-    local options = {
-      isModal = true,
-      effect = "fade",
-      time = 400,
-      params = {
-        fid = 7,
-        location = "river"
-      }
-    }
-    composer.showOverlay("scenes.modal", options)
-  
+
   end
 end
 
