@@ -104,8 +104,8 @@ function scene:create(event)
   water.y = display.contentCenterY - 550
 
   local sheetOptions = {
-    width = 1080,
-    height = 1920,
+    width = 540,
+    height = 960,
     numFrames = 8
   }
 
@@ -124,6 +124,8 @@ function scene:create(event)
   texture = display.newSprite(mainGroup, sheetFishAnim, sequenceAnim)
   texture.anchorX = 0 
   texture.anchorY = 0 
+  texture.xScale = 2
+  texture.yScale = 2
   texture:setSequence("stationary")
   texture:play()
 

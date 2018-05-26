@@ -58,6 +58,33 @@ function scene:create(event)
   mainGroup = display.newGroup()
   sceneGroup:insert(mainGroup)
 
+  local sheetOptions = {
+    width = 540,
+    height = 960,
+    numFrames = 8
+  }
+
+  local waterTextureSheet = graphics.newImageSheet("assets/backgrounds/water_anim.png", sheetOptions)
+
+  local sequenceAnim = {
+    {
+      name = "stationary",
+      start = 1,
+      count = 8,
+      time = 1600,
+      loopDirection = "forward"
+    }
+  }
+
+  waterTexture = display.newSprite(mainGroup, waterTextureSheet, sequenceAnim)
+  waterTexture.anchorX = 0 
+  waterTexture.anchorY = 0 
+  waterTexture.xScale = 2
+  waterTexture.yScale = 2
+  waterTexture:setSequence("stationary")
+  waterTexture:play()
+
+
   background = display.newImage(mainGroup, "assets/backgrounds/title.png")
   background.x = display.contentCenterX
   background.y = display.contentCenterY
@@ -67,37 +94,19 @@ function scene:create(event)
     shadow = {r = 0, g = 0, b = 0}
   }
 
-  -- Title text
-  local options = {
-    text = "Fish\nFest",
-    x = display.contentCenterX,
-    y = 350,
-    fontSize = 300,
-    align = "center",
-    font = "LilitaOne-Regular.ttf",
-  }
-  title = display.newEmbossedText(options)
-  title:setFillColor(0)
-  title:setEmbossColor(color)
-  mainGroup:insert(title)
+  logo = display.newImage("assets/logo.png", display.contentCenterX, 350)
+  mainGroup:insert(logo)
+
 
   -- Game
   game =
     widget.newButton(
     {
-      label = "Travel",
-      fontSize = 40,
-      onEvent = handleButtonEventGame,
-      emboss = false,
-      -- Properties for a rounded rectangle button
-      shape = "roundedRect",
       width = 300,
       height = 300,
-      cornerRadius = 12,
-      labelColor = {default = {utils.hexToRGB("#ffffff")}, over = {utils.hexToRGB("#00aeef")}},
-      fillColor = {default = {utils.hexToRGB("#b54c4c")}, over = {utils.hexToRGB("#ef4100")}},
-      strokeColor = {default = {0}, over = {0}},
-      strokeWidth = 3
+      onEvent = handleButtonEventGame,
+      defaultFile = "assets/buttons/playButton.png",
+      overFile = "assets/buttons/playButtonPressed.png",
     }
   )
   -- Center the button
@@ -108,19 +117,11 @@ function scene:create(event)
   encyclopedia =
     widget.newButton(
     {
-      label = "Encyclopedia",
-      fontSize = 40,
-      onEvent = handleButtonEventEncyclopedia,
-      emboss = false,
-      -- Properties for a rounded rectangle button
-      shape = "roundedRect",
       width = 300,
       height = 300,
-      cornerRadius = 12,
-      labelColor = {default = {utils.hexToRGB("#ffffff")}, over = {utils.hexToRGB("#00aeef")}},
-      fillColor = {default = {utils.hexToRGB("#5ec79c")}, over = {utils.hexToRGB("#ef4100")}},
-      strokeColor = {default = {0}, over = {0}},
-      strokeWidth = 3
+      onEvent = handleButtonEventEncyclopedia,
+      defaultFile = "assets/buttons/enc-detail.png",
+      overFile = "assets/buttons/enc-detail-pressed.png"
     }
   )
   -- Center the button
