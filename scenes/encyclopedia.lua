@@ -170,22 +170,7 @@ function scene:create(event)
   
   -- bgGroup2.x = - display.contentWidth / 2
   bgGroup2.y = - display.contentHeight / 2
-  
 
-  local systemFonts = native.getFontNames()
- 
-  -- Set the string to query for (part of the font name to locate)
-  local searchString = "pt"
-   
-  -- Display each font in the Terminal/console
-  for i, fontName in ipairs( systemFonts ) do
-   
-      local j, k = string.find( string.lower(fontName), string.lower(searchString) )
-   
-      if ( j ~= nil ) then
-          print( "Font Name = " .. tostring( fontName ) )
-      end
-  end
 
   -- Title text
   title =
@@ -391,18 +376,6 @@ local function moveBG(event)
   else
     bgGroup2.y = bgGroup2.y + yOffset
   end
-
-
-  -- if (bgGroup1.x + xOffset) > display.contentWidth then
-  --   bgGroup1.x = - display.contentWidth + xOffset
-  -- else 
-  --   bgGroup1.x = bgGroup1.x + xOffset
-  -- end
-  -- if (bgGroup2.x + xOffset ) > display.contentWidth then
-  --   bgGroup2.x = - display.contentWidth + xOffset
-  -- else
-  --   bgGroup2.x = bgGroup2.x + xOffset
-  -- end
 end
 
 -- -----------------------------------------------------------------------------------

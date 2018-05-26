@@ -71,3 +71,4 @@ end
 composer.gotoScene('scenes.title', {params={}})
 -- composer.gotoScene('scenes.encyclopedia')
 -- composer.gotoScene('scenes.locations', {params={}})
+-- composer.gotoScene("scenes.fishDetails", {params = {fid = 1, previousScene = "encyclopedia"}})
