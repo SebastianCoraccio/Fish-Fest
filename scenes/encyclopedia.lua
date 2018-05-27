@@ -100,9 +100,9 @@ local function redrawPictures(sortedFish, locationInfo, plaques, group, y1, y2)
     if (locationInfo.fish[i].fid ~= 23) then
       -- If fid is in this table, load image, otherwise load shadow
       local image = locationInfo.fish[i].fid
-      -- if (table.indexOf(fids, image) == nil) then
-      --   image = "unknown"
-      -- end
+      if (table.indexOf(fids, image) == nil) then
+        image = "unknown"
+      end
 
       if (plaques[i]) then
         plaques[i]:removeSelf()
@@ -249,72 +249,6 @@ function scene:create(event)
   -- Look at all the fish caught in the river sorted by fid
   redrawPictures(riverInfo.fish, riverInfo, riverPlaques, riverGroup, 125, 0)
 
-  -- Atlantic
-  atlanticGroup = display.newGroup()
-  scrollView:insert(atlanticGroup)
-
-  atlanticText =
-    display.newText(
-    {
-      text = "Atlantic Fish",
-      x = 40,
-      y = 75 + riverGroup.height,
-      fontSize = 50,
-      align = "left"
-    }
-  )
-  atlanticText.anchorX = 0
-  atlanticText:setFillColor(0)
-  riverGroup:insert(atlanticText)
-
-  redrawPictures(atlanticInfo.fish, atlanticInfo, atlanticPlaques, atlanticGroup, 125, riverGroup.height)
-
-  -- Reef
-  reefGroup = display.newGroup()
-  scrollView:insert(reefGroup)
-
-  reefText =
-    display.newText(
-    {
-      text = "Reef Fish",
-      x = 40,
-      y = 150 + atlanticGroup.height + riverGroup.height,
-      fontSize = 50,
-      align = "left"
-    }
-  )
-  reefText.anchorX = 0
-  reefText:setFillColor(0)
-  riverGroup:insert(reefText)
-
-  redrawPictures(reefInfo.fish, reefInfo, reefPlaques, reefGroup, 100, riverGroup.height)
-
-  -- Ice cap
-  icecapGroup = display.newGroup()
-  scrollView:insert(icecapGroup)
-
-  icecapText =
-    display.newText(
-    {
-      text = "Ice Cap Fish",
-      x = 40,
-      y = -500 + riverGroup.height + atlanticGroup.height + reefGroup.height,
-      fontSize = 50,
-      align = "left"
-    }
-  )
-  icecapText.anchorX = 0
-  icecapText:setFillColor(0)
-  icecapGroup:insert(icecapText)
-
-  redrawPictures(
-    icecapInfo.fish,
-    icecapInfo,
-    icecapPlaques,
-    icecapGroup,
-    -350,
-    atlanticGroup.height + reefGroup.height + riverGroup.height
-  )
 end
 
 -- show()
@@ -330,16 +264,7 @@ function scene:show(event)
   elseif (phase == "did") then
     -- Code here runs when the scene is entirely on screen
     redrawPictures(riverInfo.fish, riverInfo, riverPlaques, riverGroup, 125, 0)
-    redrawPictures(atlanticInfo.fish, atlanticInfo, atlanticPlaques, atlanticGroup, 125, 820)
-    redrawPictures(reefInfo.fish, reefInfo, reefPlaques, reefGroup, 100, riverGroup.height)
-    redrawPictures(
-      icecapInfo.fish,
-      icecapInfo,
-      icecapPlaques,
-      icecapGroup,
-      -350,
-      atlanticGroup.height + reefGroup.height + riverGroup.height
-    )
+    
   end
 end
 

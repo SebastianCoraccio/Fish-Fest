@@ -3,7 +3,7 @@
 
 return {
     fish = {
-        {fid=23,  spawnChance=1},
+        -- {fid=23,  spawnChance=1}
         {fid=10,  spawnChance=2},
         {fid=11,  spawnChance=3},
         {fid=9,   spawnChance=4},
@@ -14,6 +14,6 @@ return {
         {fid=4,   spawnChance=12},
         {fid=3,   spawnChance=13},
         {fid=2,   spawnChance=15},
-        {fid=1,   spawnChance=20}
+        {fid=1,   spawnChance=21}
     }
 }
