@@ -31,22 +31,8 @@ local bgGroup2 = nil
 local riverGroup
 local riverText
 local riverFish
+local riverFishImages = {}
 local riverPlaques = {}
--- Ocean
-local atlanticGroup
-local atlanticText
-local atlanticFish
-local atlanticPlaques = {}
--- Reef
-local reefGroup
-local reefText
-local reefFish
-local reefPlaques = {}
--- Ice Cap
-local icecapGroup
-local icecapText
-local icecapFish
-local icecapPlaques = {}
 
 -- Things
 local title
@@ -91,7 +77,7 @@ local function handleButtonEventBack(event)
   end
 end
 
-local function redrawPictures(sortedFish, locationInfo, plaques, group, y1, y2)
+local function redrawPictures(sortedFish, locationInfo, images, plaques, group, y1, y2)
   local xCounter = 0
   local yCounter = 0
   table.sort(sortedFish, compare)
@@ -104,36 +90,48 @@ local function redrawPictures(sortedFish, locationInfo, plaques, group, y1, y2)
         image = "unknown"
       end
 
+      if (images[i]) then
+        images[i]:removeSelf()
+      end
       if (plaques[i]) then
         plaques[i]:removeSelf()
       end
 
+      x = 225 + ((xCounter) * display.contentWidth / 2)
+      y =  y1 + (yCounter * 275) + y2
+      -- Draw plaque
+      plaques[i] = display.newImage("assets/plaque.png", x , y)
+      plaques[i].xScale = 0.6
+      plaques[i].yScale = 0.6
+      group:insert(plaques[i])
+
       -- Redraw image
-      plaques[i] =
+      images[i] =
         widget.newButton(
         {
-          width = 360,
-          height = 180,
           defaultFile = "assets/fish/" .. image .. "_large.png",
           overFile = "assets/fish/" .. image .. "_large.png",
+          width = 360,
+          height = 180,
           onEvent = handleButtonEventPlaque,
           id = locationInfo.fish[i].fid
         }
       )
-      plaques[i].x = 125 + ((xCounter) * display.contentWidth / 3)
-      plaques[i].y = y1 + (yCounter * 175) + y2
+
+      images[i].x = x
+      images[i].y = y
 
       -- Increase the counters
       xCounter = xCounter + 1
 
       -- Reset counters if necessary
-      if (xCounter > 2) then
+      if (xCounter >= 2) then
         xCounter = 0
         yCounter = yCounter + 1
       end
 
       -- Insert the button
-      group:insert(plaques[i])
+      group:insert(images[i])
     end
   end
 end
@@ -207,10 +205,11 @@ function scene:create(event)
   scrollView =
     widget.newScrollView(
     {
-      top = 300,
+      top = 200,
       left = 50,
       width = display.contentWidth,
       height = display.contentHeight,
+      scrollHeight = 4000,
       -- scrollWidth = 0,
       hideBackground = true,
       horizontalScrollDisabled = true
@@ -247,7 +246,7 @@ function scene:create(event)
   end
 
   -- Look at all the fish caught in the river sorted by fid
-  redrawPictures(riverInfo.fish, riverInfo, riverPlaques, riverGroup, 125, 0)
+  redrawPictures(riverInfo.fish, riverInfo, riverFishImages, riverPlaques, riverGroup, 200, 0)
 
 end
 
@@ -263,7 +262,7 @@ function scene:show(event)
     end
   elseif (phase == "did") then
     -- Code here runs when the scene is entirely on screen
-    redrawPictures(riverInfo.fish, riverInfo, riverPlaques, riverGroup, 125, 0)
+    redrawPictures(riverInfo.fish, riverInfo, riverFishImages, riverPlaques, riverGroup, 200, 0)
     
   end
 end
