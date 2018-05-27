@@ -100,7 +100,7 @@ local function changeInfo()
     {
       text = descriptionText,
       x = 0,
-      y = 150,
+      y = 220,
       width = display.contentWidth - 100,
       fontSize = 48,
       align = "center",
