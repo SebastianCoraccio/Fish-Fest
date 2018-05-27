@@ -20,6 +20,7 @@ local text
 local closeButton
 local picture
 local description
+local fishNameText
 local numberCaught
 local largestCaught
 local valueText
@@ -52,7 +53,6 @@ end
 
 -- Function to change the information about the fish
 local function changeInfo()
-  text.text = fishInfo[fid].name
 
   local info
   for i = 1, #db:getRows("FishCaught") do
@@ -62,10 +62,12 @@ local function changeInfo()
     end
   end
 
+  local name = "?"
   local numberCaughtText = "0"
   local value = "?"
   local descriptionText = "?"
   if (info) then
+    name = fishInfo[fid].name
     numberCaughtText = info.numberCaught
     value = fishInfo[fid].value
     descriptionText = fishInfo[fid].description
@@ -73,10 +75,25 @@ local function changeInfo()
 
 
   if (description) then
+    fishNameText:removeSelf()
     description:removeSelf()
     numberCaught:removeSelf()
     valueText:removeSelf()
   end
+
+  fishNameText =
+    display.newText(
+    {
+      text = name,
+      y = -600,
+      width = 700,
+      fontSize = 128,
+      align = "center",
+      font = "LilitaOne-Regular.ttf"
+    }
+  )
+  fishNameText:setFillColor(0)
+  modalGroup:insert(fishNameText)
 
   description =
     display.newText(
@@ -216,20 +233,6 @@ function scene:create(event)
   )
   statsText:setFillColor(0)
   modalGroup:insert(statsText)
-
-  text =
-    display.newText(
-    {
-      text = fishInfo[fid].name,
-      y = -600,
-      width = 700,
-      fontSize = 128,
-      align = "center",
-      font = "LilitaOne-Regular.ttf"
-    }
-  )
-  text:setFillColor(0)
-  modalGroup:insert(text)
 
   backButton =
     widget.newButton(
