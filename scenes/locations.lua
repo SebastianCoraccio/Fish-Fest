@@ -5,6 +5,8 @@
 local composer = require("composer")
 local widget = require("widget")
 local utils = require("utils")
+local tips = require("data.tips")
+
 
 -- This scene
 local scene = composer.newScene()
@@ -99,16 +101,12 @@ function scene:create(event)
   bgGroup1 = display.newImage(bgGroup1, "assets/backgrounds/bg_travel.png")
   bgGroup1.anchorX = 0
   bgGroup1.anchorY = 0
-
   bgGroup1.x = display.contentWidth / 2
 
-  -- Code here runs when the scene is first created but has not yet appeared on screen
   bgGroup2 = display.newImage(bgGroup2, "assets/backgrounds/bg_travel.png")
   bgGroup2.anchorX = 0
   bgGroup2.anchorY = 0
-
   bgGroup2.x = - display.contentWidth / 2
-
 
    -- Title text
    title =
@@ -139,17 +137,54 @@ function scene:create(event)
    }
  )
   mainGroup:insert(backButton)
-
-  -- location group
+  
   locationGroup = display.newGroup()
   mainGroup:insert(locationGroup)
 
-  -- Background
-  locationBox = display.newRoundedRect(50, 200, display.contentWidth - 100, display.contentHeight - 250, 12)
-  locationBox:setFillColor(.8, .8, .8)
-  locationBox.anchorX = 0
-  locationBox.anchorY = 0
-  locationGroup:insert(locationBox)
+  locationsBox = display.newRoundedRect(display.contentWidth / 2, display.contentHeight / 2.4, display.contentWidth / 1.1, display.contentHeight / 1.5, 12)
+  locationsBox:setFillColor(utils.hexToRGB("#dbc397"))
+  locationsBox:setStrokeColor(utils.hexToRGB("#000000"))
+  locationsBox.strokeWidth = 4
+  locationGroup:insert(locationsBox)
+
+  tipBox = display.newRoundedRect(display.contentWidth / 2, display.contentHeight / 1.14, display.contentWidth / 1.1, display.contentHeight / 5, 12)
+  tipBox:setFillColor(utils.hexToRGB("#dbc397"))
+  tipBox:setStrokeColor(utils.hexToRGB("#000000"))
+  tipBox.strokeWidth = 4
+  locationGroup:insert(tipBox)
+
+  tipsText =
+    display.newText(
+    {
+      text = "Tips and Hints",
+      x = display.contentWidth / 2.8,
+      y = display.contentHeight / 1.23,
+      width = 700,
+      fontSize = 100,
+      align = "center",
+      font = "LilitaOne-Regular.ttf"
+    }
+  )
+  tipsText:setFillColor(0)
+  locationGroup:insert(tipsText)
+
+  randomTip = tips[math.random(#tips)]
+
+  tip =
+    display.newText(
+    {
+      text = randomTip,
+      x = display.contentWidth / 2,
+      y = display.contentHeight / 1.12,
+      width = display.contentWidth - 120,
+      fontSize = 48,
+      align = "center",
+      font = "LilitaOne-Regular.ttf"
+    }
+  )
+  tip:setFillColor(0)
+  locationGroup:insert(tip)
+
 
   -- Options for location text
   options = {
