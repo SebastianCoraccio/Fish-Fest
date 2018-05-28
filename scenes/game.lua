@@ -139,24 +139,16 @@ function scene:create(event)
   backButton =
     widget.newButton(
     {
-      label = "Back",
-      fontSize = 40,
+      x = 90,
+      y = 90,
+      width = 100,
+      height = 100,
+      defaultFile = "assets/buttons/back-button.png",
+      overFile = "assets/buttons/back-button-pressed.png",
       onEvent = handleButtonEventBack,
-      emboss = false,
-      -- Properties for a rounded rectangle button
-      shape = "roundedRect",
-      width = 150,
-      height = 75,
-      cornerRadius = 12,
-      labelColor = {default = {utils.hexToRGB("#ef4100")}, over = {utils.hexToRGB("#00aeef")}},
-      fillColor = {default = {utils.hexToRGB("#00aeef")}, over = {utils.hexToRGB("#ef4100")}},
-      strokeColor = {default = {0}, over = {0}},
-      strokeWidth = 3
     }
   )
-  -- Center the button
-  backButton.x = display.contentCenterX - display.contentWidth / 3
-  backButton.y = display.contentHeight - 100
+
   uiGroup:insert(backButton) -- Insert the button
 
   -- Create the fish
