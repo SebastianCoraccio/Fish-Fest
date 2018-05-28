@@ -7,7 +7,6 @@ local widget = require("widget")
 local utils = require("utils")
 local tips = require("data.tips")
 
-
 -- This scene
 local scene = composer.newScene()
 
@@ -106,48 +105,61 @@ function scene:create(event)
   bgGroup2 = display.newImage(bgGroup2, "assets/backgrounds/bg_travel.png")
   bgGroup2.anchorX = 0
   bgGroup2.anchorY = 0
-  bgGroup2.x = - display.contentWidth / 2
+  bgGroup2.x = -display.contentWidth / 2
 
-   -- Title text
-   title =
-   display.newText(
-   {
-     text = "Locations",
-     x = 450,
-     y = 90,
-     fontSize = 128,
-     align = "left",
-     font = "LilitaOne-Regular.ttf"
-   }
- )
- title:setFillColor(0)
- mainGroup:insert(title)
+  -- Title text
+  title =
+    display.newText(
+    {
+      text = "Locations",
+      x = 450,
+      y = 90,
+      fontSize = 128,
+      align = "left",
+      font = "LilitaOne-Regular.ttf"
+    }
+  )
+  title:setFillColor(0)
+  mainGroup:insert(title)
 
-   -- Back button
-   backButton =
-   widget.newButton(
-   {
-     x = 90,
-     y = 90,
-     width = 100,
-     height = 100,
-     defaultFile = "assets/buttons/back-button.png",
-     overFile = "assets/buttons/back-button-pressed.png",
-     onEvent = handleButtonEventBack,
-   }
- )
+  backButton =
+    widget.newButton(
+    {
+      x = 90,
+      y = 90,
+      width = 100,
+      height = 100,
+      defaultFile = "assets/buttons/back-button.png",
+      overFile = "assets/buttons/back-button-pressed.png",
+      onEvent = handleButtonEventBack
+    }
+  )
   mainGroup:insert(backButton)
-  
+
   locationGroup = display.newGroup()
   mainGroup:insert(locationGroup)
 
-  locationsBox = display.newRoundedRect(display.contentWidth / 2, display.contentHeight / 2.4, display.contentWidth / 1.1, display.contentHeight / 1.5, 12)
+  locationsBox =
+    display.newRoundedRect(
+    display.contentWidth / 2,
+    display.contentHeight / 2.4,
+    display.contentWidth / 1.1,
+    display.contentHeight / 1.5,
+    12
+  )
   locationsBox:setFillColor(utils.hexToRGB("#dbc397"))
   locationsBox:setStrokeColor(utils.hexToRGB("#000000"))
   locationsBox.strokeWidth = 4
   locationGroup:insert(locationsBox)
 
-  tipBox = display.newRoundedRect(display.contentWidth / 2, display.contentHeight / 1.14, display.contentWidth / 1.1, display.contentHeight / 5, 12)
+  tipBox =
+    display.newRoundedRect(
+    display.contentWidth / 2,
+    display.contentHeight / 1.14,
+    display.contentWidth / 1.1,
+    display.contentHeight / 5,
+    12
+  )
   tipBox:setFillColor(utils.hexToRGB("#dbc397"))
   tipBox:setStrokeColor(utils.hexToRGB("#000000"))
   tipBox.strokeWidth = 4
@@ -185,110 +197,90 @@ function scene:create(event)
   tip:setFillColor(0)
   locationGroup:insert(tip)
 
-
   -- Options for location text
   options = {
     text = locationInfo[selectedLocation].name,
-    x = 150,
-    y = 150,
-    fontSize = 50,
-    align = "right"
+    x = 210,
+    y = 230,
+    fontSize = 110,
+    align = "right",
+    font = "LilitaOne-Regular.ttf"
+
   }
   locationTitleText = display.newText(options)
+  locationTitleText:setFillColor(0)  
   locationGroup:insert(locationTitleText)
 
   -- Get info
   local descriptionString = locationInfo[selectedLocation].description
 
   -- Set up selected location area
-  -- big picture
   bigPicture =
-    display.newImage("assets/locations/" .. string.lower(locationInfo[selectedLocation].name) .. ".png", 220, 350)
+    display.newImage("assets/locations/" .. string.lower(locationInfo[selectedLocation].name) .. ".png", 240, 450)
   locationGroup:insert(bigPicture)
 
-  -- description
   description =
     display.newText(
     {
-      text = "Description:\n" .. descriptionString,
-      x = 550,
-      y = 300,
-      width = display.contentWidth / 2.5,
-      fontSize = 35,
-      align = "center"
+      text = descriptionString,
+      x = 700,
+      y = 440,
+      width = display.contentWidth / 2,
+      fontSize = 48,
+      align = "center",
+      font = "LilitaOne-Regular.ttf"
     }
   )
   description:setFillColor(0)
   locationGroup:insert(description)
 
-  -- buy button
+  moreSoonText =
+    display.newText(
+    {
+      text = "More locations coming soon!",
+      x = display.contentWidth / 2,
+      y = display.contentHeight / 2,
+      width = display.contentWidth / 1.5,
+      fontSize = 100,
+      align = "center",
+      font = "LilitaOne-Regular.ttf"
+    }
+  )
+  moreSoonText:setFillColor(0)
+  locationGroup:insert(moreSoonText)
+
+  goFishText =
+    display.newText(
+    {
+      text = "Go fish!",
+      x = display.contentWidth / 3 * 2,
+      y = display.contentHeight / 1.42,
+      width = display.contentWidth / 2.5,
+      fontSize = 100,
+      align = "center",
+      font = "LilitaOne-Regular.ttf"
+    }
+  )
+  goFishText:setFillColor(0)
+  locationGroup:insert(goFishText)
+
+
   travelButton =
     widget.newButton(
     {
-      label = "Travel",
-      fontSize = 40,
-      labelColor = {default = {utils.hexToRGB("FFFFFF")}, over = {utils.hexToRGB("000000")}},
-      onEvent = handleButtonEventTravel,
-      emboss = false,
-      -- Properties for a rounded rectangle button
-      shape = "roundedRect",
-      width = 500,
-      height = 75,
-      cornerRadius = 25,
-      fillColor = {default = {utils.hexToRGB("660000")}, over = {utils.hexToRGB("a36666")}},
-      strokeColor = {default = {utils.hexToRGB("a36666")}, over = {utils.hexToRGB("660000")}},
-      strokeWidth = 4
+      x = display.contentWidth / 1.15,
+      y = display.contentHeight / 1.42,
+      width = 100,
+      height = 100,
+      defaultFile = "assets/buttons/back-button.png",
+      overFile = "assets/buttons/back-button-pressed.png",
+      onEvent = handleButtonEventTravel
     }
   )
-  -- Center the button
-  travelButton.x = 395
-  travelButton.y = 600
-
-  -- Insert the button
+  mainGroup:insert(backButton)
+  travelButton.rotation = 180
   locationGroup:insert(travelButton)
 
-  -- Create widgets for all the different kinds of locations
-  -- TODO: Fix placement
-  local xCounter = 0
-  local yCounter = 0
-  for i = 1, #locationInfo do
-    locationButtons[i] =
-      widget.newButton(
-      {
-        label = locationInfo[i].name,
-        fontSize = 40,
-        labelColor = {default = {utils.hexToRGB("FFFFFF")}, over = {utils.hexToRGB("000000")}},
-        onEvent = handleButtonEventLocation,
-        emboss = false,
-        -- Properties for a rounded rectangle button
-        shape = "roundedRect",
-        width = 250,
-        height = 75,
-        cornerRadius = 25,
-        fillColor = {default = {utils.hexToRGB("660000")}, over = {utils.hexToRGB("a36666")}},
-        strokeColor = {default = {utils.hexToRGB("a36666")}, over = {utils.hexToRGB("660000")}},
-        strokeWidth = 4,
-        id = i
-      }
-    )
-    locationButtons[i].x = 225 + ((xCounter) * 325)
-    locationButtons[i].y = 750 + (yCounter * 100)
-
-    -- Increase the counters
-    xCounter = xCounter + 1
-
-    -- Reset counters if necessary
-    if (xCounter > 1) then
-      xCounter = 0
-      yCounter = yCounter + 1
-    end
-
-    locationGroup:insert(locationButtons[i])
-  end
-
-  -- Finally call resetButton to set the button to be already pressed
-  resetButton(locationButtons[selectedLocation])
-  changeLocation()
 end
 
 -- show()
@@ -324,12 +316,12 @@ local function moveBG(event)
   xOffset = 3
 
   if (bgGroup1.x + xOffset) > display.contentWidth then
-    bgGroup1.x = - display.contentWidth + xOffset
+    bgGroup1.x = -display.contentWidth + xOffset
   else
     bgGroup1.x = bgGroup1.x + xOffset
   end
-  if (bgGroup2.x + xOffset ) > display.contentWidth then
-    bgGroup2.x = - display.contentWidth + xOffset
+  if (bgGroup2.x + xOffset) > display.contentWidth then
+    bgGroup2.x = -display.contentWidth + xOffset
   else
     bgGroup2.x = bgGroup2.x + xOffset
   end
