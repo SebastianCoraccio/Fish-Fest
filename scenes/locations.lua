@@ -6,6 +6,7 @@ local composer = require("composer")
 local widget = require("widget")
 local utils = require("utils")
 local tips = require("data.tips")
+local locationInfo = require("data.locationInfo")
 
 -- This scene
 local scene = composer.newScene()
@@ -18,67 +19,37 @@ local db = newDB()
 local mainGroup
 local bgGroup1 = nil
 local bgGroup2 = nil
-local title
-local game
-local scrollView
-local locationInfo = require("data.locationInfo")
-local locationBox
-local locationButtons = {}
 local selectedLocation = 1
-local bigPicture
-local locationTitleText
-local description
--- Keeps track of what scene to load based on the users swipe
-local sceneToLoad
-local slideDirection
 
-local function changeLocation()
-  -- Change title
-  locationTitleText.text = locationInfo[selectedlocation]
+local tip
+local tipIndex = 0
 
-  -- Set big picture image
-  bigPicture =
-    display.newImage("assets/locations/" .. string.lower(locationInfo[selectedLocation].name) .. ".png", 220, 350)
-  locationGroup:insert(bigPicture)
-
-  -- Set description text
-  description.text = "Description:\n" .. locationInfo[selectedLocation].description
-end
-
--- Reset button color
-local function resetButton(event)
-  -- Reset all buttons
-  for i = 1, #locationButtons do
-    locationButtons[i]:setFillColor(utils.hexToRGB("660000"))
-  end
-
-  -- Set button to be 'pressed'
-  event:setFillColor(utils.hexToRGB("a36666"))
-end
-
--- Function to handle use button
-local function handleButtonEventLocation(event)
-  if (event.phase == "ended") then
-    selectedLocation = event.target.id
-    changeLocation()
-    resetButton(event.target)
-  end
-end
-
--- Go to title
 local function handleButtonEventBack(event)
+  -- Goes back to title screen
   if (event.phase == "ended") then
     composer.gotoScene("scenes.title", {effect = "slideRight", time = 800, params = {}})
   end
 end
 
--- Function to handle buy button
 local function handleButtonEventTravel(event)
   if (event.phase == "ended") then
     composer.gotoScene(
       "scenes.game",
       {params = {location = locationInfo[selectedLocation].dbName}, effect = "fade", time = 400}
     )
+  end
+end
+
+local function handleButtonEventTip(event)
+  if (event.phase == "ended") then
+    if(event.target.id == 'next') then
+      tipIndex = tipIndex + 1
+    else
+      tipIndex = tipIndex - 1
+    end
+
+    -- Adding one to index because mod will return 0, but lua arrays are 0 indexed
+    tip.text = tips[(tipIndex % #tips) + 1]
   end
 end
 
@@ -97,6 +68,8 @@ function scene:create(event)
   sceneGroup:insert(bgGroup1)
   sceneGroup:insert(mainGroup)
 
+
+  -- Add two identical backgrounds for scrolling
   bgGroup1 = display.newImage(bgGroup1, "assets/backgrounds/bg_travel.png")
   bgGroup1.anchorX = 0
   bgGroup1.anchorY = 0
@@ -107,8 +80,7 @@ function scene:create(event)
   bgGroup2.anchorY = 0
   bgGroup2.x = -display.contentWidth / 2
 
-  -- Title text
-  title =
+  pageTitle =
     display.newText(
     {
       text = "Locations",
@@ -119,8 +91,8 @@ function scene:create(event)
       font = "LilitaOne-Regular.ttf"
     }
   )
-  title:setFillColor(0)
-  mainGroup:insert(title)
+  pageTitle:setFillColor(0)
+  mainGroup:insert(pageTitle)
 
   backButton =
     widget.newButton(
@@ -152,51 +124,6 @@ function scene:create(event)
   locationsBox.strokeWidth = 4
   locationGroup:insert(locationsBox)
 
-  tipBox =
-    display.newRoundedRect(
-    display.contentWidth / 2,
-    display.contentHeight / 1.14,
-    display.contentWidth / 1.1,
-    display.contentHeight / 5,
-    12
-  )
-  tipBox:setFillColor(utils.hexToRGB("#dbc397"))
-  tipBox:setStrokeColor(utils.hexToRGB("#000000"))
-  tipBox.strokeWidth = 4
-  locationGroup:insert(tipBox)
-
-  tipsText =
-    display.newText(
-    {
-      text = "Tips and Hints",
-      x = display.contentWidth / 2.8,
-      y = display.contentHeight / 1.23,
-      width = 700,
-      fontSize = 100,
-      align = "center",
-      font = "LilitaOne-Regular.ttf"
-    }
-  )
-  tipsText:setFillColor(0)
-  locationGroup:insert(tipsText)
-
-  randomTip = tips[math.random(#tips)]
-
-  tip =
-    display.newText(
-    {
-      text = randomTip,
-      x = display.contentWidth / 2,
-      y = display.contentHeight / 1.12,
-      width = display.contentWidth - 120,
-      fontSize = 48,
-      align = "center",
-      font = "LilitaOne-Regular.ttf"
-    }
-  )
-  tip:setFillColor(0)
-  locationGroup:insert(tip)
-
   -- Options for location text
   options = {
     text = locationInfo[selectedLocation].name,
@@ -207,22 +134,19 @@ function scene:create(event)
     font = "LilitaOne-Regular.ttf"
 
   }
-  locationTitleText = display.newText(options)
-  locationTitleText:setFillColor(0)  
-  locationGroup:insert(locationTitleText)
-
-  -- Get info
-  local descriptionString = locationInfo[selectedLocation].description
+  locationTitle = display.newText(options)
+  locationTitle:setFillColor(0)  
+  locationGroup:insert(locationTitle)
 
   -- Set up selected location area
-  bigPicture =
+  locationImage =
     display.newImage("assets/locations/" .. string.lower(locationInfo[selectedLocation].name) .. ".png", 240, 450)
-  locationGroup:insert(bigPicture)
+  locationGroup:insert(locationImage)
 
-  description =
+  locationDescription =
     display.newText(
     {
-      text = descriptionString,
+      text = locationInfo[selectedLocation].description,
       x = 700,
       y = 440,
       width = display.contentWidth / 2,
@@ -231,8 +155,8 @@ function scene:create(event)
       font = "LilitaOne-Regular.ttf"
     }
   )
-  description:setFillColor(0)
-  locationGroup:insert(description)
+  locationDescription:setFillColor(0)
+  locationGroup:insert(locationDescription)
 
   moreSoonText =
     display.newText(
@@ -264,7 +188,6 @@ function scene:create(event)
   goFishText:setFillColor(0)
   locationGroup:insert(goFishText)
 
-
   travelButton =
     widget.newButton(
     {
@@ -281,35 +204,90 @@ function scene:create(event)
   travelButton.rotation = 180
   locationGroup:insert(travelButton)
 
+  --------------------------------------------------------------
+  -- Tips
+  --------------------------------------------------------------
+  
+  tipBox =
+    display.newRoundedRect(
+    display.contentWidth / 2,
+    display.contentHeight / 1.14,
+    display.contentWidth / 1.1,
+    display.contentHeight / 5,
+    12
+  )
+  tipBox:setFillColor(utils.hexToRGB("#dbc397"))
+  tipBox:setStrokeColor(utils.hexToRGB("#000000"))
+  tipBox.strokeWidth = 4
+  locationGroup:insert(tipBox)
+
+  tipsText =
+    display.newText(
+    {
+      text = "Tips and Hints",
+      x = display.contentWidth / 2.8,
+      y = display.contentHeight / 1.23,
+      width = 700,
+      fontSize = 100,
+      align = "center",
+      font = "LilitaOne-Regular.ttf"
+    }
+  )
+  tipsText:setFillColor(0)
+  locationGroup:insert(tipsText)
+
+  nextTip =
+    widget.newButton(
+    {
+      id = 'next',
+      x = display.contentWidth / 1.15,
+      y = display.contentHeight / 1.23,
+      width = 100,
+      height = 100,
+      defaultFile = "assets/buttons/back-button.png",
+      overFile = "assets/buttons/back-button-pressed.png",
+      onEvent = handleButtonEventTip
+    }
+  )
+  mainGroup:insert(nextTip)
+  nextTip.rotation = 180
+  locationGroup:insert(nextTip)
+
+  prevTip =
+    widget.newButton(
+    {
+      id = 'prev',
+      x = display.contentWidth / 1.35,
+      y = display.contentHeight / 1.23,
+      width = 100,
+      height = 100,
+      defaultFile = "assets/buttons/back-button.png",
+      overFile = "assets/buttons/back-button-pressed.png",
+      onEvent = handleButtonEventTip
+    }
+  )
+  mainGroup:insert(prevTip)
+  locationGroup:insert(prevTip)
+
+  tip =
+    display.newText(
+    {
+      text = tips[tipIndex + 1],
+      x = display.contentWidth / 2,
+      y = display.contentHeight / 1.12,
+      width = display.contentWidth - 120,
+      fontSize = 48,
+      align = "center",
+      font = "LilitaOne-Regular.ttf"
+    }
+  )
+  tip:setFillColor(0)
+  locationGroup:insert(tip)
+
 end
 
--- show()
-function scene:show(event)
-  local sceneGroup = self.view
-  local phase = event.phase
-  if (phase == "will") then
-    -- Code here runs when the scene is still off screen (but is about to come on screen)
-  elseif (phase == "did") then
-  -- Code here runs when the scene is entirely on screen
-  end
-end
-
--- hide()
-function scene:hide(event)
-  local sceneGroup = self.view
-  local phase = event.phase
-
-  if (phase == "will") then
-    -- Code here runs when the scene is on screen (but is about to go off screen)
-  elseif (phase == "did") then
-  -- Code here runs immediately after the scene goes entirely off screen
-  end
-end
-
--- destroy()
 function scene:destroy(event)
   local sceneGroup = self.view
-  -- Code here runs prior to the removal of scene's view
 end
 
 local function moveBG(event)
