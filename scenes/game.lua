@@ -81,12 +81,31 @@ local function handleButtonEventBack(event)
   end
 end
 
+local function toggleMusicOn()
+  if (db:getRows("Flags")[1].music == 1) then
+    audio.pause({channel=1})
+    audio.resume({channel=2})
+  end
+end
+
+local function toggleMusicOff()
+  if (db:getRows("Flags")[1].music == 1) then
+    audio.pause({channel=2})
+    audio.resume({channel=1})
+  end
+end
+
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
 
 -- create()
 function scene:create(event)
+  local backgroundMusic = audio.loadStream("audio/waterAmbient.wav")
+  backgroundMusicChannel = audio.play(backgroundMusic, {channel=2, loops=-1})
+  audio.pause({channel=2})
+  toggleMusicOn()
+
   local sceneGroup = self.view
   locationName = event.params.location
   -- Define groups
@@ -176,6 +195,7 @@ end
 
 -- show()
 function scene:show(event)
+  toggleMusicOn()
   local sceneGroup = self.view
   local phase = event.phase
   local the_fish = nil
@@ -210,6 +230,8 @@ end
 
 -- hide()
 function scene:hide(event)
+  toggleMusicOff()
+
   local sceneGroup = self.view
   local phase = event.phase
 
