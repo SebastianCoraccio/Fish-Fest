@@ -94,7 +94,7 @@ function scene:create(event)
     shadow = {r = 0, g = 0, b = 0}
   }
 
-  logo = display.newImage("assets/logo.png", display.contentCenterX, 350)
+  logo = display.newImage("assets/logo.png", display.contentCenterX, 360)
   mainGroup:insert(logo)
 
 
