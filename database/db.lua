@@ -155,7 +155,7 @@ function _DB.create()
     end
 
     if (#Db:getRows("Flags") == 0) then
-      db:exec [[INSERT INTO Flags VALUES (0, 0, 0);]]
+      db:exec [[INSERT INTO Flags VALUES (1, 1, 1);]]
     end
 
     if (#Db:getRows("Stats") == 0) then
