@@ -57,15 +57,18 @@ function scene:create(event)
   -- New display group
   mainGroup = display.newGroup()
   sceneGroup:insert(mainGroup)
-
   local sheetOptions = {
     width = 540,
     height = 960,
     numFrames = 8
   }
-
+  
+  waterColor = display.newImage(mainGroup, "assets/backgrounds/bg_river.png")
+  waterColor.x = display.contentCenterX
+  waterColor.y = display.contentCenterY
+  
   local waterTextureSheet = graphics.newImageSheet("assets/backgrounds/water_anim.png", sheetOptions)
-
+  
   local sequenceAnim = {
     {
       name = "stationary",
@@ -75,7 +78,7 @@ function scene:create(event)
       loopDirection = "forward"
     }
   }
-
+  
   waterTexture = display.newSprite(mainGroup, waterTextureSheet, sequenceAnim)
   waterTexture.anchorX = 0 
   waterTexture.anchorY = 0 
@@ -83,12 +86,12 @@ function scene:create(event)
   waterTexture.yScale = 2
   waterTexture:setSequence("stationary")
   waterTexture:play()
-
-
+  
+  
   background = display.newImage(mainGroup, "assets/backgrounds/title.png")
   background.x = display.contentCenterX
   background.y = display.contentCenterY
-
+  
   local color = {
     highlight = {r = 0, g = 0, b = 0},
     shadow = {r = 0, g = 0, b = 0}
