@@ -35,6 +35,7 @@ local location
 local currentExp
 local nextLevel
 local expBeep = audio.loadSound("audio/expBeep.wav")
+local levelUpSound = audio.loadSound("audio/levelUp.wav")
 
 
 -- Function to handle details button
@@ -64,6 +65,11 @@ local function handleButtonEventClose(event)
 end
 
 function levelUp(remainingValue)
+
+  if (db:getRows("Flags")[1].sound == 1) then
+    audio.play(levelUpSound)
+  end
+
   local level = db:getRows("Stats")[1].level + 1
   db:updateLevel(level, remainingValue)
 
