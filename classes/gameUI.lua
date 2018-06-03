@@ -29,6 +29,8 @@ module(..., package.seeall)
 -- 		local dragBody = gameUI.dragBody
 -- 		object:addEventListener( "touch", dragBody )
 
+local tempJointRemoved = false
+
 function dragBobber(event, bobber, params)
 	if (bobber.casting) then
 		return
@@ -48,7 +50,8 @@ function dragBobber(event, bobber, params)
 		body.isFocus = false
 
 		-- Remove the joint when the touch ends
-		if (body.tempJoint) then
+		if (body.tempJoint and not tempJointRemoved) then
+			tempJointRemoved = true
 			body.tempJoint:removeSelf()
 		end
 		bobber.cast()
@@ -61,9 +64,11 @@ function dragBobber(event, bobber, params)
 		-- Create a temporary touch joint and store it in the object for later reference
 		if params and params.center then
 			-- drag the body from its center point
+			tempJointRemoved = false
 			body.tempJoint = physics.newJoint("touch", body, body.x, body.y)
 		else
 			-- drag the body from the point where it was touched
+			tempJointRemoved = false
 			body.tempJoint = physics.newJoint("touch", body, event.x, event.y)
 		end
 
@@ -95,7 +100,10 @@ function dragBobber(event, bobber, params)
 			body.isFocus = false
 
 			-- Remove the joint when the touch ends
-			body.tempJoint:removeSelf()
+			if (body.tempJoint and not tempJointRemoved) then
+				tempJointRemoved = true
+				body.tempJoint:removeSelf()
+			end
 			bobber.cast()
 		end
 	end
