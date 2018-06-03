@@ -12,13 +12,6 @@ function _Location.create(locationName)
 
   -- Get fish information for that location
   local fish = require("data." .. locationName).fish
-  
-  -- Information about trash
-  local trash = require("data.trash")
-
-  local function giveTrash()
-    return trash[math.random(1,3)]
-  end
 
   -- Give a random fish
   function location:giveFish()
@@ -31,10 +24,6 @@ function _Location.create(locationName)
       max = max + fish[i].spawnChance
       if (chance <= max) then
         local fish = fish[i]
-        -- CHANGE TRASH ID WHEN NEW FISH ARE ADDED
-        if (fish.fid == 23) then
-          return giveTrash()
-        end
         return fish
       end
     end

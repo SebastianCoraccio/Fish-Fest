@@ -4,11 +4,13 @@
 -- Require imports
 local composer = require("composer")
 local newFish = require("classes.fish").create
-local newBobber = require("classes.bobber").create
+-- local newBobber = require("classes.bobber").create
+local newBobber = require("classes.newBobber").create
 local physics = require("physics")
 local newLocation = require("classes.location").create
 local widget = require("widget")
 local utils = require("utils")
+local gameUI = require("classes.gameUI")
 
 -- Fish info
 local fishInfo = require("data.fishInfo")
@@ -30,7 +32,7 @@ local background = nil
 local water = nil
 
 -- Bobber
-local bobber = nil
+-- local bobber = nil
 
 -- Modal is showing
 local modalIsShowing = false
@@ -45,6 +47,10 @@ local preCatch = false
 local postCatch = false
 local spawnedInitialFish = false
 
+-- Casting
+local castArea
+local bobber
+local bobberCast = false
 -- Location
 local location
 local locationName
@@ -61,10 +67,10 @@ function addFish()
   local f =
     newFish(
     {
-      maxX = display.contentWidth,
-      maxY = display.contentHeight - 150,
-      minX = 0,
-      minY = -100,
+      maxX = display.contentWidth - 50,
+      maxY = display.contentHeight - 500,
+      minX = 50,
+      minY = 50,
       fid = fishToAdd.fid,
       group = mainGroup
     }
@@ -75,7 +81,7 @@ end
 
 -- Back button
 local function handleButtonEventBack(event)
-  bobber.bringBack()
+  -- bobber.bringBack()
   if (event.phase == "ended") then
     composer.gotoScene("scenes.locations", {params = {}, effect = "slideRight", time = 600})
   end
@@ -83,15 +89,15 @@ end
 
 local function toggleMusicOn()
   if (db:getRows("Flags")[1].music == 1) then
-    audio.pause({channel=1})
-    audio.resume({channel=2})
+    audio.pause({channel = 1})
+    audio.resume({channel = 2})
   end
 end
 
 local function toggleMusicOff()
   if (db:getRows("Flags")[1].music == 1) then
-    audio.pause({channel=2})
-    audio.resume({channel=1})
+    audio.pause({channel = 2})
+    audio.resume({channel = 1})
   end
 end
 
@@ -102,8 +108,8 @@ end
 -- create()
 function scene:create(event)
   local backgroundMusic = audio.loadStream("audio/waterAmbient.wav")
-  backgroundMusicChannel = audio.play(backgroundMusic, {channel=2, loops=-1})
-  audio.pause({channel=2})
+  backgroundMusicChannel = audio.play(backgroundMusic, {channel = 2, loops = -1})
+  audio.pause({channel = 2})
   toggleMusicOn()
 
   local sceneGroup = self.view
@@ -141,15 +147,15 @@ function scene:create(event)
   }
 
   texture = display.newSprite(mainGroup, sheetFishAnim, sequenceAnim)
-  texture.anchorX = 0 
-  texture.anchorY = 0 
+  texture.anchorX = 0
+  texture.anchorY = 0
   texture.xScale = 2
   texture.yScale = 2
   texture:setSequence("stationary")
   texture:play()
 
   -- Create the bobber
-  bobber = newBobber(display.contentCenterX, display.contentHeight - 100 , uiGroup)
+  -- bobber = newBobber(display.contentCenterX, display.contentHeight - 100 , uiGroup)
 
   -- Get location
   location = newLocation(event.params.location)
@@ -164,7 +170,7 @@ function scene:create(event)
       height = 100,
       defaultFile = "assets/buttons/back-button.png",
       overFile = "assets/buttons/back-button-pressed.png",
-      onEvent = handleButtonEventBack,
+      onEvent = handleButtonEventBack
     }
   )
 
@@ -175,22 +181,54 @@ function scene:create(event)
     addFish()
   end
   spawnedInitialFish = true
+  local paint = {
+    type = "gradient",
+    color1 = {0.9, 0.9, 0.9, 0.3},
+    color2 = {0, 0, 0, 0.2},
+    direction = "down"
+  }
 
+  castArea = display.newRoundedRect(uiGroup, display.contentWidth / 2, display.contentHeight - 190, display.contentWidth, display.contentHeight - 1500, 20)
+  castArea.fill = paint
+  local function dragBobber(event)
+    local xThird = display.contentWidth / 3
+    return gameUI.dragBobber(
+      event,
+      bobber,
+      {
+        center = true, 
+        dampingRatio = 1,
+        maxForce = 950,
+        xMin = 0, 
+        yMin = display.contentHeight - xThird, 
+        xMax = display.contentWidth, 
+        yMax = display.contentHeight - 20}
+    )
+
+    -- Substitute one of these lines for the line above to see what happens!
+    -- return gameUI.dragBody( event, { maxForce=400, frequency=5, dampingRatio=0.2 } ) -- slow, elastic dragging
+    -- return gameUI.dragBody( event, { maxForce=20000, frequency=1000, dampingRatio=1.0, center=true } ) -- very tight dragging, snaps to object center
+  end
+
+  bobber = newBobber(display.contentWidth / 2, display.contentHeight - 200, uiGroup)
+  bobber.anim:addEventListener("touch", dragBobber)
+
+  -- castArea:addEventListener("touch", castArea)
   -- Add catch event and related listeners
   Runtime:addEventListener("touch", bobber.catch)
-  bobber.anim:addEventListener("catchEvent", scene.reelIn)
+  -- bobber.anim:addEventListener("catchEvent", scene.reelIn)
 end
 
 -- Pause the fish spawning and fish movement
 function pauseGame()
   modalIsShowing = true
-  bobber.setCast()
+  -- bobber.setCast()
 end
 
 -- Custom function for resuming the game (from pause state)
 function scene:resumeGame(final)
   modalIsShowing = false
-  bobber.setCast()
+  -- bobber.setCast()
 end
 
 -- show()
@@ -201,14 +239,13 @@ function scene:show(event)
   local the_fish = nil
 
   if (phase == "will") then
+    -- bobber:caught()
     -- Code here runs when the scene is first created but has not yet appeared on screen
     locationName = event.params.location
 
     water = display.newImage(backgroundGroup, "assets/backgrounds/bg_" .. locationName .. ".png")
     water.anchorX = 0
     water.anchorY = 0
-
-    bobber:caught()
   elseif (phase == "did") then
     -- Code here runs when the scene is entirely on screen
 
@@ -224,7 +261,6 @@ function scene:show(event)
       end,
       0
     )
-
   end
 end
 
@@ -239,7 +275,7 @@ function scene:hide(event)
     -- Code here runs when the scene is on screen (but is about to go off screen)
   elseif (phase == "did") then
     -- Code here runs immediately after the scene goes entirely off screen
-    bobber:noCast()
+    -- bobber:noCast()
     timer.cancel(fishUpdateTimer)
     -- Destroy the fish image objects and remove fish from table
     function removeFish(index)

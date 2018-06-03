@@ -117,11 +117,6 @@ function _Bobber.create(x, y, group)
     end
   end
 
-  -- Counter function to use for the casting speed
-  -- function bobber:count()
-  -- counter = counter - 100
-  -- end
-
   function bobber:bringBack()
     bobber.anim.isActive = false -- bobber isn't active
     bobber.anim.isCatchable = false -- bobber isn't catchable
