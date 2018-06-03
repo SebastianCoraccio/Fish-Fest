@@ -101,7 +101,6 @@ function _Bobber.create(x, y, group)
     bobber.anim.isActive = false -- bobber isn't active
     bobber.anim.isCatchable = false -- bobber isn't catchable
     bobber.anim:setLinearVelocity(0, 0) -- stop the bobber
-    bobber.anim:dispatchEvent(catchEvent) -- Catch event
     transition.to(
       bobber.anim,
       {
