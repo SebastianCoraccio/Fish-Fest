@@ -31,7 +31,7 @@ function _Splash.create(params)
   splash.anim = display.newSprite(sheet_splash, sequence_splash)
   splash.anim.isActive = true
   splash.anim.x = params.x
-  splash.anim.y = params.y - 5
+  splash.anim.y = params.y - 10
   splash.anim.myName = "splash"
   
   if(params.collide == true) then

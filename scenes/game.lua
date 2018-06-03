@@ -81,7 +81,7 @@ end
 
 -- Back button
 local function handleButtonEventBack(event)
-  -- bobber.bringBack()
+  bobber.bringBack()
   if (event.phase == "ended") then
     composer.gotoScene("scenes.locations", {params = {}, effect = "slideRight", time = 600})
   end
@@ -205,30 +205,26 @@ function scene:create(event)
         yMax = display.contentHeight - 20}
     )
 
-    -- Substitute one of these lines for the line above to see what happens!
-    -- return gameUI.dragBody( event, { maxForce=400, frequency=5, dampingRatio=0.2 } ) -- slow, elastic dragging
-    -- return gameUI.dragBody( event, { maxForce=20000, frequency=1000, dampingRatio=1.0, center=true } ) -- very tight dragging, snaps to object center
   end
 
   bobber = newBobber(display.contentWidth / 2, display.contentHeight - 200, uiGroup)
   bobber.anim:addEventListener("touch", dragBobber)
 
-  -- castArea:addEventListener("touch", castArea)
   -- Add catch event and related listeners
   Runtime:addEventListener("touch", bobber.catch)
-  -- bobber.anim:addEventListener("catchEvent", scene.reelIn)
+  bobber.anim:addEventListener("catchEvent", scene.reelIn)
 end
 
 -- Pause the fish spawning and fish movement
 function pauseGame()
   modalIsShowing = true
-  -- bobber.setCast()
+  bobber.setCast()
 end
 
 -- Custom function for resuming the game (from pause state)
 function scene:resumeGame(final)
   modalIsShowing = false
-  -- bobber.setCast()
+  bobber.setCast()
 end
 
 -- show()
@@ -275,7 +271,7 @@ function scene:hide(event)
     -- Code here runs when the scene is on screen (but is about to go off screen)
   elseif (phase == "did") then
     -- Code here runs immediately after the scene goes entirely off screen
-    -- bobber:noCast()
+    bobber:noCast()
     timer.cancel(fishUpdateTimer)
     -- Destroy the fish image objects and remove fish from table
     function removeFish(index)
@@ -380,8 +376,6 @@ function scene:reelIn()
           end
         )
 
-        -- Update DB and remove fish
-        -- db:caughtFish(fid)
         removeFish(i)
       else
         fishTable[i].scatter()
