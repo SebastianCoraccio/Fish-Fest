@@ -41,6 +41,7 @@ local levelUpSound = audio.loadSound("audio/levelUp.wav")
 -- Function to handle details button
 -- TODO: Open encylopedia with that fish
 local function handleButtonEventDetails(event)
+    -- Don't navigate if the slider is animating, will throw an error when the scene changes
   if (not sliderAnimating) then
     if (event.phase == "ended") then
       composer.gotoScene(
@@ -57,6 +58,7 @@ end
 
 -- Function to handle close button
 local function handleButtonEventClose(event)
+  -- Don't navigate if the slider is animating, will throw an error when the scene changes
   if (not sliderAnimating) then
     if (event.phase == "ended") then
       composer.hideOverlay(true, "fade", 400)
@@ -84,7 +86,15 @@ function levelUp(remainingValue)
 end
 
 function updateSlider(value)
+  -- Wait for the slider to complete updating, then flip the animating flag
   sliderAnimating = true
+  timer.performWithDelay(
+    5 * value,
+    function() 
+      sliderAnimating = false
+    end
+  )
+
   currentExp = currentExp - value
   for i = 0, value, 10 do
     if (currentExp + i >= nextLevel) then
@@ -93,7 +103,6 @@ function updateSlider(value)
         function()
           value = value - i
           levelUp(value)
-
         end
       )
       return
@@ -110,7 +119,6 @@ function updateSlider(value)
       )
     end
   end
-  sliderAnimating = false
 end
 
 function removeLevelInformation()
@@ -309,6 +317,7 @@ function scene:create(event)
   modalGroup.y = display.contentHeight / 2
 
   -- Update the slider after waiting a moment for the modal to open
+  sliderAnimating = true
   timer.performWithDelay(
     700,
     function()
