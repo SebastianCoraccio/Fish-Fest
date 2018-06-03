@@ -9,7 +9,7 @@ application =
 	{
 		width = 1080,
 		height = 1920, 
-		scale = "letterbox",
+		-- scale = "adaptive",
 		fps = 60,
 		
 		--[[
