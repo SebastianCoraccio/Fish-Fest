@@ -271,37 +271,6 @@ function _Fish.create(params)
     fish:moveTo({x = newX, y = newY})
   end
 
-  -- -- Fish darts away from the given x and y position
-  -- function fish:scare(params)
-
-  --   fish.mode = "SCARED"
-
-  --   -- Picks a location in the other direction of the given x and y
-  --   local newX = fish.anim.x + math.random(-100, 100)
-  --   local newY = fish.anim.y + math.random(-400, 400)
-
-  --   -- Check new x and y are in the bounding area
-  --   if newX > fish.maxX then
-  --     newX = fish.maxX
-  --   elseif newX < fish.minX then
-  --     newX = fish.minX
-  --   end
-
-  --   if newY > fish.maxY then
-  --     newY = fish.maxY
-  --   elseif newY < fish.minY then
-  --     newY = fish.minY
-  --   end
-
-  --   -- Rotate and move to new position
-  --   fish:rotateTo({x=newX, y=newY, speed=8})
-  --   fish:moveTo({x=newX, y=newY,
-  --                speed=8,
-  --                onComplete=function()
-  --                  fish.mode = "SEEKING"
-  --                end})
-  -- end
-
   -- Destructor for the fish
   function fish:destroy()
     -- Cancel all timers

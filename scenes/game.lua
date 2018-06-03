@@ -5,7 +5,7 @@
 local composer = require("composer")
 local newFish = require("classes.fish").create
 -- local newBobber = require("classes.bobber").create
-local newBobber = require("classes.newBobber").create
+local newBobber = require("classes.bobber").create
 local physics = require("physics")
 local newLocation = require("classes.location").create
 local widget = require("widget")

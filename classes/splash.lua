@@ -31,9 +31,16 @@ function _Splash.create(params)
   splash.anim = display.newSprite(sheet_splash, sequence_splash)
   splash.anim.isActive = true
   splash.anim.x = params.x
-  splash.anim.y = params.y - 10
+  splash.anim.y = params.y
   splash.anim.myName = "splash"
   
+  function splash.anim:preCollision(event)
+    if event.other.myName == "bobber" then
+      event.contact.isEnabled = false
+    end
+  end
+  splash.anim:addEventListener("preCollision")
+
   if(params.collide == true) then
     physics.addBody(splash.anim, "dynamic", {filter = {groupIndex=-1}})
   end
