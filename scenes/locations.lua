@@ -286,12 +286,8 @@ function scene:create(event)
 
 end
 
-function scene:destroy(event)
-  local sceneGroup = self.view
-end
-
 local function moveBG(event)
-  xOffset = 3
+  xOffset = 2
 
   if (bgGroup1.x + xOffset) > display.contentWidth then
     bgGroup1.x = -display.contentWidth + xOffset
@@ -310,8 +306,6 @@ end
 -- -----------------------------------------------------------------------------------
 scene:addEventListener("create", scene)
 scene:addEventListener("show", scene)
-scene:addEventListener("hide", scene)
-scene:addEventListener("destroy", scene)
 
 Runtime:addEventListener("enterFrame", moveBG)
 -- -----------------------------------------------------------------------------------

@@ -7,9 +7,6 @@ local widget = require("widget")
 local utils = require("utils")
 local fishInfo = require("data.fishInfo")
 local riverInfo = require("data.river")
-local atlanticInfo = require("data.atlantic")
-local reefInfo = require("data.reef")
-local icecapInfo = require("data.ice_cap")
 
 -- Set up DB
 local newDB = require("database.db").create
@@ -36,10 +33,8 @@ local riverPlaques = {}
 
 -- Things
 local title
-local coins
 local scrollView
 local backButton
-local plaques = {}
 
 local function compare(one, two)
   return one.fid < two.fid
@@ -267,27 +262,8 @@ function scene:show(event)
   end
 end
 
--- hide()
-function scene:hide(event)
-  local sceneGroup = self.view
-  local phase = event.phase
-
-  if (phase == "will") then
-    -- Code here runs when the scene is on screen (but is about to go off screen)
-  elseif (phase == "did") then
-  -- Code here runs immediately after the scene goes entirely off screen
-  end
-end
-
--- destroy()
-function scene:destroy(event)
-  local sceneGroup = self.view
-  -- Code here runs prior to the removal of scene's view
-end
-
 local function moveBG(event)
-  -- xOffset = 3
-  yOffset = 3
+  yOffset = 2
 
   if (bgGroup1.y + yOffset ) > display.contentHeight then
     bgGroup1.y = - display.contentHeight + yOffset
@@ -307,8 +283,6 @@ end
 -- -----------------------------------------------------------------------------------
 scene:addEventListener("create", scene)
 scene:addEventListener("show", scene)
-scene:addEventListener("hide", scene)
-scene:addEventListener("destroy", scene)
 
 Runtime:addEventListener("enterFrame", moveBG)
 
